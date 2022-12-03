@@ -82,3 +82,13 @@
     - How will you communicate that it’s time to merge?
       - Either in remo, zoom, or discord. 
 
+## Prep 2
+  
+### Trash Wars
+  1. Game is an auto battler, in which hardy racoons are fighting to defend their home... an enormous heap of trash from various types of baddies.
+  2. This app will solve the common pain point that everyone has experienced, a totally overwhelming boredom. If it can be properly implemented on react native, it will gameify exercise so that the more a user moves, the more rewards they would get in the game. 
+  3. MVP
+    - Game board w/ assets
+    - Pieces should be dynamic
+    - Logic for game mechanics is handled on frontEnd
+
