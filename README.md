@@ -91,4 +91,3 @@
     - Game board w/ assets
     - Pieces should be dynamic
     - Logic for game mechanics is handled on frontEnd
-
