@@ -1,24 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
+import { useState } from 'react';
+import { ScreenContext, screenInitialState } from './context/ScreenContext'
 import './App.css';
 
+import Title from './components/Title/Title'
+import GameBoard from './components/GameBoard/GameBoard';
+import PreRound from './components/Preround/Preround';
+import GameOver from './components/GameOver/GameOver';
+
+const SCREEN2COMP = [
+  () => Title,
+  () => PreRound,
+  () => GameBoard,
+  () => GameOver,
+];
+
 function App() {
+  const [screenContext, setScreenContext] = useState(screenInitialState)
+  const Screen = SCREEN2COMP[screenContext.screen - 1]();
+
+  function handleSetScreen(newScreen: 0 | 1 | 2 | 3) {
+    setScreenContext({screen: newScreen, setScreen: handleSetScreen})
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ScreenContext.Provider
+        value={{
+          screen: screenContext.screen,
+          setScreen: handleSetScreen,
+        }}>
+        {screenContext.screen}
+        <Screen />
+      </ScreenContext.Provider>
     </div>
   );
 }

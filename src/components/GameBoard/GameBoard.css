@@ -1,0 +1,11 @@
+.tile {
+  width: 50px;
+  height: 50px;
+  background-color: green;
+}
+
+.entity {
+  position: absolute;
+  transition: all 0.5s ease-in-out;
+  border: 1px solid black;
+}
