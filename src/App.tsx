@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { Entity } from './classes/entity';
 import { ScreenContext, screenInitialState } from './context/ScreenContext'
+import { PersistenceContext, persistenceInitialState } from './context/PersistenceContext'
 import './App.css';
 
 import Title from './components/Title/Title'
@@ -16,22 +18,39 @@ const SCREEN2COMP = [
 
 function App() {
   const [screenContext, setScreenContext] = useState(screenInitialState)
+  const [persistence, setPersistence] = useState(persistenceInitialState)
   const Screen = SCREEN2COMP[screenContext.screen - 1]();
 
   function handleSetScreen(newScreen: 0 | 1 | 2 | 3) {
     setScreenContext({screen: newScreen, setScreen: handleSetScreen})
   }
 
+  function persistEntity(addedEntity: Entity) {
+    setPersistence({...persistence, entities: [...persistence.entities, addedEntity]});
+  }
+
+  function unpersistEntity(removedEntity: Entity) {
+    const newEntities = [...persistence.entities];
+    const removeIndex = newEntities.indexOf(removedEntity);
+    newEntities.splice(removeIndex, 1);
+    setPersistence({...persistence, entities: newEntities});
+  }
+
   return (
     <div className="App">
-      <ScreenContext.Provider
-        value={{
-          screen: screenContext.screen,
-          setScreen: handleSetScreen,
-        }}>
-        {screenContext.screen}
-        <Screen />
-      </ScreenContext.Provider>
+      <PersistenceContext.Provider value={{
+        ...persistence,
+        persistEntity: persistEntity,
+        unpersistEntity: unpersistEntity,
+      }} >
+        <ScreenContext.Provider
+          value={{
+            ...screenContext,
+            setScreen: handleSetScreen,
+          }}>
+          <Screen />
+        </ScreenContext.Provider>
+      </PersistenceContext.Provider>
     </div>
   );
 }

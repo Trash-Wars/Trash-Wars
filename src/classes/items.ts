@@ -1,18 +1,22 @@
-class Item {
+export class Item {
   name?: string;
   description?: string;
   image?: string;
 }
 
-class Apparel extends Item {
+export class Apparel extends Item {
   armor?: number
   health?:number
 }
 
 
-class Weapon extends Item {
+export class Weapon extends Item {
   damage?: number;
   attackSpeed?: number;
+
+  use() {
+    console.log(`${this.name} deals ${this.damage} damage ${this.attackSpeed} times`);
+  }
 }
 
 class Axe extends Weapon {
