@@ -1,9 +1,9 @@
 import { createContext } from "react";
 
-export const SCREEN_TITLE = 1
-export const SCREEN_PREROUND = 2
-export const SCREEN_GAMEBOARD = 3
-export const SCREEN_GAMEOVER = 4
+export const SCREEN_TITLE = 0
+export const SCREEN_PREROUND = 1
+export const SCREEN_GAMEBOARD = 2
+export const SCREEN_GAMEOVER = 3
 
 export type ScreenStyle = {
   screen: 0 | 1 | 2 | 3;
@@ -11,7 +11,10 @@ export type ScreenStyle = {
 }
 
 export const screenInitialState: ScreenStyle = {
+
   screen: SCREEN_TITLE,
+
+
 }
 
 export const ScreenContext = createContext<ScreenStyle>(screenInitialState)

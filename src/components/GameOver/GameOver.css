@@ -1,0 +1,66 @@
+#GameOverContainer {
+  background-color: black;
+  background-image: URL('./Raccoonrunningforlife\,gameover.png'); 
+  width: 100%;
+  height: 1024px;
+  margin: auto;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+   display:flex;
+  justify-content: center;
+}
+
+#GameOver {
+  border-radius: 10px;
+  display:flex;
+  justify-content: space-evenly;
+  color: red;
+  background-color: black;
+  margin: 0px;
+ 
+}
+
+#readables {
+   display:flex;
+  justify-content: space-between;
+  margin: auto;
+  background-color: rgba(255, 228, 196, 0.554);
+  width:25%;
+  height:50%;
+  flex-direction: column;
+  border-radius: 10px;
+}
+
+#button {
+  background-color: rgba(255, 228, 196, 0);
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 24px;
+  border-radius: 10px;
+  transition: color 0.3s;
+  animation: shimmer 1s linear infinite;
+}
+
+#button:hover {
+  /* background-color: #b00202; */
+  transition: color 1s;
+  color: black;
+}
+
+@keyframes shimmer {
+  0% {
+      color: transparent;
+  }
+  50% {
+      
+      color: white;
+  }
+  100% {
+      color: transparent;
+  }
+}
+
