@@ -18,8 +18,10 @@ const SCREEN2COMP = [
 
 function App() {
   const [screenContext, setScreenContext] = useState(screenInitialState)
+
   const [persistence, setPersistence] = useState(persistenceInitialState)
   const Screen = SCREEN2COMP[screenContext.screen - 1]();
+
 
   function handleSetScreen(newScreen: 0 | 1 | 2 | 3) {
     setScreenContext({screen: newScreen, setScreen: handleSetScreen})
