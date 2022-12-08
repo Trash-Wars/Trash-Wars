@@ -1,43 +1,97 @@
+import { Weapon, Apparel } from "./items";
 
-class Entity {
+export class Entity {
 
-  constructor(position: Tile, name: string, emoji: string, team: 'friendly' | 'neutral' | 'hostile') {
-    this.position = position;
+  constructor(
+    name: string,
+    emoji: string,
+    ) {
     this.name = name;
     this.emoji = emoji;
-    this.team = team;
+    this.isSolid = true;
+  }
+  tile: Tile | undefined;
+  name: string;
+  position: [number, number] | undefined;
+  emoji: string;
+  team: 'friendly' | 'neutral' | 'hostile' | undefined;
+  isSolid: boolean;
+
+  changeTeams(newTeam: 'friendly' | 'neutral' | 'hostile'): void {
+    this.team = newTeam;
   }
 
-  name: string;
-  // Graph Tile, its coordinate on the gameboard grid
-  position: Tile
-  emoji: string;
-  team: 'friendly' | 'neutral' | 'hostile';
+  getAdjacentTiles(): Set<Tile> | undefined {
+    if(!this.tile) return undefined;
+    return this.tile.edges;
+  }
 
-  changeTeams(newTeam: 'friendly' | 'neutral' | 'hostile') {
-    this.team = newTeam;
+  moveToPosition(tile: Tile): this {
+    this.tile = tile;
+    this.position = tile.position;
+    return this
+  }
+
+  cleanup() {
+    this.tile = undefined;
   }
 }
 
 class Mob extends Entity {
-
-//health: number;
-
-  moveToPosition(tile: Tile) {
-    this.position = tile;
+  constructor(
+    name: string,
+    emoji: string,
+    health: number,
+    ) {
+    super(name, emoji)
+    this.health = health;
   }
+  health: number;
 
 }
 
-// class Raccoon extends Mob {
-//   description?: string;
-//   hat: any;
-//   weapon: any;
-// }
+export class Raccoon extends Mob {
+  constructor(
+    name: string,
+    emoji: string,
+    health: number,
+  ) {
+    super(name, emoji, health)
+    this.team = 'friendly'
+  }
+  description: 'string' | undefined;
+  hat: Apparel | undefined;
+  weapon: Weapon | undefined;
 
-// class Enemy extends Mob {
-  
-// }
+  useWeapon() {
+    if (!this.weapon) return;
+    this.weapon.use();
+  }
+
+  changeWeapon(newWeapon: Weapon) {
+    if (this.weapon) {
+      const oldWeapon = this.weapon;
+      // place oldWeapon back in player inventory
+    }
+    // remove newWeapon from player inventory
+    this.weapon = newWeapon;
+  }
+
+  changeApparel(newApparel: Apparel) {
+    if (this.hat) {
+      const oldApparel = this.hat;
+      // place oldApparel back in player inventory
+    }
+    // remove newApparel from player inventory
+    this.hat = newApparel;
+  }
+
+
+}
+
+class Enemy extends Mob {
+
+}
 
 export interface Tile {
   contents: Entity[];
@@ -45,30 +99,31 @@ export interface Tile {
   edges: Set<Tile>;
 }
 
-export const ROWS = 4;
-export const COLS = 6;
+export function comparePos(a: [number, number], b: [number, number]) {
+  return a[0] === b[0] && a[1] === b[1];
+}
 
 export class Gameboard {
-  tiles = new Map<[number, number], Tile>();
+  tiles: Tile[] = [];
 
-  constructor() {
+  constructor(readonly rows: number, readonly cols: number) {
     this.generateGameBoard();
   }
 
   generateGameBoard() {
-    for(let x = 0; x <= ROWS - 1; x++) {
-      for(let y = 0; y <= COLS - 1; y++) {
+    for (let x = 0; x <= this.rows - 1; x++) {
+      for (let y = 0; y <= this.cols - 1; y++) {
         // add the tile
         const tile: Tile = {
           contents: [],
           position: [x, y],
           edges: new Set(),
         };
-        this.tiles.set([x, y], tile);
+        this.tiles.push(tile);
         // add the tile's neighbors
-        for(let coord of [[x+1, y+1], [x+1, y-1], [x-1, y+1], [x-1, y-1]] as [number, number][]) {
-          const neighbor = this.tiles.get(coord) as Tile | undefined;
-          if(!neighbor) {
+        for (let coord of [[x + 1, y + 1], [x + 1, y - 1], [x - 1, y + 1], [x - 1, y - 1]] as [number, number][]) {
+          const neighbor = this.getTile(coord);
+          if (!neighbor) {
             continue;
           }
           this.addEdge(tile, neighbor);
@@ -81,4 +136,14 @@ export class Gameboard {
     a.edges.add(b);
     b.edges.add(a);
   }
+
+  getTile(pos: [number, number]): Tile | undefined {
+    for(const tile of this.tiles) {
+      if(comparePos(pos, tile.position)) {
+        return tile;
+      }
+    }
+    return undefined;
+  }
+
 }
