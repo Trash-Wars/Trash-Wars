@@ -59,9 +59,9 @@ const GameBoard = () => {
   useEffect(() => {
     const debugSpawns: Entity[] = [
       moveEntity(new Raccoon("Hugo", racc, 10), [0,0]),
-      moveEntity(new Raccoon("Zayah", racc, 10), [1,1]),
-      moveEntity(new Raccoon("Jim", racc, 10), [2,2]),
-      moveEntity(new Raccoon("Luis", racc, 10), [3,3]),
+      moveEntity(new Raccoon("Zayah", racc, 10), [0,1]),
+      moveEntity(new Raccoon("Jim", racc, 10), [0,2]),
+      moveEntity(new Raccoon("Luis", racc, 10), [0,3]),
     ]
     setCurrentEntities([...persistence.entities, ...debugSpawns])
   }, [moveEntity, persistence])
