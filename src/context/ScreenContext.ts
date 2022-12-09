@@ -12,7 +12,7 @@ export type ScreenStyle = {
 
 export const screenInitialState: ScreenStyle = {
 
-  screen: SCREEN_TITLE,
+  screen: SCREEN_GAMEBOARD,
 
 
 }

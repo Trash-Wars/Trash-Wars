@@ -10,7 +10,7 @@ let roundsWon = 17
 // TODO:will need to take these props from the gameboard to display number of rounds won in game
 // TODO: Allow user to see how the rounds they won compares to the global Leaderboard
 // TODO IF user has won enough rounds to be on the leaderboard, allow them to enter their name and score into the leaderboard
-const GameOver: React.FC = () => {
+const GameOver = () => {
   const {setScreen} =useContext(ScreenContext)
 
   return (
