@@ -8,8 +8,11 @@ const Preround = () => {
 
   const [highlighted, setHighlighted] = useState(false);
 
-  const divRef = useRef(null);
+  const divRef = useRef<HTMLDivElement>(null);
   const handleClick = () => {
+    if(!divRef.current) {
+      return;
+    }
     const value = divRef.current.innerText;
     setHighlighted(true);
     setSelectedItem(value);
