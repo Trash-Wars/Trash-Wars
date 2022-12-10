@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Entity } from './classes/entity';
-import { ScreenContext, screenInitialState } from './context/ScreenContext'
+import { ScreenContext, screenInitialState, SCREEN_GAMEBOARD } from './context/ScreenContext'
 import { PersistenceContext, persistenceInitialState } from './context/PersistenceContext'
+import { UserOptions, UserOptionsContext, userOptionsInitialState } from './context/OptionsContext';
 import './App.css';
 
 import Title from './components/Title/Title'
 import GameBoard from './components/GameBoard/GameBoard';
 import PreRound from './components/Preround/Preround';
 import GameOver from './components/GameOver/GameOver';
+
+const music = require("./assets/retroForest.mp3")
 
 const SCREEN2COMP = [
   () => Title,
@@ -21,6 +24,11 @@ function App() {
   const [persistence, setPersistence] = useState(persistenceInitialState)
   const Screen = SCREEN2COMP[screenContext.screen]();
 
+  const [userOptions, setUserOptions] = useState(userOptionsInitialState);
+
+  function handleSetOptions(userOptions: UserOptions) {
+    setUserOptions({userOptions})
+  }
 
   function handleSetScreen(newScreen: 0 | 1 | 2 | 3) {
     if(screenContext.screen === 2) {
@@ -44,6 +52,20 @@ function App() {
     setPersistence({...persistence, entities: newEntities});
   }
 
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    const audioElement = audioRef.current!;
+
+    if (userOptions.userOptions.music === "false") {
+      audioElement.pause();
+    } else if (audioElement) {
+      audioElement.loop = true;
+      audioElement.volume = userOptions.userOptions.volume / 100;
+      audioElement.play();
+    }
+  }, [userOptions])
+
   return (
     <div className="App">
       <PersistenceContext.Provider value={{
@@ -56,7 +78,10 @@ function App() {
             ...screenContext,
             setScreen: handleSetScreen,
           }}>
+          <UserOptionsContext.Provider value={{...userOptions, setUserOptions: handleSetOptions}}>
+          <audio ref={audioRef} src={music}/>
           <Screen />
+          </UserOptionsContext.Provider>
         </ScreenContext.Provider>
       </PersistenceContext.Provider>
     </div>

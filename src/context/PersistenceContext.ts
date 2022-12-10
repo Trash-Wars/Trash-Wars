@@ -10,7 +10,7 @@ export type PersistenceStyle = {
     sidelineRaccoons: Raccoon[],
     items: Item[],
   }
-  persistEntity?: (addedEntity: Entity) => void;
+  persistEntity?: (addedEntity: Entity,) => void;
   unpersistEntity?: (removedEntity: Entity) => void;
 }
 
@@ -23,8 +23,8 @@ export const persistenceInitialState: PersistenceStyle = {
     new Raccoon("Luis", racc, 10),
   ],
   inventory: {
-    sidelineRaccoons: [],
-    items: [new Axe(), new Axe()],
+    sidelineRaccoons: [new Raccoon("Hugo", '', 10)],
+    items: [new Axe("axe", "", "", 5, 4)],
   },
 };
 export const PersistenceContext = createContext<PersistenceStyle>(persistenceInitialState)

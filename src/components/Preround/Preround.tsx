@@ -1,39 +1,26 @@
 import { useContext, useState } from "react";
-import { Item } from "../../classes/entity";
+import { Raccoon } from "../../classes/entity";
+import { Apparel, Item, Weapon } from "../../classes/entity";
 import { PersistenceContext } from "../../context/PersistenceContext";
 import { ScreenContext, SCREEN_GAMEBOARD } from "../../context/ScreenContext";
 import { range } from "../../helpers/array";
 import useMousePosition from "../../hooks/useMousePosition";
 import './Preround.css'
+import raccoonIcon from '../../assets/human_m.png';
 
 const Preround = () => {
+  const { raccoonTeam } = useContext(PersistenceContext);
   const { setScreen } = useContext(ScreenContext);
 
   return (
     <div className="Preround">
-      <div style={{ position: "absolute", top: "0", left: "0" }}>
-        <button
-          onClick={() => {
-            setScreen!(1);
-          }}
-        >
-          Back to home
-        </button>
-      </div>
       <div>
-        <h1 style={{ textAlign: "center" }}>preround</h1>
+        <h1 style={{ textAlign: "center", marginTop: 0 }}>Prepare your Team...</h1>
       </div>
       <div style={{ display: "flex", justifyContent: "space-around" }}>
-        {[1, 2, 3, 4].map(() => {
+        {range(0, 3).map((i) => {
           return (
-            <div
-              style={{
-                width: "100px",
-                height: "300px",
-                border: "1px solid black",
-              }} >
-              item?
-            </div>
+            <RaccoonSlot racIndex={i} raccoon={raccoonTeam[i]} />
           );
         })}
       </div>
@@ -54,7 +41,7 @@ const Preround = () => {
 };
 
 const InventoryCarousel = () => {
-  const { inventory } = useContext(PersistenceContext);
+  const { inventory, raccoonTeam } = useContext(PersistenceContext);
 
   const {clientX, clientY} = useMousePosition()
 
@@ -62,13 +49,37 @@ const InventoryCarousel = () => {
 
   function startGrab(item: Item) {
     setGrabbed(item);
+    console.log("grabbed", item)
     window.addEventListener("mousedown", endGrab);
-    window.addEventListener("mousemove", (e) => {
-      //console.log("MOUSE:",e.clientX)
-    })
   }
 
-  function endGrab() {
+  function endGrab(event: MouseEvent) {
+    const clickedOn = event.target
+    if(!(clickedOn instanceof HTMLDivElement) || !grabbed) {
+      console.log("bad, no clicked on or no grabbed", grabbed)
+      return;
+    }
+    let racIndex = +clickedOn.classList.item(1)!;
+    const equippingRaccoon = raccoonTeam[racIndex];
+    let equipped = false;
+
+    if(clickedOn.classList.contains('weapon-slot')) {
+      if(grabbed instanceof Weapon) {
+        equippingRaccoon.weapon = grabbed
+        equipped = true;
+      }
+    }
+
+    if(clickedOn.classList.contains('hat-slot')) {
+      if(grabbed instanceof Apparel) {
+        equippingRaccoon.hat = grabbed
+        equipped = true;
+      }
+    }
+    if(equipped) {
+      inventory.items.splice(inventory.items.indexOf(grabbed))
+    }
+
     setGrabbed(undefined);
     window.removeEventListener("mousedown", endGrab);
   }
@@ -78,25 +89,72 @@ const InventoryCarousel = () => {
       {/* back button */}
       <img alt="back" />
         {range(1,8).map((_, i) => (
-          <div className='inventory-slot'>
-            {inventory.items[i] && (
-              <div
-                key={i}
-                className='inventory-item'
-                onClick={() => {startGrab(inventory.items[i])}}
-                style={{
-                  backgroundPosition: "center",
-                  backgroundRepeat: "no-repeat",
-                  position: grabbed === inventory.items[i] ? "absolute" : "initial",
-                  left: grabbed === inventory.items[i] ? clientX! - 50 : "initial",
-                  top: grabbed === inventory.items[i] ? clientY! - 50 : "initial",
-                }}>
-                <img style={{imageRendering: "pixelated"}} height={100} width={100} src={inventory.items[i].emoji} alt="axe" />
-              </div>
-            )}
-          </div>
+          <ItemSlot
+            key={i}
+            item={inventory.items[i]}
+            onClick={inventory.items[i] ? () => {startGrab(inventory.items[i])} : undefined}
+            itemStyle={{
+              pointerEvents: grabbed === inventory.items[i] ? "none" : "initial",
+              position: grabbed === inventory.items[i] ? "absolute" : "initial",
+              left: grabbed === inventory.items[i] ? clientX || 0 - 50 : "initial",
+              top: grabbed === inventory.items[i] ? clientY || 0 - 50 : "initial",
+            }} />
         ))}
       <img alt="forward" />
+    </div>
+  )
+}
+
+type ItemSlotProps = {
+  item?: Item;
+  raccoon?: Raccoon;
+  onClick?: () => void;
+  className?: string;
+  itemStyle?: any;
+}
+
+const ItemSlot = (props: ItemSlotProps) => {
+  const { item, itemStyle, className } = props;
+
+  return (
+    <div className={`inventory-slot ${className}`}>
+      <div
+        onClick={props.onClick}
+        style={itemStyle}>
+        {item && (
+          <img style={{imageRendering: "pixelated"}} height={100} width={100} src={item.emoji} alt={item.name} />
+          )}
+      </div>
+    </div>
+  )
+}
+
+type RaccoonSlotProps = {
+  raccoon?: Raccoon
+  racIndex: number;
+}
+
+const RaccoonSlot = (props: RaccoonSlotProps) => {
+  const { raccoon, racIndex } = props;
+  return (
+    <div className="raccoon-slot">
+      {raccoon ? (
+        <div>
+          <img width={256} height={256} src={raccoonIcon} alt={raccoon.name} />
+          <ItemSlot
+            className={`${racIndex} weapon-slot`}
+            raccoon={raccoon}
+            item={raccoon.weapon} />
+          <ItemSlot
+            className={`${racIndex} hat-slot`}
+            raccoon={raccoon}
+            item={raccoon.hat} />
+        </div>
+      ) : (
+        <div>
+          Select a Raccoon
+        </div>
+      )}
     </div>
   )
 }
