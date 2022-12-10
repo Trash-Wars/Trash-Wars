@@ -75,7 +75,7 @@ const persistence = useContext(PersistenceContext)
     console.log('e.target',e.target)
     console.log('entity' ,entity)
     // if(e.target)
-    if(entityDamage == 'entity') setEntityDamage('entity damage');
+    if(entityDamage === 'entity') setEntityDamage('entity damage');
     else setEntityDamage('entity');
     return entity
   }

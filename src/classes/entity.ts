@@ -47,7 +47,7 @@ export class Item extends Entity {
   description: string;
 }
 
-class Apparel extends Item {
+export class Apparel extends Item {
   constructor(
     name: string,
     emoji: string,
@@ -63,7 +63,7 @@ class Apparel extends Item {
   //health: number;
 }
 
-class Weapon extends Item {
+export class Weapon extends Item {
   constructor(
     name: string,
     emoji: string,
@@ -83,7 +83,7 @@ class Weapon extends Item {
   }
 }
 
-class Axe extends Weapon {
+export class Axe extends Weapon {
   name = 'Axe';
   emoji = "https://via.placeholder.com/150";
   description = 'An axe';
@@ -100,7 +100,7 @@ class Axe extends Weapon {
   }
 }
 
-class SpentSoupCan extends Weapon {
+export class SpentSoupCan extends Weapon {
   name = "Spent Soup Can"
   emoji = "https://via.placeholder.com/150"
   damage = 3

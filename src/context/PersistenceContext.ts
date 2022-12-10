@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import { Entity, Raccoon } from '../classes/entity';
-import { Axe, Item } from '../classes/items';
+import { Axe, Item } from '../classes/entity';
 
 export type PersistenceStyle = {
   entities: Entity[];
@@ -9,16 +9,16 @@ export type PersistenceStyle = {
     sidelineRaccoons: Raccoon[],
     items: Item[],
   }
-  persistEntity?: (addedEntity: Entity) => void;
+  persistEntity?: (addedEntity: Entity,) => void;
   unpersistEntity?: (removedEntity: Entity) => void;
 }
 
 export const persistenceInitialState: PersistenceStyle = {
   entities: [],
-  raccoonTeam: [],
+  raccoonTeam: [new Raccoon("Hugo", '', 10)],
   inventory: {
-    sidelineRaccoons: [],
-    items: [new Axe(), new Axe()],
+    sidelineRaccoons: [new Raccoon("Hugo", '', 10)],
+    items: [new Axe("axe", "", "", 5, 4)],
   },
 };
 export const PersistenceContext = createContext<PersistenceStyle>(persistenceInitialState)
