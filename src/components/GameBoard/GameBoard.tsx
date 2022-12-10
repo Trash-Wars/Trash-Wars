@@ -64,39 +64,28 @@ const Board = (props: BoardProps) => {
   function debugPosition(event: React.MouseEvent<HTMLImageElement>, entity: Entity) {
     // console.log(entity.position)
     const { marginLeft, marginTop } = event.currentTarget.style
-    //console.log(`${tilePx}:`, `${marginLeft}, ${marginTop}`)
+    console.log(`${tilePx}:`, `${marginLeft}, ${marginTop}`)
   }
-  // holder code for animations for racoons to take damage. 
-  // Moving forward, damage for any entity should change the className of the 
 
-  const entityAnimationHandler = (e: any, entity: any) => {
-    console.log('e.target', e.target)
-    console.log('entity', entity)
-    // if(e.target)
-    if (entityDamage == 'entity') setEntityDamage('entity damage');
-    else setEntityDamage('entity');
-    return entity
+  const raccoonDamageHandler = (e: any, entity: Entity) => {
+    if(entity.className === 'raccoon') entity.className = 'raccoon damage'
+    else entity.className = 'raccoon';
+    setCurrentEntities([...currentEntities]);
   }
+
 
   return (
     <div className='board'>
       {currentEntities.map((entity, i) => (
-
         <img
           onMouseEnter={(e) => debugPosition(e, entity)}
           key={i}
-          className={entityDamage}
-          onClick={(e) => entityAnimationHandler(e, entity)}
+          className={entity.className}
+          onClick={(e) => raccoonDamageHandler(e, entity)}
           style={{ ...entitySize, ...getPosValues(entity) }}
           src={entity.emoji}
           alt={entity.name} />
-
-      )
-
-      )
-
-      }
-      {/* hugo removing this on his end */}
+          ))}
       {range(0, board.cols - 1).reverse().map(col => (
         <div className='rows' key={col} style={{ display: "flex" }}>
           {range(0, board.rows - 1).map((row) => (
@@ -131,7 +120,7 @@ const Buttons = () => {
 const GameBoard = () => {
   const { winWidth } = useWindowDimensions()
   return (
-    <div>
+    <div className="gameBoard">
       <Buttons />
       <Board winWidth={winWidth} />
     </div>
