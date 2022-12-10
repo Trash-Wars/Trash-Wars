@@ -48,17 +48,24 @@ const Board = (props: BoardProps) => {
 
   //when game board loads, 
   useEffect(() => {
-    const zayah = new Raccoon("Zayah", racc, 10)
-    const debugSpawns: Entity[] = [
-      moveEntity(new Raccoon("Hugo", racc, 10), [1, 1]),
-      moveEntity(zayah, [0, 1]),
-      moveEntity(new Raccoon("Jim", racc, 10), [0, 2]),
-      moveEntity(new Raccoon("Luis", racc, 10), [0, 3]),
-    ]
-    console.log(zayah)
-    zayah.changeWeapon(new Axe());
-    zayah.useWeapon()
-    setCurrentEntities([...persistence.entities, ...debugSpawns])
+    // const zayah = new Raccoon("Zayah", racc, 10)
+    // const debugSpawns: Entity[] = [
+    //   moveEntity(new Raccoon("Hugo", racc, 10), [1, 1]),
+    //   moveEntity(zayah, [0, 1]),
+    //   moveEntity(new Raccoon("Jim", racc, 10), [0, 2]),
+    //   moveEntity(new Raccoon("Luis", racc, 10), [0, 3]),
+    // ]
+    // console.log(zayah)
+    // zayah.changeWeapon(new Axe());
+    // zayah.useWeapon()
+    const raccoons: Entity[] = [];
+    let counter = 0;
+    for(const raccoon of persistence.raccoonTeam) {
+      raccoons.push(raccoon)
+      moveEntity(raccoon, [0, counter]);
+      counter++;
+    }
+    setCurrentEntities([...raccoons])
   }, [moveEntity, persistence])
 
   function debugPosition(event: React.MouseEvent<HTMLImageElement>, entity: Entity) {
