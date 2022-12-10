@@ -19,7 +19,6 @@ const SCREEN2COMP = [
 
 function App() {
   const [screenContext, setScreenContext] = useState(screenInitialState)
-
   const [persistence, setPersistence] = useState(persistenceInitialState)
   const Screen = SCREEN2COMP[screenContext.screen]();
 
@@ -30,6 +29,13 @@ function App() {
   }
 
   function handleSetScreen(newScreen: 0 | 1 | 2 | 3) {
+    if(screenContext.screen === 2) {
+      const entities = persistence.entities
+      for(const entity of entities) {
+        entity.cleanup()
+      }
+      setPersistence({...persistence, entities})
+    }
     setScreenContext({screen: newScreen, setScreen: handleSetScreen})
   }
 
