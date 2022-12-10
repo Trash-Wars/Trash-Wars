@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Entity } from './classes/entity';
 import { ScreenContext, screenInitialState } from './context/ScreenContext'
 import { PersistenceContext, persistenceInitialState } from './context/PersistenceContext'
+import { UserOptions, UserOptionsContext, userOptionsInitialState } from './context/OptionsContext';
 import './App.css';
 
 import Title from './components/Title/Title'
@@ -22,6 +23,11 @@ function App() {
   const [persistence, setPersistence] = useState(persistenceInitialState)
   const Screen = SCREEN2COMP[screenContext.screen]();
 
+  const [userOptions, setUserOptions] = useState(userOptionsInitialState);
+
+  function handleSetOptions(userOptions: UserOptions) {
+    setUserOptions({userOptions})
+  }
 
   function handleSetScreen(newScreen: 0 | 1 | 2 | 3) {
     setScreenContext({screen: newScreen, setScreen: handleSetScreen})
@@ -50,7 +56,10 @@ function App() {
             ...screenContext,
             setScreen: handleSetScreen,
           }}>
+          <UserOptionsContext.Provider value={{...userOptions, setUserOptions: handleSetOptions}}>
+
           <Screen />
+          </UserOptionsContext.Provider>
         </ScreenContext.Provider>
       </PersistenceContext.Provider>
     </div>
