@@ -8,16 +8,7 @@ function Title() {
   const { Options, isOpen, toggle } = useOptions(false);
 
   return (
-    <div
-      className="Title"
-      style={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        backgroundImage: "",
-      }}
-    >
+    <div className="Title">
       <div>
         <h1>Trash Wars</h1>
       </div>
@@ -32,7 +23,7 @@ function Title() {
         {/* <button onClick={() => electron.app.quit()}>Quit</button> */}
         <button onClick={() => window.close()}>Quit</button>
       </div>
-      {isOpen && <Options/>}
+      {isOpen && <Options />}
     </div>
   );
 }
