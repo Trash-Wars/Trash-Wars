@@ -1,18 +1,15 @@
 import axeIcon from '../assets/battle_axe1.png';
 
 export class Entity {
-  className: string;
-
   constructor(
     name: string,
     emoji: string,
-    className: string
   ) {
     this.name = name;
     this.emoji = emoji;
     this.isSolid = true;
-    this.className = 'entity';
   }
+  className: string | undefined;
   tile: Tile | undefined;
   name: string;
   position: [number, number] | undefined;
@@ -52,12 +49,10 @@ export class Item extends Entity {
   constructor(
     name: string,
     emoji: string,
-    className:string,
     description: string
     ) {
-    super(name, emoji, className)
+    super(name, emoji)
     this.description = description;
-    this.className = className
   }
   description: string;
 }
@@ -68,11 +63,11 @@ export class Apparel extends Item {
     emoji: string,
     description: string,
     armor: number,
-    className:string
     //health: number,// maybe these are just a bonuses object?
   ) {
-    super(name, emoji, description, className)
+    super(name, emoji, description);
     this.armor = armor;
+    this.className = 'apparel';
     //this.health = health;
   }
   armor: number;
@@ -86,11 +81,11 @@ export class Weapon extends Item {
     description: string,
     damage: number,
     attackSpeed: number,
-    className: string,
   ) {
-    super(name, emoji, description, className)
+    super(name, emoji, description)
     this.damage = damage;
     this.attackSpeed = attackSpeed;
+    this.className = 'weapon';
   }
   damage: number;
   attackSpeed: number;
@@ -154,9 +149,8 @@ class Mob extends Entity {
     name: string,
     emoji: string,
     health: number,
-    className:string
   ) {
-    super(name, emoji, className)
+    super(name, emoji)
     this.health = health;
   }
   health: number;
@@ -168,11 +162,10 @@ export class Raccoon extends Mob {
     name: string,
     emoji: string,
     health: number,
-    className: string
   ) {
-    super(name, emoji, health, className)
+    super(name, emoji, health)
     this.team = 'friendly'
-    this.className = 'raccoon'
+    this.className = 'raccoon';
   }
   description: 'string' | undefined;
   hat: Apparel | undefined;
