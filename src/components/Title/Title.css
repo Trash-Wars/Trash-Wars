@@ -8,21 +8,19 @@ button {
 }
 
 button:hover {
-  animation: shake 0.8s;
-  transform: scale(1.15);
+  animation: shake 1s;
+  transform: scale(1.2);
 }
 
 @keyframes shake {
-  0% {
-    transform: translateX(0) scale(1.15);
+  0%,
+  100% {
+    transform: translateX(0) scale(1.2);
   }
   25% {
-    transform: translateX(25px) scale(1.15);
+    transform: translateX(25px) scale(1.2);
   }
   50% {
-    transform: translateX(-25px) scale(1.15);
-  }
-  100% {
-    transform: translateX(0) scale(1.15);
+    transform: translateX(-25px) scale(1.2);
   }
 }
