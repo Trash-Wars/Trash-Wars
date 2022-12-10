@@ -1,3 +1,5 @@
+import axeIcon from '../assets/battle_axe1.png';
+
 export class Entity {
   className: string;
 
@@ -60,7 +62,7 @@ export class Item extends Entity {
   description: string;
 }
 
-class Apparel extends Item {
+export class Apparel extends Item {
   constructor(
     name: string,
     emoji: string,
@@ -77,7 +79,7 @@ class Apparel extends Item {
   //health: number;
 }
 
-class Weapon extends Item {
+export class Weapon extends Item {
   constructor(
     name: string,
     emoji: string,
@@ -100,9 +102,8 @@ class Weapon extends Item {
 
 export class Axe extends Weapon {
   constructor() {
-    super('Axe', 'https://via.placeholder.com/150', 'An axe', 5, 4)
+    super('Axe', axeIcon, 'An axe', 5, 4)
     // this.name = 'Axe';
-    // this.emoji = "https://via.placeholder.com/150";
     // this.description = 'An axe';
     // this.damage = 5;
     // this.attackSpeed = 4;
@@ -124,7 +125,7 @@ export class Axe extends Weapon {
   }
 }
 
-class SpentSoupCan extends Weapon {
+export class SpentSoupCan extends Weapon {
   name = "Spent Soup Can"
   emoji = "https://via.placeholder.com/150"
   damage = 3
