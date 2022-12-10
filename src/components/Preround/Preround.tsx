@@ -1,36 +1,16 @@
-import { useContext, useRef, useState } from "react";
-import { ScreenContext } from "../../context/ScreenContext";
+import { useContext, useState } from "react";
+import { Item } from "../../classes/items";
+import { PersistenceContext } from "../../context/PersistenceContext";
+import { ScreenContext, SCREEN_GAMEBOARD } from "../../context/ScreenContext";
+import { range } from "../../helpers/array";
+import useMousePosition from "../../hooks/useMousePosition";
+import './Preround.css'
 
 const Preround = () => {
   const { setScreen } = useContext(ScreenContext);
-  const [selectedItem, setSelectedItem] = useState("");
-  const [item, setItem] = useState("");
-
-  const [highlighted, setHighlighted] = useState(false);
-
-  const divRef = useRef<HTMLDivElement>(null);
-  const handleClick = () => {
-    if(!divRef.current) {
-      return;
-    }
-    const value = divRef.current.innerText;
-    setHighlighted(true);
-    setSelectedItem(value);
-  };
-  const handleEquip = () => {
-    setItem(selectedItem);
-  };
 
   return (
-    <div
-      style={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        backgroundImage: "",
-      }}
-    >
+    <div className="Preround">
       <div style={{ position: "absolute", top: "0", left: "0" }}>
         <button
           onClick={() => {
@@ -47,40 +27,23 @@ const Preround = () => {
         {[1, 2, 3, 4].map(() => {
           return (
             <div
-              onClick={handleEquip}
               style={{
                 width: "100px",
                 height: "300px",
                 border: "1px solid black",
-              }}
-            >
-              {item}
+              }} >
+              item?
             </div>
           );
         })}
       </div>
-      <div style={{ display: "flex" }}>
-        {[1, 2, 3, 4, 5, 6, 7, 8].map(() => {
-          return (
-            <div
-              ref={divRef}
-              onClick={handleClick}
-              style={{
-                width: "100px",
-                height: "100px",
-                border: highlighted ? "2px solid red" : "1px solid black",
-                boxSizing: "border-box",
-              }}
-            >
-              🪓
-            </div>
-          );
-        })}
+      <div>
+        <InventoryCarousel />
       </div>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <button
           onClick={() => {
-            setScreen!(3);
+            setScreen!(SCREEN_GAMEBOARD);
           }}
         >
           Start Match
@@ -89,5 +52,53 @@ const Preround = () => {
     </div>
   );
 };
+
+const InventoryCarousel = () => {
+  const { inventory } = useContext(PersistenceContext);
+
+  const {clientX, clientY} = useMousePosition()
+
+  const [grabbed, setGrabbed] = useState<Item | undefined>(undefined)
+
+  function startGrab(item: Item) {
+    setGrabbed(item);
+    window.addEventListener("mousedown", endGrab);
+    window.addEventListener("mousemove", (e) => {
+      console.log("MOUSE:",e.clientX)
+    })
+  }
+
+  function endGrab() {
+    setGrabbed(undefined);
+    window.removeEventListener("mousedown", endGrab);
+  }
+
+  return (
+    <div style={{ display: "flex" }}>
+      {/* back button */}
+      <img alt="back" />
+        {range(1,8).map((_, i) => (
+          <div className='inventory-slot'>
+            {inventory.items[i] && (
+              <div
+                key={i}
+                className='inventory-item'
+                onClick={() => {startGrab(inventory.items[i])}}
+                style={{
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                  position: grabbed === inventory.items[i] ? "absolute" : "initial",
+                  left: grabbed === inventory.items[i] ? clientX! - 50 : "initial",
+                  top: grabbed === inventory.items[i] ? clientY! - 50 : "initial",
+                }}>
+                <img style={{imageRendering: "pixelated"}} height={100} width={100} src={inventory.items[i].image} alt="axe" />
+              </div>
+            )}
+          </div>
+        ))}
+      <img alt="forward" />
+    </div>
+  )
+}
 
 export default Preround;

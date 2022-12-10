@@ -6,20 +6,11 @@ import { PersistenceContext } from '../../context/PersistenceContext';
 import './GameBoard.css'
 import racc from '../../assets/racc.png'
 import useWindowDimensions from '../../hooks/useWindowDimensions';
-
-function range(start: number, end: number) {
-  const ans: number[] = [];
-  for (let i = start; i <= end; i++) {
-      ans.push(i);
-  }
-  return ans;
-}
+import { range } from '../../helpers/array';
 
 interface BoardProps {
   winWidth:number
 }
-
-
 
 const Board = (props:BoardProps) => {
   const [entityDamage, setEntityDamage] = useState('entity')
