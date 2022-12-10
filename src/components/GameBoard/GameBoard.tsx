@@ -1,6 +1,6 @@
 import { Gameboard, } from '../../classes/entity';
 import React, { useState, useEffect, useContext, useCallback } from 'react'
-import { Entity, Raccoon } from '../../classes/entity';
+import { Entity, Raccoon, Axe } from '../../classes/entity';
 import { ScreenContext } from '../../context/ScreenContext';
 import { PersistenceContext } from '../../context/PersistenceContext';
 import './GameBoard.css'
@@ -13,6 +13,7 @@ interface BoardProps {
 }
 
 const Board = (props: BoardProps) => {
+  const [entityDamage, setEntityDamage] = useState('entity')
   const persistence = useContext(PersistenceContext)
   const screen = useContext(ScreenContext)
   const { winWidth } = props
@@ -36,14 +37,6 @@ const Board = (props: BoardProps) => {
     return { marginLeft: `${pixelX}px`, marginTop: `${pixelY}px` }
   }
 
-  useEffect(() => {
-    // when in gameboard, all entities have positions, outside of gameboard that doesnt realy matter 
-    // we want to forget all of their positions when transitioning from the gameboard to preRound or the gameOver. 
-    for (const entity of currentEntities) {
-      entity.cleanup()
-    }
-  }, [screen, currentEntities])
-
   const moveEntity = useCallback((entity: Entity, pos: [number, number]) => {
     const tile = board.getTile(pos);
     if (!tile) {
@@ -55,12 +48,16 @@ const Board = (props: BoardProps) => {
 
   //when game board loads, 
   useEffect(() => {
+    const zayah = new Raccoon("Zayah", racc, 10)
     const debugSpawns: Entity[] = [
-      moveEntity(new Raccoon("Hugo", racc, 10, 'raccoon'), [0, 0]),
-      moveEntity(new Raccoon("Zayah", racc, 10, 'raccoon'), [0, 1]),
-      moveEntity(new Raccoon("Jim", racc, 10, 'raccoon'), [0, 2]),
-      moveEntity(new Raccoon("Luis", racc, 10, 'raccoon'), [0, 3]),
+      moveEntity(new Raccoon("Hugo", racc, 10), [1, 1]),
+      moveEntity(zayah, [0, 1]),
+      moveEntity(new Raccoon("Jim", racc, 10), [0, 2]),
+      moveEntity(new Raccoon("Luis", racc, 10), [0, 3]),
     ]
+    console.log(zayah)
+    zayah.changeWeapon(new Axe());
+    zayah.useWeapon()
     setCurrentEntities([...persistence.entities, ...debugSpawns])
   }, [moveEntity, persistence])
 
@@ -69,7 +66,6 @@ const Board = (props: BoardProps) => {
     const { marginLeft, marginTop } = event.currentTarget.style
     console.log(`${tilePx}:`, `${marginLeft}, ${marginTop}`)
   }
-
 
   const raccoonDamageHandler = (e: any, entity: Entity) => {
     if(entity.className === 'raccoon') entity.className = 'raccoon damage'

@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Item } from "../../classes/items";
+import { Item } from "../../classes/entity";
 import { PersistenceContext } from "../../context/PersistenceContext";
 import { ScreenContext, SCREEN_GAMEBOARD } from "../../context/ScreenContext";
 import { range } from "../../helpers/array";
@@ -63,9 +63,6 @@ const InventoryCarousel = () => {
   function startGrab(item: Item) {
     setGrabbed(item);
     window.addEventListener("mousedown", endGrab);
-    // window.addEventListener("mousemove", (e) => {
-    //   console.log("MOUSE:",e.clientX)
-    // })
   }
 
   function endGrab() {
@@ -91,7 +88,7 @@ const InventoryCarousel = () => {
                   left: grabbed === inventory.items[i] ? clientX! - 50 : "initial",
                   top: grabbed === inventory.items[i] ? clientY! - 50 : "initial",
                 }}>
-                <img style={{imageRendering: "pixelated"}} height={100} width={100} src={inventory.items[i].image} alt="axe" />
+                <img style={{imageRendering: "pixelated"}} height={100} width={100} src={inventory.items[i].emoji} alt="axe" />
               </div>
             )}
           </div>
