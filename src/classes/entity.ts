@@ -1,3 +1,5 @@
+import axeIcon from '../assets/battle_axe1.png';
+
 export class Entity {
 
   constructor(
@@ -85,7 +87,7 @@ export class Weapon extends Item {
 
 export class Axe extends Weapon {
   name = 'Axe';
-  emoji = "https://via.placeholder.com/150";
+  emoji = axeIcon;
   description = 'An axe';
   damage = 5;
   attackSPeed = 4;

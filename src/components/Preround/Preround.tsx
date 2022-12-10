@@ -55,22 +55,29 @@ const InventoryCarousel = () => {
 
   function endGrab(event: MouseEvent) {
     const clickedOn = event.target
-    if(!(clickedOn instanceof HTMLDivElement)) {
+    if(!(clickedOn instanceof HTMLDivElement) || !grabbed) {
+      console.log("bad, no clicked on or no grabbed", grabbed)
       return;
     }
     let racIndex = +clickedOn.classList.item(1)!;
     const equippingRaccoon = raccoonTeam[racIndex];
+    let equipped = false;
 
     if(clickedOn.classList.contains('weapon-slot')) {
       if(grabbed instanceof Weapon) {
         equippingRaccoon.weapon = grabbed
+        equipped = true;
       }
     }
 
     if(clickedOn.classList.contains('hat-slot')) {
       if(grabbed instanceof Apparel) {
         equippingRaccoon.hat = grabbed
+        equipped = true;
       }
+    }
+    if(equipped) {
+      inventory.items.splice(inventory.items.indexOf(grabbed))
     }
 
     setGrabbed(undefined);
