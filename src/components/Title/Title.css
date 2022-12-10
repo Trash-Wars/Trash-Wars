@@ -1,0 +1,28 @@
+button {
+  border: none;
+  border-radius: 4px;
+  padding: 12px 24px;
+  background-color: transparent;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  animation: shake 0.8s;
+  transform: scale(1.15);
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0) scale(1.15);
+  }
+  25% {
+    transform: translateX(25px) scale(1.15);
+  }
+  50% {
+    transform: translateX(-25px) scale(1.15);
+  }
+  100% {
+    transform: translateX(0) scale(1.15);
+  }
+}
