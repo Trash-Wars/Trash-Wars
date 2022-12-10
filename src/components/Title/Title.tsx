@@ -18,10 +18,10 @@ function Title() {
           flexDirection: "column",
         }}
       >
-        <button onClick={() => setScreen!(1)}>Start Game</button>
-        <button onClick={toggle}>Options</button>
+        <button className="titleButton" onClick={() => setScreen!(1)}>Start Game</button>
+        <button className="titleButton" onClick={toggle}>Options</button>
         {/* <button onClick={() => electron.app.quit()}>Quit</button> */}
-        <button onClick={() => window.close()}>Quit</button>
+        <button className="titleButton" onClick={() => window.close()}>Quit</button>
       </div>
       {isOpen && <Options />}
     </div>
