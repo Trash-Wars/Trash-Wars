@@ -1,5 +1,5 @@
 import { Gameboard, } from '../../classes/entity';
-import { useState, useEffect, useContext, useCallback } from 'react'
+import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { Entity, Raccoon } from '../../classes/entity';
 import { ScreenContext } from '../../context/ScreenContext';
 import { PersistenceContext } from '../../context/PersistenceContext';
@@ -8,10 +8,15 @@ import racc from '../../assets/racc.png'
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import { range } from '../../helpers/array';
 
-const GameBoard = () => {
-  const persistence = useContext(PersistenceContext)
+interface BoardProps {
+  winWidth:number
+}
+
+const Board = (props:BoardProps) => {
+  const [entityDamage, setEntityDamage] = useState('entity')
+const persistence = useContext(PersistenceContext)
   const screen = useContext(ScreenContext)
-  const {winWidth} = useWindowDimensions()
+  const {winWidth} = props
   const [ board ] = useState(new Gameboard(6, 4))
   const [currentEntities, setCurrentEntities] = useState<Entity[]>([]);
 
@@ -63,18 +68,37 @@ const GameBoard = () => {
     const {marginLeft, marginTop} = event.currentTarget.style
     console.log(`${tilePx}:`, `${marginLeft}, ${marginTop}`)
   }
+  // holder code for animations for racoons to take damage. 
+  // Moving forward, damage for any entity should change the className of the 
+
+  const entityAnimationHandler = (e:any, entity:any) => {
+    console.log('e.target',e.target)
+    console.log('entity' ,entity)
+    // if(e.target)
+    if(entityDamage == 'entity') setEntityDamage('entity damage');
+    else setEntityDamage('entity');
+    return entity
+  }
 
   return (
     <div className='board'>
       {currentEntities.map((entity, i) => (
+        
         <img
           onMouseEnter={(e) => debugPosition(e, entity)}
           key={i}
-          className='entity'
+          className ={entityDamage}
+          onClick = {(e) => entityAnimationHandler(e, entity)}
           style={{...entitySize, ...getPosValues(entity)}}
           src={entity.emoji}
           alt={entity.name} />
-      ))}
+      
+      )
+      
+      )
+      
+      }
+      {/* hugo removing this on his end */}
       {range(0, board.cols - 1).reverse().map(col => (
         <div className='rows' key={col} style={{display: "flex" }}>
           {range(0, board.rows - 1).map((row) => (
@@ -86,6 +110,32 @@ const GameBoard = () => {
           ))}
         </div>
       ))}
+    </div>
+  )
+}
+
+
+
+// TODO Conditionally render Pause/play button depending on whether or not the game is playing. 
+const Buttons = () => {
+  const {setScreen} =useContext(ScreenContext)
+
+  return(
+     <div className = "buttonsContainer">
+      <button className="button">Options ⚙️</button>
+      <button className="button">Pause ⏸️</button>
+      <button className="button" onClick = {() => setScreen!(3)}>Quit Out 🏳️</button>
+     </div>
+  )
+ 
+}
+
+const GameBoard = () => {
+  const{winWidth} = useWindowDimensions()
+  return(
+    <div>
+      <Buttons/>
+      <Board winWidth={winWidth}/>
     </div>
   )
 }

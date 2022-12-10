@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import { Entity, Raccoon } from '../classes/entity';
-import { Axe, Item, SpentSoupCan } from '../classes/items';
+import { Axe, Item } from '../classes/items';
 
 export type PersistenceStyle = {
   entities: Entity[];
