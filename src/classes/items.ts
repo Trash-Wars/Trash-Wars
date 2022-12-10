@@ -1,3 +1,5 @@
+import axeIcon from '../assets/battle_axe1.png'
+
 export class Item {
   name?: string;
   description?: string;
@@ -19,15 +21,15 @@ export class Weapon extends Item {
   }
 }
 
-class Axe extends Weapon {
+export class Axe extends Weapon {
   name = "axe"
   damage = 5
   attackSpeed = 4
   description = "A wedge attached to the end of a lever arm"
-  image = "https://via.placeholder.com/150"
+  image = axeIcon
 }
 
-class SpentSoupCan extends Weapon {
+export class SpentSoupCan extends Weapon {
   name = "Spent Soup Can"
   damage= 3
   attackSpeed= 3
@@ -35,7 +37,7 @@ class SpentSoupCan extends Weapon {
   image= "https://via.placeholder.com/150"
 }
 
-class CoolShades extends Apparel {
+export class CoolShades extends Apparel {
   name= "Cool Shades"
   health= 2
   armor= 1
