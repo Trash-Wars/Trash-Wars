@@ -25,11 +25,20 @@ export class Entity {
   }
 
   moveToPosition(tile: Tile): this {
-    this.tile = tile;
-    this.position = tile.position;
-    return this
+    if (!this.tile) {
+      console.log('Adding tile')
+      return this.setTile(tile);
+    }
+    console.log('Deleting: ', this.tile.contents.splice(this.tile.contents.indexOf(this), 1));
+    return this.setTile(tile);
   }
 
+  setTile(tile: Tile): this {
+    this.tile = tile;
+    this.tile.contents.push(this)
+    this.position = tile.position;
+    return this;
+  }
   cleanup() {
     this.tile = undefined;
   }
@@ -40,7 +49,7 @@ export class Item extends Entity {
     name: string,
     emoji: string,
     description: string
-    ) {
+  ) {
     super(name, emoji)
     this.description = description;
   }
@@ -83,20 +92,29 @@ class Weapon extends Item {
   }
 }
 
-class Axe extends Weapon {
-  name = 'Axe';
-  emoji = "https://via.placeholder.com/150";
-  description = 'An axe';
-  damage = 5;
-  attackSPeed = 4;
+export class Axe extends Weapon {
+  constructor() {
+    super('Axe', 'https://via.placeholder.com/150', 'An axe', 5, 4)
+    // this.name = 'Axe';
+    // this.emoji = "https://via.placeholder.com/150";
+    // this.description = 'An axe';
+    // this.damage = 5;
+    // this.attackSpeed = 4;
+  }
 
   use(parent: Raccoon) {
     const origin = parent.position;
-    if(!origin) return;
-    let enemyTile: Tile;
-    parent.getAdjacentTiles()?.forEach((neighbor: Tile) => {
-      if(neighbor.position[0] === origin[0] + 1) enemyTile = neighbor;
+    if (!origin) return;
+    let enemyTile: Tile | undefined;
+    parent.getAdjacentTiles()!.forEach((neighbor: Tile) => {
+      if (neighbor.position[0] === origin[0] + 1) {
+        enemyTile = neighbor;
+      }
     });
+    if (!enemyTile) return;
+    //console.log(`Tile: ${origin} targeting tile: ${enemyTile.position}`)
+    //console.log(enemyTile)
+
   }
 }
 
@@ -109,14 +127,14 @@ class SpentSoupCan extends Weapon {
 }
 
 class CoolShades extends Apparel {
-  name= "Cool Shades"
+  name = "Cool Shades"
   emoji = "https//via.placeholder.com/150"
   //health = 2
   armor = 1
   description = "an empty case"
 }
 
-class TopHat extends Apparel  {
+class TopHat extends Apparel {
   name = "Top Hat"
   emoji = "https://via.placeholder.com/150"
   //health = 2
@@ -226,8 +244,8 @@ export class Gameboard {
   addEdge(a: Tile, b: Tile): void {
     a.edges.add(b);
     b.edges.add(a);
-    console.log(a.edges)
-    console.log(b.edges)
+    //console.log(a.edges)
+    //console.log(b.edges)
   }
 
   getTile(pos: [number, number]): Tile | undefined {
