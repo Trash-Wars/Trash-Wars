@@ -4,7 +4,7 @@ import { Entity, Raccoon } from '../../classes/entity';
 import { ScreenContext } from '../../context/ScreenContext';
 import { PersistenceContext } from '../../context/PersistenceContext';
 import './GameBoard.css'
-import racc from './racc.png'
+import racc from '../../assets/racc.png'
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 
 function range(start: number, end: number) {
