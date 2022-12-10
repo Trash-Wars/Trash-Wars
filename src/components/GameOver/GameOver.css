@@ -1,6 +1,6 @@
 #GameOverContainer {
   background-color: black;
-  background-image: URL('./Raccoonrunningforlife\,gameover.png'); 
+  background-image: URL('../../assets/Raccoonrunningforlife\,gameover.png'); 
   width: 100%;
   height: 1024px;
   margin: auto;
