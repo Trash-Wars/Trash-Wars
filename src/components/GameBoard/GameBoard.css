@@ -8,6 +8,11 @@
   box-shadow: inset 0 0 2px 2px #02702c;
 }
 
+.gameBoard {
+  height: 100vh;
+  width: 100vw
+}
+
 .tile:last-child {
   border-right: 1px solid green;
 }
@@ -16,20 +21,30 @@
   border-bottom: 1px solid blue;
 }
 
-.entity {
+.raccoon {
+  position: absolute;
+  /* transition: margin 0.5s ease-in-out; */
+  margin: 1px 1px;
+  
+}
+
+.raccoon.damage {
   position: absolute;
   transition: margin 0.5s ease-in-out;
   margin: 1px 1px;
+  filter: blur(5px); 
+  transition: filter .1s linear;
+  animation: flash 0.1s linear
 }
 
-.entity.damage {
-  position: absolute;
-  transition: margin 0.5s ease-in-out;
-  margin: 1px 1px;
-  filter: blur(3px);
-  transition: filter .1s ease;
+@keyframes flash {
+  from{
+    filter: brightness(100%)
+  }
+  to {
+    filter:brightness(300%)
+  }
 }
-
 /* .entity:active{
   filter: blur(3px);
   transition: filter 0.1s ease;

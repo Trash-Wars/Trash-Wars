@@ -1,12 +1,15 @@
 export class Entity {
+  className: string;
 
   constructor(
     name: string,
     emoji: string,
+    className: string
   ) {
     this.name = name;
     this.emoji = emoji;
     this.isSolid = true;
+    this.className = 'entity';
   }
   tile: Tile | undefined;
   name: string;
@@ -14,7 +17,6 @@ export class Entity {
   emoji: string;
   team: 'friendly' | 'neutral' | 'hostile' | undefined;
   isSolid: boolean;
-
   changeTeams(newTeam: 'friendly' | 'neutral' | 'hostile'): void {
     this.team = newTeam;
   }
@@ -39,10 +41,12 @@ export class Item extends Entity {
   constructor(
     name: string,
     emoji: string,
+    className:string,
     description: string
     ) {
-    super(name, emoji)
+    super(name, emoji, className)
     this.description = description;
+    this.className = className
   }
   description: string;
 }
@@ -53,9 +57,10 @@ class Apparel extends Item {
     emoji: string,
     description: string,
     armor: number,
+    className:string
     //health: number,// maybe these are just a bonuses object?
   ) {
-    super(name, emoji, description)
+    super(name, emoji, description, className)
     this.armor = armor;
     //this.health = health;
   }
@@ -70,8 +75,9 @@ class Weapon extends Item {
     description: string,
     damage: number,
     attackSpeed: number,
+    className: string,
   ) {
-    super(name, emoji, description)
+    super(name, emoji, description, className)
     this.damage = damage;
     this.attackSpeed = attackSpeed;
   }
@@ -129,8 +135,9 @@ class Mob extends Entity {
     name: string,
     emoji: string,
     health: number,
+    className:string
   ) {
-    super(name, emoji)
+    super(name, emoji, className)
     this.health = health;
   }
   health: number;
@@ -142,9 +149,11 @@ export class Raccoon extends Mob {
     name: string,
     emoji: string,
     health: number,
+    className: string
   ) {
-    super(name, emoji, health)
+    super(name, emoji, health, className)
     this.team = 'friendly'
+    this.className = 'raccoon'
   }
   description: 'string' | undefined;
   hat: Apparel | undefined;
@@ -226,8 +235,8 @@ export class Gameboard {
   addEdge(a: Tile, b: Tile): void {
     a.edges.add(b);
     b.edges.add(a);
-    console.log(a.edges)
-    console.log(b.edges)
+    // console.log(a.edges)
+    // console.log(b.edges)
   }
 
   getTile(pos: [number, number]): Tile | undefined {

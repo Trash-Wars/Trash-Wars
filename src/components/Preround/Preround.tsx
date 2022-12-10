@@ -63,9 +63,9 @@ const InventoryCarousel = () => {
   function startGrab(item: Item) {
     setGrabbed(item);
     window.addEventListener("mousedown", endGrab);
-    window.addEventListener("mousemove", (e) => {
-      console.log("MOUSE:",e.clientX)
-    })
+    // window.addEventListener("mousemove", (e) => {
+    //   console.log("MOUSE:",e.clientX)
+    // })
   }
 
   function endGrab() {
