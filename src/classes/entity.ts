@@ -1,14 +1,17 @@
 import axeIcon from '../assets/battle_axe1.png';
 
 export class Entity {
+  className: string;
 
   constructor(
     name: string,
     emoji: string,
+    className: string
   ) {
     this.name = name;
     this.emoji = emoji;
     this.isSolid = true;
+    this.className = 'entity';
   }
   tile: Tile | undefined;
   name: string;
@@ -16,7 +19,6 @@ export class Entity {
   emoji: string;
   team: 'friendly' | 'neutral' | 'hostile' | undefined;
   isSolid: boolean;
-
   changeTeams(newTeam: 'friendly' | 'neutral' | 'hostile'): void {
     this.team = newTeam;
   }
@@ -27,11 +29,20 @@ export class Entity {
   }
 
   moveToPosition(tile: Tile): this {
-    this.tile = tile;
-    this.position = tile.position;
-    return this
+    if (!this.tile) {
+      console.log('Adding tile')
+      return this.setTile(tile);
+    }
+    console.log('Deleting: ', this.tile.contents.splice(this.tile.contents.indexOf(this), 1));
+    return this.setTile(tile);
   }
 
+  setTile(tile: Tile): this {
+    this.tile = tile;
+    this.tile.contents.push(this)
+    this.position = tile.position;
+    return this;
+  }
   cleanup() {
     this.tile = undefined;
   }
@@ -41,10 +52,12 @@ export class Item extends Entity {
   constructor(
     name: string,
     emoji: string,
+    className:string,
     description: string
     ) {
-    super(name, emoji)
+    super(name, emoji, className)
     this.description = description;
+    this.className = className
   }
   description: string;
 }
@@ -55,9 +68,10 @@ export class Apparel extends Item {
     emoji: string,
     description: string,
     armor: number,
+    className:string
     //health: number,// maybe these are just a bonuses object?
   ) {
-    super(name, emoji, description)
+    super(name, emoji, description, className)
     this.armor = armor;
     //this.health = health;
   }
@@ -72,8 +86,9 @@ export class Weapon extends Item {
     description: string,
     damage: number,
     attackSpeed: number,
+    className: string,
   ) {
-    super(name, emoji, description)
+    super(name, emoji, description, className)
     this.damage = damage;
     this.attackSpeed = attackSpeed;
   }
@@ -86,19 +101,27 @@ export class Weapon extends Item {
 }
 
 export class Axe extends Weapon {
-  name = 'Axe';
-  emoji = axeIcon;
-  description = 'An axe';
-  damage = 5;
-  attackSPeed = 4;
+  constructor() {
+    super('Axe', axeIcon, 'An axe', 5, 4)
+    // this.name = 'Axe';
+    // this.description = 'An axe';
+    // this.damage = 5;
+    // this.attackSpeed = 4;
+  }
 
   use(parent: Raccoon) {
     const origin = parent.position;
-    if(!origin) return;
-    let enemyTile: Tile;
-    parent.getAdjacentTiles()?.forEach((neighbor: Tile) => {
-      if(neighbor.position[0] === origin[0] + 1) enemyTile = neighbor;
+    if (!origin) return;
+    let enemyTile: Tile | undefined;
+    parent.getAdjacentTiles()!.forEach((neighbor: Tile) => {
+      if (neighbor.position[0] === origin[0] + 1) {
+        enemyTile = neighbor;
+      }
     });
+    if (!enemyTile) return;
+    //console.log(`Tile: ${origin} targeting tile: ${enemyTile.position}`)
+    //console.log(enemyTile)
+
   }
 }
 
@@ -111,14 +134,14 @@ export class SpentSoupCan extends Weapon {
 }
 
 class CoolShades extends Apparel {
-  name= "Cool Shades"
+  name = "Cool Shades"
   emoji = "https//via.placeholder.com/150"
   //health = 2
   armor = 1
   description = "an empty case"
 }
 
-class TopHat extends Apparel  {
+class TopHat extends Apparel {
   name = "Top Hat"
   emoji = "https://via.placeholder.com/150"
   //health = 2
@@ -131,8 +154,9 @@ class Mob extends Entity {
     name: string,
     emoji: string,
     health: number,
+    className:string
   ) {
-    super(name, emoji)
+    super(name, emoji, className)
     this.health = health;
   }
   health: number;
@@ -144,9 +168,11 @@ export class Raccoon extends Mob {
     name: string,
     emoji: string,
     health: number,
+    className: string
   ) {
-    super(name, emoji, health)
+    super(name, emoji, health, className)
     this.team = 'friendly'
+    this.className = 'raccoon'
   }
   description: 'string' | undefined;
   hat: Apparel | undefined;
@@ -228,8 +254,6 @@ export class Gameboard {
   addEdge(a: Tile, b: Tile): void {
     a.edges.add(b);
     b.edges.add(a);
-    console.log(a.edges)
-    console.log(b.edges)
   }
 
   getTile(pos: [number, number]): Tile | undefined {
