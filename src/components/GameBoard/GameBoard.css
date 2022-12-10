@@ -20,21 +20,22 @@
   position: absolute;
   transition: margin 0.5s ease-in-out;
   margin: 1px 1px;
-  background-color: black;
 }
 
-.entity.Damage {
-  background-color: red;
+.entity.damage {
+  position: absolute;
+  transition: margin 0.5s ease-in-out;
+  margin: 1px 1px;
+  filter: blur(3px);
+  transition: filter .1s ease;
 }
 
-.entity:active{
+/* .entity:active{
   filter: blur(3px);
   transition: filter 0.1s ease;
-}
+} */
 
-.noDamage {
-  
-}
+
 
 
 .buttonsContainer {

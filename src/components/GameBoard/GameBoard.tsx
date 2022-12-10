@@ -22,6 +22,7 @@ interface BoardProps {
 
 
 const Board = (props:BoardProps) => {
+  const [entityDamage, setEntityDamage] = useState('entity')
 const persistence = useContext(PersistenceContext)
   const screen = useContext(ScreenContext)
   const {winWidth} = props
@@ -78,30 +79,35 @@ const persistence = useContext(PersistenceContext)
   }
   // holder code for animations for racoons to take damage. 
   // Moving forward, damage for any entity should change the className of the 
-  let entityClassName = 'entity'
-  const entityClassNameHandler = () => {
-    if(entityClassName === 'entity') {
-      entityClassName = 'entity Damage'
-     console.log(entityClassName)
-    } else {
-      entityClassName = 'entity'
-      console.log(entityClassName)
-    }
-   
+
+  const entityAnimationHandler = (e:any, entity:any) => {
+    console.log('e.target',e.target)
+    console.log('entity' ,entity)
+    // if(e.target)
+    if(entityDamage == 'entity') setEntityDamage('entity damage');
+    else setEntityDamage('entity');
+    return entity
   }
 
   return (
     <div className='board'>
       {currentEntities.map((entity, i) => (
+        
         <img
           onMouseEnter={(e) => debugPosition(e, entity)}
           key={i}
-          className ={entityClassName}
-          onClick = {entityClassNameHandler}
+          className ={entityDamage}
+          onClick = {(e) => entityAnimationHandler(e, entity)}
           style={{...entitySize, ...getPosValues(entity)}}
           src={entity.emoji}
           alt={entity.name} />
-      ))}
+      
+      )
+      
+      )
+      
+      }
+      {/* hugo removing this on his end */}
       {range(0, board.cols - 1).reverse().map(col => (
         <div className='rows' key={col} style={{display: "flex" }}>
           {range(0, board.rows - 1).map((row) => (
