@@ -24,7 +24,7 @@ export const persistenceInitialState: PersistenceStyle = {
   ],
   inventory: {
     sidelineRaccoons: [new Raccoon("Hugo", '', 10)],
-    items: [new Axe("axe", "", "", 5, 4)],
+    items: [new Axe()],
   },
 };
 export const PersistenceContext = createContext<PersistenceStyle>(persistenceInitialState)
