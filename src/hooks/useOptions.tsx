@@ -10,7 +10,7 @@ export function useOptions(initialState: boolean) {
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       event.preventDefault();
       const { name, value } = event.target;
-      setUserOptions({ ...userOptions, [name]: value });
+      setUserOptions!({ ...userOptions, [name]: value });
     };
 
     return (
