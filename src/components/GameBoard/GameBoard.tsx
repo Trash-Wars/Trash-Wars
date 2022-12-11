@@ -1,4 +1,4 @@
-import { Gameboard, } from '../../classes/entity';
+import { Enemy, Gameboard, } from '../../classes/entity';
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { Entity, Raccoon, Axe } from '../../classes/entity';
 import { ScreenContext } from '../../context/ScreenContext';
@@ -48,16 +48,6 @@ const Board = (props: BoardProps) => {
 
   //when game board loads, 
   useEffect(() => {
-    // const zayah = new Raccoon("Zayah", racc, 10)
-    // const debugSpawns: Entity[] = [
-    //   moveEntity(new Raccoon("Hugo", racc, 10), [1, 1]),
-    //   moveEntity(zayah, [0, 1]),
-    //   moveEntity(new Raccoon("Jim", racc, 10), [0, 2]),
-    //   moveEntity(new Raccoon("Luis", racc, 10), [0, 3]),
-    // ]
-    // console.log(zayah)
-    // zayah.changeWeapon(new Axe());
-    // zayah.useWeapon()
     const raccoons: Entity[] = [];
     let counter = 0;
     for(const raccoon of persistence.raccoonTeam) {
@@ -71,7 +61,7 @@ const Board = (props: BoardProps) => {
   function debugPosition(event: React.MouseEvent<HTMLImageElement>, entity: Entity) {
     // console.log(entity.position)
     const { marginLeft, marginTop } = event.currentTarget.style
-    console.log(`${tilePx}:`, `${marginLeft}, ${marginTop}`)
+    //console.log(`${tilePx}:`, `${marginLeft}, ${marginTop}`)
   }
 
   const raccoonDamageHandler = (e: any, entity: Entity) => {
@@ -79,6 +69,18 @@ const Board = (props: BoardProps) => {
     else entity.className = 'raccoon';
     setCurrentEntities([...currentEntities]);
   }
+
+  const doCombat = (e: any, entity: Entity) => {
+    const zombie = new Enemy('Zombie', racc, 10, 5)
+    moveEntity(zombie, [entity.position![0] + 1, entity.position![1]])
+    if(entity instanceof Raccoon) {
+    const raccoon = entity as Raccoon;
+    raccoon.changeWeapon(new Axe());
+    raccoon.useWeapon();
+    };
+    zombie.advance();
+    return;
+  };
 
 
   return (
@@ -88,7 +90,7 @@ const Board = (props: BoardProps) => {
           onMouseEnter={(e) => debugPosition(e, entity)}
           key={i}
           className={entity.className}
-          onClick={(e) => raccoonDamageHandler(e, entity)}
+          onClick={(e) => doCombat(e, entity)}
           style={{ ...entitySize, ...getPosValues(entity) }}
           src={entity.emoji}
           alt={entity.name} />
