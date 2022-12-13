@@ -8,20 +8,14 @@ export type UserOptions = {
 
 export type UserOptionsContextProps = {
   userOptions: UserOptions;
-  setUserOptions: (userOptions: UserOptions) => void;
+  setUserOptions?: (userOptions: UserOptions) => void;
 };
 
-export const userOptionsInitialState: UserOptions = {
-  music: true,
-  soundfx: true,
-  volume: 50,
-};
-
-export const UserOptionsContext = createContext<UserOptionsContextProps>({
-  userOptions: {
-    music: true,
-    soundfx: true,
-    volume: 50,
-  },
+export const userOptionsInitialState: UserOptionsContextProps = {
+  userOptions: { music: true, soundfx: true, volume: 10 },
   setUserOptions: () => {},
-});
+};
+
+export const UserOptionsContext = createContext<UserOptionsContextProps>(
+  userOptionsInitialState
+);

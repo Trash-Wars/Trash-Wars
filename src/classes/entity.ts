@@ -1,7 +1,6 @@
 import axeIcon from '../assets/battle_axe1.png';
 
 export class Entity {
-
   constructor(
     name: string,
     emoji: string,
@@ -10,13 +9,13 @@ export class Entity {
     this.emoji = emoji;
     this.isSolid = true;
   }
+  className: string | undefined;
   tile: Tile | undefined;
   name: string;
   position: [number, number] | undefined;
   emoji: string;
   team: 'friendly' | 'neutral' | 'hostile' | undefined;
   isSolid: boolean;
-
   changeTeams(newTeam: 'friendly' | 'neutral' | 'hostile'): void {
     this.team = newTeam;
   }
@@ -27,11 +26,19 @@ export class Entity {
   }
 
   moveToPosition(tile: Tile): this {
-    this.tile = tile;
-    this.position = tile.position;
-    return this
+    if (!this.tile) {
+      return this.setTile(tile);
+    }
+    this.tile.contents.splice(this.tile.contents.indexOf(this), 1);
+    return this.setTile(tile);
   }
 
+  setTile(tile: Tile): this {
+    this.tile = tile;
+    this.tile.contents.push(this)
+    this.position = tile.position;
+    return this;
+  }
   cleanup() {
     this.tile = undefined;
   }
@@ -42,7 +49,7 @@ export class Item extends Entity {
     name: string,
     emoji: string,
     description: string
-    ) {
+  ) {
     super(name, emoji)
     this.description = description;
   }
@@ -55,14 +62,12 @@ export class Apparel extends Item {
     emoji: string,
     description: string,
     armor: number,
-    //health: number,// maybe these are just a bonuses object?
   ) {
-    super(name, emoji, description)
+    super(name, emoji, description);
     this.armor = armor;
-    //this.health = health;
+    this.className = 'apparel';
   }
   armor: number;
-  //health: number;
 }
 
 export class Weapon extends Item {
@@ -76,6 +81,7 @@ export class Weapon extends Item {
     super(name, emoji, description)
     this.damage = damage;
     this.attackSpeed = attackSpeed;
+    this.className = 'weapon';
   }
   damage: number;
   attackSpeed: number;
@@ -86,19 +92,23 @@ export class Weapon extends Item {
 }
 
 export class Axe extends Weapon {
-  name = 'Axe';
-  emoji = axeIcon;
-  description = 'An axe';
-  damage = 5;
-  attackSPeed = 4;
+  constructor() {
+    super('Axe', axeIcon, 'An axe', 5, 4)
+  }
 
   use(parent: Raccoon) {
     const origin = parent.position;
-    if(!origin) return;
-    let enemyTile: Tile;
-    parent.getAdjacentTiles()?.forEach((neighbor: Tile) => {
-      if(neighbor.position[0] === origin[0] + 1) enemyTile = neighbor;
+    if (!origin) return;
+    let enemyTile: Tile | undefined;
+    parent.getAdjacentTiles()!.forEach((neighbor: Tile) => {
+      if (neighbor.position[0] === origin[0] + 1) {
+        enemyTile = neighbor;
+      }
     });
+    if (!enemyTile) return;
+    console.log(`Tile: ${origin} targeting tile: ${enemyTile.position}`)
+    console.log(`${parent.name} is attacking ${enemyTile.contents[0].name} with ${this.name}`);
+
   }
 }
 
@@ -111,14 +121,14 @@ export class SpentSoupCan extends Weapon {
 }
 
 class CoolShades extends Apparel {
-  name= "Cool Shades"
+  name = "Cool Shades"
   emoji = "https//via.placeholder.com/150"
   //health = 2
   armor = 1
   description = "an empty case"
 }
 
-class TopHat extends Apparel  {
+class TopHat extends Apparel {
   name = "Top Hat"
   emoji = "https://via.placeholder.com/150"
   //health = 2
@@ -145,8 +155,9 @@ export class Raccoon extends Mob {
     emoji: string,
     health: number,
   ) {
-    super(name, emoji, health)
-    this.team = 'friendly'
+    super(name, emoji, health);
+    this.team = 'friendly';
+    this.className = 'raccoon';
   }
   description: 'string' | undefined;
   hat: Apparel | undefined;
@@ -178,8 +189,58 @@ export class Raccoon extends Mob {
 
 }
 
-class Enemy extends Mob {
+export class Enemy extends Mob {
 
+  constructor(
+    name: string,
+    emoji: string,
+    health: number,
+    damage: number,
+  ) {
+    super(name, emoji, health);
+    this.team = 'hostile';
+    this.className = 'enemy';
+    this.damage = damage;
+  }
+
+  damage: number;
+
+  attack(target: Mob) {
+    //play damage animation on target
+    const oldHealth = target.health;
+    let damageTotal = this.damage;
+    if(target instanceof Raccoon && target.hat) {
+      damageTotal = damageTotal - target.hat.armor | 0;
+    }
+    target.health = oldHealth - (damageTotal);
+    console.log(`
+    ${target.name} is dealt ${damageTotal} damage!
+    ${target.name} has ${target.health}hp.
+    `)
+  };
+
+  advance(): this | undefined {
+    if (!this.position) return;
+    let targetTile: Tile | undefined;
+    this.getAdjacentTiles()!.forEach((neighbor: Tile) => {
+      if (neighbor.position[0] === this.position![0] - 1) targetTile = neighbor;
+    });
+    if (!targetTile) return;
+    // ^ Finds adjacent tile
+
+    let solid: Mob | undefined;
+    if (targetTile.contents.length !== 0) solid = targetTile.contents.find(entity => entity.isSolid) as Mob;
+    // ^ Defines the first solid entity in adjacent tile
+
+    if (solid) {
+      console.log(`${this.name} is attacking ${solid.name}`);
+      this.attack(solid);
+      return;
+    }// ^ attacks the solid if one was found
+
+    return this.moveToPosition(targetTile);
+    // ^ move to tile if unoccupied
+  };
 }
 
 export interface Tile {
@@ -228,8 +289,6 @@ export class Gameboard {
   addEdge(a: Tile, b: Tile): void {
     a.edges.add(b);
     b.edges.add(a);
-    console.log(a.edges)
-    console.log(b.edges)
   }
 
   getTile(pos: [number, number]): Tile | undefined {
