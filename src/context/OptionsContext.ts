@@ -1,8 +1,8 @@
 import { createContext } from "react";
 
 export type UserOptions = {
-  music: "true" | "false";
-  soundfx: "true" | "false";
+  music: true | false;
+  soundfx: true | false;
   volume: number;
 };
 
@@ -12,7 +12,7 @@ export type UserOptionsContextProps = {
 };
 
 export const userOptionsInitialState: UserOptionsContextProps = {
-  userOptions: { music: "true", soundfx: "true", volume: 10 },
+  userOptions: { music: true, soundfx: true, volume: 10 },
   setUserOptions: () => {},
 };
 
