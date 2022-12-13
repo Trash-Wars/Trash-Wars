@@ -9,8 +9,7 @@ import Title from './components/Title/Title'
 import GameBoard from './components/GameBoard/GameBoard';
 import PreRound from './components/Preround/Preround';
 import GameOver from './components/GameOver/GameOver';
-
-const music = require("./assets/retroForest.mp3")
+const music = require("./assets/sounds/retroForest.mp3");
 
 const SCREEN2COMP = [
   () => Title,
@@ -57,7 +56,7 @@ function App() {
   useEffect(() => {
     const audioElement = audioRef.current!;
 
-    if (userOptions.userOptions.music === "false") {
+    if (userOptions.userOptions.music === false) {
       audioElement.pause();
     } else if (audioElement) {
       audioElement.loop = true;
