@@ -1,7 +1,8 @@
 .Preround {
+  padding: 1rem;
   background-image: url(../../assets/grey_dirt0.png);
   background-repeat: repeat;
-  background-size: 64px, 64px;
+  background-size: 128px, 128px;
   image-rendering: pixelated;
   height: 100vh;
   width: 100vw;
@@ -30,12 +31,12 @@
 }
 
 .raccoon-entity {
-  background-image: url(../../assets/human_m.png);
+  background-image: url(../../assets/doll.png);
 }
 
 .hat-slot {
   position: relative;
-  bottom: 400px;
+  bottom: 390px;
   left: 78px;
 }
 
@@ -43,4 +44,14 @@
   position: relative;
   bottom: 150px;
   right: 20px;
+}
+
+.forward-back {
+  width: 100px;
+  height: 100px;
+  background-size: cover;
+}
+
+.dimmed {
+  filter: brightness(40%);
 }
