@@ -8,24 +8,23 @@ import racc from '../../assets/racc.png'
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import { range } from '../../helpers/array';
 
-interface BoardProps {
-  winWidth: number
-}
 
-const Board = (props: BoardProps) => {
-  const [entityDamage, setEntityDamage] = useState('entity')
+
+
+
+const Board = () => {
   const persistence = useContext(PersistenceContext)
   const screen = useContext(ScreenContext)
-  const { winWidth } = props
+  const { winWidth, winHeight } = useWindowDimensions()
   const [board] = useState(new Gameboard(6, 4))
   const [currentEntities, setCurrentEntities] = useState<Entity[]>([]);
 
   const { tilePx, tileSize, entitySize } = getTileSize()
   function getTileSize() {
-    const tilePx = winWidth / board.rows
+    const tilePx = (Math.min(winWidth / board.rows, winHeight / board.cols))
     return {
       tilePx,
-      tileSize: { width: `${tilePx}px`, height: `${tilePx}px` },
+      tileSize: { width: `${tilePx}px`, height: `${tilePx}px`, backgroundSize: `${tilePx}px` },
       entitySize: { width: `${tilePx - 1}px`, height: `${tilePx}px` },
     }
   }
@@ -60,7 +59,7 @@ const Board = (props: BoardProps) => {
     // zayah.useWeapon()
     const raccoons: Entity[] = [];
     let counter = 0;
-    for(const raccoon of persistence.raccoonTeam) {
+    for (const raccoon of persistence.raccoonTeam) {
       raccoons.push(raccoon)
       moveEntity(raccoon, [0, counter]);
       counter++;
@@ -73,11 +72,30 @@ const Board = (props: BoardProps) => {
     const { marginLeft, marginTop } = event.currentTarget.style
     console.log(`${tilePx}:`, `${marginLeft}, ${marginTop}`)
   }
-
+  // add timer on class transition
   const raccoonDamageHandler = (e: any, entity: Entity) => {
-    if(entity.className === 'raccoon') entity.className = 'raccoon damage'
-    else entity.className = 'raccoon';
+    let initialClass = entity.className
+    console.log("entity", entity)
+    console.log("e.target", e.target)
+    if (entity.className === `${initialClass}`) entity.className = `${initialClass} damage`;
     setCurrentEntities([...currentEntities]);
+    setTimeout(() => {
+      entity.className = `${initialClass}`
+      setCurrentEntities([...currentEntities]);
+      console.log('time over');
+    }, 200)
+  }
+
+  const entityMovementHandler = (e: any, entity: Entity) => {
+    console.log("entity", entity)
+    //set interval is for testing purposes only
+    // setInterval(() => {
+    //   entity.position![0] =0
+    // }, 2000)
+    //only moves in the horizontal direction
+    // would have to set to -- for mobs moving against noble raccoons
+    entity.position![0]++
+    setCurrentEntities([...currentEntities])
   }
 
 
@@ -88,11 +106,11 @@ const Board = (props: BoardProps) => {
           onMouseEnter={(e) => debugPosition(e, entity)}
           key={i}
           className={entity.className}
-          onClick={(e) => raccoonDamageHandler(e, entity)}
+          onClick={(e) => entityMovementHandler(e, entity)}
           style={{ ...entitySize, ...getPosValues(entity) }}
           src={entity.emoji}
           alt={entity.name} />
-          ))}
+      ))}
       {range(0, board.cols - 1).reverse().map(col => (
         <div className='rows' key={col} style={{ display: "flex" }}>
           {range(0, board.rows - 1).map((row) => (
@@ -113,23 +131,33 @@ const Board = (props: BoardProps) => {
 // TODO Conditionally render Pause/play button depending on whether or not the game is playing. 
 const Buttons = () => {
   const { setScreen } = useContext(ScreenContext)
-
-  return (
-    <div className="buttonsContainer">
-      <button className="button">Options ⚙️</button>
-      <button className="button">Pause ⏸️</button>
-      <button className="button" onClick={() => setScreen!(3)}>Quit Out 🏳️</button>
-    </div>
-  )
-
+  const { winWidth, winHeight } = useWindowDimensions()
+  if (winWidth > winHeight) {
+    console.log("wide")
+    return (
+      <div className="buttonsContainerWide">
+        <button className="button">Options ⚙️</button>
+        <button className="button">Pause ⏸️</button>
+        <button className="button" onClick={() => setScreen!(3)}>Quit Out 🏳️</button>
+      </div>
+    )
+  } else {
+    console.log("tall")
+    return (
+      <div className="buttonsContainerTall">
+        <button className="button">Options ⚙️</button>
+        <button className="button">Pause ⏸️</button>
+        <button className="button" onClick={() => setScreen!(3)}>Quit Out 🏳️</button>
+      </div>
+    )
+  }
 }
 
 const GameBoard = () => {
-  const { winWidth } = useWindowDimensions()
   return (
     <div className="gameBoard">
+      <Board />
       <Buttons />
-      <Board winWidth={winWidth} />
     </div>
   )
 }
