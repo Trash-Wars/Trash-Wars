@@ -10,6 +10,7 @@ export class Entity {
     this.isSolid = true;
   }
   className: string | undefined;
+  idName: string | undefined;
   tile: Tile | undefined;
   name: string;
   position: [number, number] | undefined;
@@ -66,6 +67,7 @@ export class Apparel extends Item {
     super(name, emoji, description);
     this.armor = armor;
     this.className = 'apparel';
+    this.idName = '';
   }
   armor: number;
 }
@@ -82,6 +84,7 @@ export class Weapon extends Item {
     this.damage = damage;
     this.attackSpeed = attackSpeed;
     this.className = 'weapon';
+    this.idName = '';
   }
   damage: number;
   attackSpeed: number;
@@ -158,6 +161,7 @@ export class Raccoon extends Mob {
     super(name, emoji, health);
     this.team = 'friendly';
     this.className = 'raccoon';
+    this.idName = '';
   }
   description: 'string' | undefined;
   hat: Apparel | undefined;
@@ -200,6 +204,7 @@ export class Enemy extends Mob {
     super(name, emoji, health);
     this.team = 'hostile';
     this.className = 'enemy';
+    this.idName = '';
     this.damage = damage;
   }
 

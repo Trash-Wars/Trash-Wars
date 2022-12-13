@@ -7,10 +7,12 @@ import './GameBoard.css'
 import racc from '../../assets/racc.png'
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import { range } from '../../helpers/array';
+import { allTileBackgrounds } from '../../assets/grass/allTiles';
+// import grass1 from '../../assets/grass/allTiles'
 
-
-
-
+// const initialTileState = [
+//   '../../assets/grass/blue1.png'
+// ]
 
 const Board = () => {
   const persistence = useContext(PersistenceContext)
@@ -18,6 +20,9 @@ const Board = () => {
   const { winWidth, winHeight } = useWindowDimensions()
   const [board] = useState(new Gameboard(6, 4))
   const [currentEntities, setCurrentEntities] = useState<Entity[]>([]);
+  const [tileBackgrounds, setTileBackgrounds] = useState(['../../assets/grass/blue1.png'])
+
+
 
   const { tilePx, tileSize, entitySize } = getTileSize()
   function getTileSize() {
@@ -57,21 +62,40 @@ const Board = () => {
     setCurrentEntities([...raccoons])
   }, [moveEntity, persistence])
 
+  //on gameboardLoad, randomly get tilebackgrounds then save them into state
+  useEffect(()=> {
+    setTileBackgrounds(range(0,board.cols*board.rows).map(_=> {
+      return allTileBackgrounds[Math.round(Math.random()*8)]
+    }))
+     
+      // setTileBackgrounds([...tileBackgrounds, allTileBackgrounds[Math.round(Math.random()*9)]])
+    
+    
+  }, [board.cols, board.rows])
+  
   function debugPosition(event: React.MouseEvent<HTMLImageElement>, entity: Entity) {
     const { marginLeft, marginTop } = event.currentTarget.style
   }
-  // add timer on class transition
-  const raccoonDamageHandler = (e: any, entity: Entity) => {
-    let initialClass = entity.className
-    console.log("entity", entity)
-    console.log("e.target", e.target)
-    if (entity.className === `${initialClass}`) entity.className = `${initialClass} damage`;
-    setCurrentEntities([...currentEntities]);
-    setTimeout(() => {
-      entity.className = `${initialClass}`
-      setCurrentEntities([...currentEntities]);
-      console.log('time over');
-    }, 200)
+  // add timer on id transition
+  const EntityDamageHandler = ( entity: Entity) => {
+    // let initialClass = entity.className
+    // if (entity.className === `${initialClass}`) entity.className = `${initialClass} damage`;
+    // setCurrentEntities([...currentEntities]);
+    // setTimeout(() => {
+    //   entity.className = `${initialClass}`
+    //   setCurrentEntities([...currentEntities]);
+    //   console.log('time over');
+    // }, 200)
+
+    if(entity.idName !== 'damage'){
+      entity.idName = 'damage'
+      setCurrentEntities([...currentEntities])
+    }
+    setTimeout(()=> {
+      entity.idName='';
+      setCurrentEntities([...currentEntities])
+    },200)
+    console.log(currentEntities)
   }
 
   const entityMovementHandler = (e: any, entity: Entity) => {
@@ -95,18 +119,33 @@ const Board = () => {
       raccoon.useWeapon();
     };
     zombie.advance();
+    EntityDamageHandler(entity)
     return;
   };
 
+  const entityDeathHandler = (entity:Entity) => {
+    if(entity.idName !== 'death'){
+      entity.idName = 'death'
+      setCurrentEntities([...currentEntities])
+    }
+    setTimeout(()=> {
+      entity.idName='';
+      setCurrentEntities([...currentEntities])
+      console.log(entity)
+    },1000)
+    console.log(entity.idName)
+  }
+// look into reading 
 
   return (
     <div className='board'>
       {currentEntities.map((entity, i) => (
         <img
+          id = {entity.idName}
           onMouseEnter={(e) => debugPosition(e, entity)}
           key={i}
           className={entity.className}
-          onClick={() => doCombat(entity)}
+          onClick={() => entityDeathHandler(entity)}
           style={{ ...entitySize, ...getPosValues(entity) }}
           src={entity.emoji}
           alt={entity.name} />
@@ -115,7 +154,9 @@ const Board = () => {
         <div className='rows' key={col} style={{ display: "flex" }}>
           {range(0, board.rows - 1).map((row) => (
             <>
-              <div className="tile" style={{ ...tileSize }} key={row}>
+              <div className="tile" style={{ ...tileSize,
+                 backgroundImage: `url('${tileBackgrounds[(24-row-col)]}')`
+                 }} key={row}>
                 {row}, {col},
               </div>
             </>
@@ -127,13 +168,12 @@ const Board = () => {
 }
 
 
-
 // TODO Conditionally render Pause/play button depending on whether or not the game is playing. 
 const Buttons = () => {
   const { setScreen } = useContext(ScreenContext)
   const { winWidth, winHeight } = useWindowDimensions()
   if (winWidth > winHeight) {
-    console.log("wide")
+    // console.log("wide")
     return (
       <div className="buttonsContainerWide">
         <button className="button">Options ⚙️</button>
@@ -142,7 +182,7 @@ const Buttons = () => {
       </div>
     )
   } else {
-    console.log("tall")
+    // console.log("tall")
     return (
       <div className="buttonsContainerTall">
         <button className="button">Options ⚙️</button>

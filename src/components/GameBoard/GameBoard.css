@@ -5,7 +5,7 @@
   border-right: none;
   -webkit-box-shadow: inset 0 0 2px 2px #074430;
   box-shadow: inset 0 0 2px 2px #02702c;
-  background-image: URL('../../assets/grass/blue3.png');
+  background-image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAA…McMD+/vc1/uX+whfWc6P8H0ZJMRlM9Jv5AAAAAElFTkSuQmCC';
   image-rendering: pixelated;
 }
 
@@ -31,12 +31,54 @@
   
 }
 
-.raccoon.damage {
-  position: absolute;
-  margin: 1px 1px;
+
+
+#damage {
   filter: blur(5px); 
   transition: filter .1s linear;
   animation: flash 0.1s linear;
+}
+
+#death {
+  /* transition: .5s; */
+  transform: rotate(-90deg);
+  animation: fallback 1s linear; 
+}
+
+@keyframes fallback {
+  from {
+    transform: rotate(0deg);
+  }
+  to{
+    transform: rotate(-90deg);
+    transform:translateY(0);
+    opacity:1;
+  }
+  100% {
+    transform:translateY(100);
+    opacity:0
+  }
+}
+/* @keyframes floatnfade {
+  from{
+    transform:translateY(0);
+    opacity:1;
+  }
+  to {
+    transform:translateY(100);
+    opacity:0
+  }
+}  */
+
+/* @keyframes floatup {
+  from {
+    transform: translateY(0);
+    opacity: 1
+  }
+  to{
+    transform: translateY(100);
+    opacity: 0;
+  }
 }
 
 @keyframes flash {
