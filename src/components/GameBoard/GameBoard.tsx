@@ -50,7 +50,7 @@ const Board = (props: BoardProps) => {
   useEffect(() => {
     const raccoons: Entity[] = [];
     let counter = 0;
-    for(const raccoon of persistence.raccoonTeam) {
+    for (const raccoon of persistence.raccoonTeam) {
       raccoons.push(raccoon)
       moveEntity(raccoon, [0, counter]);
       counter++;
@@ -59,24 +59,22 @@ const Board = (props: BoardProps) => {
   }, [moveEntity, persistence])
 
   function debugPosition(event: React.MouseEvent<HTMLImageElement>, entity: Entity) {
-    // console.log(entity.position)
     const { marginLeft, marginTop } = event.currentTarget.style
-    //console.log(`${tilePx}:`, `${marginLeft}, ${marginTop}`)
   }
 
   const raccoonDamageHandler = (e: any, entity: Entity) => {
-    if(entity.className === 'raccoon') entity.className = 'raccoon damage'
+    if (entity.className === 'raccoon') entity.className = 'raccoon damage'
     else entity.className = 'raccoon';
     setCurrentEntities([...currentEntities]);
   }
 
-  const doCombat = (e: any, entity: Entity) => {
+  const doCombat = (entity: Entity) => {
     const zombie = new Enemy('Zombie', racc, 10, 5)
     moveEntity(zombie, [entity.position![0] + 1, entity.position![1]])
-    if(entity instanceof Raccoon) {
-    const raccoon = entity as Raccoon;
-    raccoon.changeWeapon(new Axe());
-    raccoon.useWeapon();
+    if (entity instanceof Raccoon) {
+      const raccoon = entity as Raccoon;
+      raccoon.changeWeapon(new Axe());
+      raccoon.useWeapon();
     };
     zombie.advance();
     return;
@@ -90,11 +88,11 @@ const Board = (props: BoardProps) => {
           onMouseEnter={(e) => debugPosition(e, entity)}
           key={i}
           className={entity.className}
-          onClick={(e) => doCombat(e, entity)}
+          onClick={() => doCombat(entity)}
           style={{ ...entitySize, ...getPosValues(entity) }}
           src={entity.emoji}
           alt={entity.name} />
-          ))}
+      ))}
       {range(0, board.cols - 1).reverse().map(col => (
         <div className='rows' key={col} style={{ display: "flex" }}>
           {range(0, board.rows - 1).map((row) => (

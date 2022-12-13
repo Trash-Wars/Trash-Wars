@@ -62,15 +62,12 @@ export class Apparel extends Item {
     emoji: string,
     description: string,
     armor: number,
-    //health: number,// maybe these are just a bonuses object?
   ) {
     super(name, emoji, description);
     this.armor = armor;
     this.className = 'apparel';
-    //this.health = health;
   }
   armor: number;
-  //health: number;
 }
 
 export class Weapon extends Item {
@@ -245,7 +242,7 @@ export class Enemy extends Mob {
     // ^ move to tile if unoccupied
   };
 }
-//return this.moveToPosition(targetTile); // if tile is empty, move to tile
+
 export interface Tile {
   contents: Entity[];
   position: [number, number];
