@@ -107,15 +107,18 @@ const Board = () => {
 
     for (let i = 0; i < difficulty; i++) {
       const randIdx = Math.round(Math.random() * possibleEnemies.length);
-      enemySpawns.push(possibleEnemies[randIdx]); // this may need to call new
+      const enemy = possibleEnemies[randIdx]
+      enemySpawns.push(new Enemy('Zombie', racc, 10, 5)); // this may need to call new
     };// ^ randomly selects from the list of all enemies and pushes them to the enemy spawns queue
     return enemySpawns;
   };
 
   const findEnemySpawnTile = (): [number, number] | undefined => {
     const length = board.tiles.length;
-    for (let i = length; i > (length - 4); i--) { // starts at the last board tiles and checks moving forward for valid spawns through the final 4 tiles
-      if (board.tiles[i].contents.find(entity => entity.isSolid)) continue;
+    for (let i = length - 1; i >= length - 4; i--) { // starts at the last board tiles and checks moving forward for valid spawns through the final 4 tiles
+      if (board.tiles[i].contents) {
+          if(board.tiles[i].contents.find(entity => entity.isSolid)) continue;
+        }
       // ^ if the contents of the spawn tile contains a solid, skip the tile
       return board.tiles[i].position;
       // ^ return the spawn tile that is open
@@ -171,8 +174,9 @@ const Board = () => {
 
 
 // TODO Conditionally render Pause/play button depending on whether or not the game is playing. 
-const Buttons = (startRound: any) => {
+const Buttons = (props: any) => {
   const { setScreen } = useContext(ScreenContext)
+  const { startRound } = props;
   const { winWidth, winHeight } = useWindowDimensions()
   if (winWidth > winHeight) {
     console.log("wide")
