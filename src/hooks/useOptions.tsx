@@ -19,7 +19,8 @@ export function useOptions(initialState: boolean) {
     const handleChangeVolume = (event: React.ChangeEvent<HTMLInputElement>) => {
       event.preventDefault();
       const { name, value } = event.target;
-      setUserOptions!({ ...userOptions, [name]: value });
+      setUserOptions!({ ...userOptions, [name]: value });// bang is temporary change PLEASE
+
     };
 
     return (

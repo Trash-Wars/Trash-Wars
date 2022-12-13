@@ -27,10 +27,9 @@ export class Entity {
 
   moveToPosition(tile: Tile): this {
     if (!this.tile) {
-      console.log('Adding tile')
       return this.setTile(tile);
     }
-    console.log('Deleting: ', this.tile.contents.splice(this.tile.contents.indexOf(this), 1));
+    this.tile.contents.splice(this.tile.contents.indexOf(this), 1);
     return this.setTile(tile);
   }
 
@@ -50,7 +49,7 @@ export class Item extends Entity {
     name: string,
     emoji: string,
     description: string
-    ) {
+  ) {
     super(name, emoji)
     this.description = description;
   }
@@ -63,15 +62,12 @@ export class Apparel extends Item {
     emoji: string,
     description: string,
     armor: number,
-    //health: number,// maybe these are just a bonuses object?
   ) {
     super(name, emoji, description);
     this.armor = armor;
     this.className = 'apparel';
-    //this.health = health;
   }
   armor: number;
-  //health: number;
 }
 
 export class Weapon extends Item {
@@ -98,10 +94,6 @@ export class Weapon extends Item {
 export class Axe extends Weapon {
   constructor() {
     super('Axe', axeIcon, 'An axe', 5, 4)
-    // this.name = 'Axe';
-    // this.description = 'An axe';
-    // this.damage = 5;
-    // this.attackSpeed = 4;
   }
 
   use(parent: Raccoon) {
@@ -114,8 +106,8 @@ export class Axe extends Weapon {
       }
     });
     if (!enemyTile) return;
-    //console.log(`Tile: ${origin} targeting tile: ${enemyTile.position}`)
-    //console.log(enemyTile)
+    console.log(`Tile: ${origin} targeting tile: ${enemyTile.position}`)
+    console.log(`${parent.name} is attacking ${enemyTile.contents[0].name} with ${this.name}`);
 
   }
 }
@@ -163,8 +155,8 @@ export class Raccoon extends Mob {
     emoji: string,
     health: number,
   ) {
-    super(name, emoji, health)
-    this.team = 'friendly'
+    super(name, emoji, health);
+    this.team = 'friendly';
     this.className = 'raccoon';
   }
   description: 'string' | undefined;
@@ -197,8 +189,58 @@ export class Raccoon extends Mob {
 
 }
 
-class Enemy extends Mob {
+export class Enemy extends Mob {
 
+  constructor(
+    name: string,
+    emoji: string,
+    health: number,
+    damage: number,
+  ) {
+    super(name, emoji, health);
+    this.team = 'hostile';
+    this.className = 'enemy';
+    this.damage = damage;
+  }
+
+  damage: number;
+
+  attack(target: Mob) {
+    //play damage animation on target
+    const oldHealth = target.health;
+    let damageTotal = this.damage;
+    if(target instanceof Raccoon && target.hat) {
+      damageTotal = damageTotal - target.hat.armor | 0;
+    }
+    target.health = oldHealth - (damageTotal);
+    console.log(`
+    ${target.name} is dealt ${damageTotal} damage!
+    ${target.name} has ${target.health}hp.
+    `)
+  };
+
+  advance(): this | undefined {
+    if (!this.position) return;
+    let targetTile: Tile | undefined;
+    this.getAdjacentTiles()!.forEach((neighbor: Tile) => {
+      if (neighbor.position[0] === this.position![0] - 1) targetTile = neighbor;
+    });
+    if (!targetTile) return;
+    // ^ Finds adjacent tile
+
+    let solid: Mob | undefined;
+    if (targetTile.contents.length !== 0) solid = targetTile.contents.find(entity => entity.isSolid) as Mob;
+    // ^ Defines the first solid entity in adjacent tile
+
+    if (solid) {
+      console.log(`${this.name} is attacking ${solid.name}`);
+      this.attack(solid);
+      return;
+    }// ^ attacks the solid if one was found
+
+    return this.moveToPosition(targetTile);
+    // ^ move to tile if unoccupied
+  };
 }
 
 export interface Tile {

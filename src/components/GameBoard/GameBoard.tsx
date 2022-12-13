@@ -1,4 +1,4 @@
-import { Gameboard, } from '../../classes/entity';
+import { Enemy, Gameboard, } from '../../classes/entity';
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { Entity, Raccoon, Axe } from '../../classes/entity';
 import { ScreenContext } from '../../context/ScreenContext';
@@ -47,16 +47,6 @@ const Board = () => {
 
   //when game board loads, 
   useEffect(() => {
-    // const zayah = new Raccoon("Zayah", racc, 10)
-    // const debugSpawns: Entity[] = [
-    //   moveEntity(new Raccoon("Hugo", racc, 10), [1, 1]),
-    //   moveEntity(zayah, [0, 1]),
-    //   moveEntity(new Raccoon("Jim", racc, 10), [0, 2]),
-    //   moveEntity(new Raccoon("Luis", racc, 10), [0, 3]),
-    // ]
-    // console.log(zayah)
-    // zayah.changeWeapon(new Axe());
-    // zayah.useWeapon()
     const raccoons: Entity[] = [];
     let counter = 0;
     for (const raccoon of persistence.raccoonTeam) {
@@ -68,9 +58,7 @@ const Board = () => {
   }, [moveEntity, persistence])
 
   function debugPosition(event: React.MouseEvent<HTMLImageElement>, entity: Entity) {
-    // console.log(entity.position)
     const { marginLeft, marginTop } = event.currentTarget.style
-    console.log(`${tilePx}:`, `${marginLeft}, ${marginTop}`)
   }
   // add timer on class transition
   const raccoonDamageHandler = (e: any, entity: Entity) => {
@@ -98,6 +86,18 @@ const Board = () => {
     setCurrentEntities([...currentEntities])
   }
 
+  const doCombat = (entity: Entity) => {
+    const zombie = new Enemy('Zombie', racc, 10, 5)
+    moveEntity(zombie, [entity.position![0] + 1, entity.position![1]])
+    if (entity instanceof Raccoon) {
+      const raccoon = entity as Raccoon;
+      raccoon.changeWeapon(new Axe());
+      raccoon.useWeapon();
+    };
+    zombie.advance();
+    return;
+  };
+
 
   return (
     <div className='board'>
@@ -106,7 +106,7 @@ const Board = () => {
           onMouseEnter={(e) => debugPosition(e, entity)}
           key={i}
           className={entity.className}
-          onClick={(e) => entityMovementHandler(e, entity)}
+          onClick={() => doCombat(entity)}
           style={{ ...entitySize, ...getPosValues(entity) }}
           src={entity.emoji}
           alt={entity.name} />
