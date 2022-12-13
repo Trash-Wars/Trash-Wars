@@ -135,7 +135,6 @@ const Buttons = () => {
   if (winWidth > winHeight) {
     console.log("wide")
     return (
-
       <div className="buttonsContainerWide">
         <button className="button">Options ⚙️</button>
         <button className="button">Pause ⏸️</button>
@@ -152,16 +151,11 @@ const Buttons = () => {
       </div>
     )
   }
-
-
-
-
 }
 
 const GameBoard = () => {
   return (
     <div className="gameBoard">
-
       <Board />
       <Buttons />
     </div>
