@@ -147,6 +147,14 @@ class Mob extends Entity {
   }
   health: number;
 
+  takeDamage(damage: number, attacker: Entity | undefined): void {
+    // ^ attacker is optional
+    this.health = this.health - damage;
+    if(this.health >= 0) {
+      console.log(`${this.name} died!`);
+      // call death function
+    }
+  }
 }
 
 export class Raccoon extends Mob {
@@ -207,20 +215,8 @@ export class Enemy extends Mob {
 
   attack(target: Mob) {
     //play damage animation on target
-    const oldHealth = target.health;
-    let damageTotal = this.damage;
-    if(target instanceof Raccoon && target.hat) {
-      damageTotal = damageTotal - target.hat.armor | 0;
-    }
-    target.health = oldHealth - (damageTotal);
-    if(target.health >= 0) {
-      console.log(`${target.name} has died!`);
-      // remove the target by a method
-    }
-    console.log(`
-    ${target.name} is dealt ${damageTotal} damage!
-    ${target.name} has ${target.health}hp.
-    `)
+    if(target.team === this.team) return; // prevents team-killing and allows attacking neutral
+    target.takeDamage(this.damage, this);
   };
 
   advance(): this | undefined {
