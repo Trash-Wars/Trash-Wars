@@ -213,6 +213,10 @@ export class Enemy extends Mob {
       damageTotal = damageTotal - target.hat.armor | 0;
     }
     target.health = oldHealth - (damageTotal);
+    if(target.health >= 0) {
+      console.log(`${target.name} has died!`);
+      // remove the target by a method
+    }
     console.log(`
     ${target.name} is dealt ${damageTotal} damage!
     ${target.name} has ${target.health}hp.
