@@ -8,11 +8,6 @@ import racc from '../../assets/racc.png'
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import { range } from '../../helpers/array';
 import { allTileBackgrounds } from '../../assets/grass/allTiles';
-// import grass1 from '../../assets/grass/allTiles'
-
-// const initialTileState = [
-//   '../../assets/grass/blue1.png'
-// ]
 
 const Board = () => {
   const persistence = useContext(PersistenceContext)
@@ -21,8 +16,6 @@ const Board = () => {
   const [board] = useState(new Gameboard(6, 4))
   const [currentEntities, setCurrentEntities] = useState<Entity[]>([]);
   const [tileBackgrounds, setTileBackgrounds] = useState(['../../assets/grass/blue1.png'])
-
-
 
   const { tilePx, tileSize, entitySize } = getTileSize()
   function getTileSize() {
@@ -67,26 +60,13 @@ const Board = () => {
     setTileBackgrounds(range(0,board.cols*board.rows).map(_=> {
       return allTileBackgrounds[Math.round(Math.random()*8)]
     }))
-     
-      // setTileBackgrounds([...tileBackgrounds, allTileBackgrounds[Math.round(Math.random()*9)]])
-    
-    
   }, [board.cols, board.rows])
   
   function debugPosition(event: React.MouseEvent<HTMLImageElement>, entity: Entity) {
     const { marginLeft, marginTop } = event.currentTarget.style
   }
-  // add timer on id transition
-  const EntityDamageHandler = ( entity: Entity) => {
-    // let initialClass = entity.className
-    // if (entity.className === `${initialClass}`) entity.className = `${initialClass} damage`;
-    // setCurrentEntities([...currentEntities]);
-    // setTimeout(() => {
-    //   entity.className = `${initialClass}`
-    //   setCurrentEntities([...currentEntities]);
-    //   console.log('time over');
-    // }, 200)
 
+  const EntityDamageHandler = ( entity: Entity) => {
     if(entity.idName !== 'damage'){
       entity.idName = 'damage'
       setCurrentEntities([...currentEntities])
@@ -100,12 +80,6 @@ const Board = () => {
 
   const entityMovementHandler = (e: any, entity: Entity) => {
     console.log("entity", entity)
-    //set interval is for testing purposes only
-    // setInterval(() => {
-    //   entity.position![0] =0
-    // }, 2000)
-    //only moves in the horizontal direction
-    // would have to set to -- for mobs moving against noble raccoons
     entity.position![0]++
     setCurrentEntities([...currentEntities])
   }
@@ -129,13 +103,10 @@ const Board = () => {
       setCurrentEntities([...currentEntities])
     }
     setTimeout(()=> {
-      entity.idName='';
-      setCurrentEntities([...currentEntities])
-      console.log(entity)
-    },1000)
-    console.log(entity.idName)
+      let holderArray = currentEntities.filter((ent) => ent.name !== entity.name)
+      setCurrentEntities(holderArray)
+    },1400)
   }
-// look into reading 
 
   return (
     <div className='board'>
@@ -166,7 +137,6 @@ const Board = () => {
     </div>
   )
 }
-
 
 // TODO Conditionally render Pause/play button depending on whether or not the game is playing. 
 const Buttons = () => {

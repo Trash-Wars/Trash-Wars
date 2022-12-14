@@ -26,11 +26,10 @@
 
 .raccoon {
   position: absolute;
-  transition: margin 0.5s ease-in-out;
+  /* transition: margin 0.5s ease-in-out; */
   margin: 1px 1px;
   
 }
-
 
 
 #damage {
@@ -40,44 +39,32 @@
 }
 
 #death {
-  /* transition: .5s; */
-  transform: rotate(-90deg);
-  animation: fallback 1s linear; 
+  /* transition: .5s linear;
+  transform: rotate(-.25turn); */
+  animation: fade 1.5s linear; 
 }
 
-@keyframes fallback {
-  from {
-    transform: rotate(0deg);
-  }
-  to{
-    transform: rotate(-90deg);
-    transform:translateY(0);
-    opacity:1;
-  }
-  100% {
-    transform:translateY(100);
-    opacity:0
-  }
-}
-/* @keyframes floatnfade {
-  from{
-    transform:translateY(0);
-    opacity:1;
-  }
-  to {
-    transform:translateY(100);
-    opacity:0
-  }
-}  */
 
-/* @keyframes floatup {
-  from {
-    transform: translateY(0);
-    opacity: 1
+
+ @keyframes fade {
+  0% {
+    transform: rotate(0);
   }
-  to{
-    transform: translateY(100);
+  25% {
+    transform: rotate(-.25turn);
+  }
+  50% {
+    opacity: 1;
+    transform: rotate(-.25turn) translate(0,0);
+  }
+  75% {
+    opacity: .5;
+    transform: rotate(-.25turn) translate(50%,0);
+  }
+  100%{
+    transform: rotate(-.25turn) translate(100%,0) ;
     opacity: 0;
+    
   }
 }
 
@@ -89,10 +76,10 @@
     filter:brightness(300%)
   }
 }
-/* .entity:active{
+ .entity:active{
   filter: blur(3px);
   transition: filter 0.1s ease;
-} */
+} 
 
 
 
