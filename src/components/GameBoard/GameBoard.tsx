@@ -9,6 +9,30 @@ import useWindowDimensions from '../../hooks/useWindowDimensions';
 import { range } from '../../helpers/array';
 import { allTileBackgrounds } from '../../assets/grass/allTiles';
 
+const Buttons = (props: any) => {
+  const { setScreen } = useContext(ScreenContext)
+  const { startRound } = props;
+  const { winWidth, winHeight } = useWindowDimensions()
+  if (winWidth > winHeight) {
+
+    return (
+      <div className="buttonsContainerWide">
+        <button className="button">Options ⚙️</button>
+        <button className="button" onClick={() => startRound()}>Start Round</button>
+        <button className="button" onClick={() => setScreen!(3)}>Quit Out 🏳️</button>
+      </div>
+    )
+  } else {
+
+    return (
+      <div className="buttonsContainerTall">
+        <button className="button">Options ⚙️</button>
+        <button className="button" onClick={() => startRound()}>Start Round</button>
+        <button className="button" onClick={() => setScreen!(3)}>Quit Out 🏳️</button>
+      </div>
+    )
+  }
+}
 const Board = () => {
   const persistence = useContext(PersistenceContext)
   const screen = useContext(ScreenContext)
@@ -56,25 +80,25 @@ const Board = () => {
   }, [moveEntity, persistence])
 
   //on gameboardLoad, randomly get tilebackgrounds then save them into state
-  useEffect(()=> {
-    setTileBackgrounds(range(0,board.cols*board.rows).map(_=> {
-      return allTileBackgrounds[Math.round(Math.random()*8)]
+  useEffect(() => {
+    setTileBackgrounds(range(0, board.cols * board.rows).map(_ => {
+      return allTileBackgrounds[Math.round(Math.random() * 8)]
     }))
   }, [board.cols, board.rows])
-  
+
   function debugPosition(event: React.MouseEvent<HTMLImageElement>, entity: Entity) {
     const { marginLeft, marginTop } = event.currentTarget.style
   }
 
-  const EntityDamageHandler = ( entity: Entity) => {
-    if(entity.idName !== 'damage'){
+  const EntityDamageHandler = (entity: Entity) => {
+    if (entity.idName !== 'damage') {
       entity.idName = 'damage'
       setCurrentEntities([...currentEntities])
     }
-    setTimeout(()=> {
-      entity.idName='';
+    setTimeout(() => {
+      entity.idName = '';
       setCurrentEntities([...currentEntities])
-    },200)
+    }, 200)
     console.log(currentEntities)
   }
 
@@ -98,47 +122,6 @@ const Board = () => {
   };
 
 
-  const entityDeathHandler = (entity:Entity) => {
-    if(entity.idName !== 'death'){
-      entity.idName = 'death'
-      setCurrentEntities([...currentEntities])
-    }
-    setTimeout(()=> {
-      let holderArray = currentEntities.filter((ent) => ent.name !== entity.name)
-      setCurrentEntities(holderArray)
-    },1400)
-  }
-
-  // return (
-    
-  //   <div className='board'>
-  //     <Buttons startRound={startRound} />
-  //     {currentEntities.map((entity, i) => (
-  //       <img
-  //         id = {entity.idName}
-  //         onMouseEnter={(e) => debugPosition(e, entity)}
-  //         key={i}
-  //         className={entity.className}
-  //         onClick={() => entityDeathHandler(entity)}
-  //         style={{ ...entitySize, ...getPosValues(entity) }}
-  //         src={entity.emoji}
-  //         alt={entity.name} />
-  //     ))}
-  //     {range(0, board.cols - 1).reverse().map(col => (
-  //       <div className='rows' key={col} style={{ display: "flex" }}>
-  //         {range(0, board.rows - 1).map((row) => (
-  //           <>
-  //             <div className="tile" style={{ ...tileSize,
-  //                backgroundImage: `url('${tileBackgrounds[(24-row-col)]}')`
-  //                }} key={row}>
-  //               {row}, {col},
-  //             </div>
-  //           </>
-  //         ))}
-  //       </div>
-  //     ))}
-  //   </div>
-  // )
   const generateEnemies = (difficulty: number): Enemy[] => {
     // start round should generate a list of enemies that it will generate for the round and where they will go, then begin a loop that continues until all enemies have been killed or the player has lost using the advance() method on enemies. It will loop over every enemy to call advance() on them
     let enemySpawns: Enemy[] = [];
@@ -158,8 +141,8 @@ const Board = () => {
     const length = board.tiles.length;
     for (let i = length - 1; i >= length - 4; i--) { // starts at the last board tiles and checks moving forward for valid spawns through the final 4 tiles
       if (board.tiles[i].contents) {
-          if(board.tiles[i].contents.find(entity => entity.isSolid)) continue;
-        }
+        if (board.tiles[i].contents.find(entity => entity.isSolid)) continue;
+      }
       // ^ if the contents of the spawn tile contains a solid, skip the tile
       return board.tiles[i].position;
       // ^ return the spawn tile that is open
@@ -181,63 +164,51 @@ const Board = () => {
       // raccoons need to hit back
     } while (activeEnemies.length > 0);
   };
+  const entityDeathHandler = (entity: Entity) => {
+    if (entity.idName !== 'death') {
+      entity.idName = 'death'
+      setCurrentEntities([...currentEntities])
+    }
+    setTimeout(() => {
+      let holderArray = currentEntities.filter((ent) => ent.name !== entity.name)
+      setCurrentEntities(holderArray)
+    }, 1400)
+  }
 
   return (
-    <>
+
+    <div className='board'>
       <Buttons startRound={startRound} />
-      <div className='board'>
-        {currentEntities.map((entity, i) => (
-          <img
-            onMouseEnter={(e) => debugPosition(e, entity)}
-            key={i}
-            id = {entity.idName}
-            className={entity.className}
-            onClick={() => doCombat(entity)}
-            style={{ ...entitySize, ...getPosValues(entity) }}
-            src={entity.emoji}
-            alt={entity.name} />
-        ))}
-        {range(0, board.cols - 1).reverse().map(col => (
-          <div className='rows' key={col} style={{ display: "flex" }}>
-            {range(0, board.rows - 1).map((row) => (
-              <>
-                <div className="tile" style={{ ...tileSize }} key={row}>
-                  {row}, {col},
-                </div>
-              </>
-            ))}
-          </div>
-        ))}
-      </div>
-    </>
+      {currentEntities.map((entity, i) => (
+        <img
+          id={entity.idName}
+          onMouseEnter={(e) => debugPosition(e, entity)}
+          key={i}
+          className={entity.className}
+          onClick={() => entityDeathHandler(entity)}
+          style={{ ...entitySize, ...getPosValues(entity) }}
+          src={entity.emoji}
+          alt={entity.name} />
+      ))}
+      {range(0, board.cols - 1).reverse().map(col => (
+        <div className='rows' key={col} style={{ display: "flex" }}>
+          {range(0, board.rows - 1).map((row) => (
+            <>
+              <div className="tile" style={{
+                ...tileSize,
+                backgroundImage: `url('${tileBackgrounds[(24 - row - col)]}')`
+              }} key={row}>
+                {row}, {col},
+              </div>
+            </>
+          ))}
+        </div>
+      ))}
+    </div>
   )
 }
 
 // TODO Conditionally render Pause/play button depending on whether or not the game is playing. 
-const Buttons = (props: any) => {
-  const { setScreen } = useContext(ScreenContext)
-  const { startRound } = props;
-  const { winWidth, winHeight } = useWindowDimensions()
-  if (winWidth > winHeight) {
-    
-    return (
-      <div className="buttonsContainerWide">
-        <button className="button">Options ⚙️</button>
-        <button className="button" onClick={() => startRound()}>Start Round</button>
-        <button className="button" onClick={() => setScreen!(3)}>Quit Out 🏳️</button>
-      </div>
-    )
-  } else {
-    
-    return (
-      <div className="buttonsContainerTall">
-        <button className="button">Options ⚙️</button>
-        <button className="button" onClick={() => startRound()}>Start Round</button>
-        <button className="button" onClick={() => setScreen!(3)}>Quit Out 🏳️</button>
-      </div>
-    )
-  }
-}
 
 const GameBoard = () => {
   return (
