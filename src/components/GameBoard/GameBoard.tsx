@@ -97,6 +97,7 @@ const Board = () => {
     return;
   };
 
+
   const entityDeathHandler = (entity:Entity) => {
     if(entity.idName !== 'death'){
       entity.idName = 'death'
@@ -107,6 +108,51 @@ const Board = () => {
       setCurrentEntities(holderArray)
     },1400)
   }
+
+  
+
+  const generateEnemies = (difficulty: number): Enemy[] => {
+    // start round should generate a list of enemies that it will generate for the round and where they will go, then begin a loop that continues until all enemies have been killed or the player has lost using the advance() method on enemies. It will loop over every enemy to call advance() on them
+    let enemySpawns: Enemy[] = [];
+    // ^ defines a stack/queue of enemies to place onto the board
+    const possibleEnemies: Enemy[] = []; // TODO: write enemy types for this list
+    // ^ this could be automatically generated later based off subclasses, and possibly a difficulty rating
+
+    for (let i = 0; i < difficulty; i++) {
+      const randIdx = Math.round(Math.random() * possibleEnemies.length);
+      const enemy = possibleEnemies[randIdx]
+      enemySpawns.push(new Enemy('Zombie', racc, 10, 5)); // this may need to call new
+    };// ^ randomly selects from the list of all enemies and pushes them to the enemy spawns queue
+    return enemySpawns;
+  };
+
+  const findEnemySpawnTile = (): [number, number] | undefined => {
+    const length = board.tiles.length;
+    for (let i = length - 1; i >= length - 4; i--) { // starts at the last board tiles and checks moving forward for valid spawns through the final 4 tiles
+      if (board.tiles[i].contents) {
+          if(board.tiles[i].contents.find(entity => entity.isSolid)) continue;
+        }
+      // ^ if the contents of the spawn tile contains a solid, skip the tile
+      return board.tiles[i].position;
+      // ^ return the spawn tile that is open
+    }
+    return undefined;
+  }
+
+  const startRound = () => {
+    const enemyQueue: Enemy[] = generateEnemies(5); // TODO: difficulty should be math on the current round with a multiplier. In other words, round# * 3 = enemy count
+    const activeEnemies: Enemy[] = [];
+    do {
+      const spawnTile = findEnemySpawnTile()
+      if (enemyQueue.length > 0 && spawnTile) activeEnemies.push(moveEntity(enemyQueue.pop()!, spawnTile) as Enemy);//moveEntity returns the entity
+      // ^ searches for a valid spawn point
+      // ^ moves an enemy from the queue to the battlefield at that spawn if valid
+      // ^ assigns enemy to the currently active enemies list
+
+      activeEnemies.forEach(enemy => enemy.advance());
+      // raccoons need to hit back
+    } while (activeEnemies.length > 0);
+  };
 
   return (
     <div className='board'>
@@ -139,15 +185,16 @@ const Board = () => {
 }
 
 // TODO Conditionally render Pause/play button depending on whether or not the game is playing. 
-const Buttons = () => {
+const Buttons = (props: any) => {
   const { setScreen } = useContext(ScreenContext)
+  const { startRound } = props;
   const { winWidth, winHeight } = useWindowDimensions()
   if (winWidth > winHeight) {
     // console.log("wide")
     return (
       <div className="buttonsContainerWide">
         <button className="button">Options ⚙️</button>
-        <button className="button">Pause ⏸️</button>
+        <button className="button" onClick={() => startRound()}>Start Round</button>
         <button className="button" onClick={() => setScreen!(3)}>Quit Out 🏳️</button>
       </div>
     )
@@ -156,7 +203,7 @@ const Buttons = () => {
     return (
       <div className="buttonsContainerTall">
         <button className="button">Options ⚙️</button>
-        <button className="button">Pause ⏸️</button>
+        <button className="button" onClick={() => startRound()}>Start Round</button>
         <button className="button" onClick={() => setScreen!(3)}>Quit Out 🏳️</button>
       </div>
     )
@@ -167,7 +214,6 @@ const GameBoard = () => {
   return (
     <div className="gameBoard">
       <Board />
-      <Buttons />
     </div>
   )
 }
