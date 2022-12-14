@@ -122,6 +122,17 @@ const Board = () => {
   };
 
 
+  const entityDeathHandler = (entity:Entity) => {
+    if(entity.idName !== 'death'){
+      entity.idName = 'death'
+      setCurrentEntities([...currentEntities])
+    }
+    setTimeout(()=> {
+      let holderArray = currentEntities.filter((ent) => ent.name !== entity.name)
+      setCurrentEntities(holderArray)
+    },1400)
+  }
+
   const generateEnemies = (difficulty: number): Enemy[] => {
     // start round should generate a list of enemies that it will generate for the round and where they will go, then begin a loop that continues until all enemies have been killed or the player has lost using the advance() method on enemies. It will loop over every enemy to call advance() on them
     let enemySpawns: Enemy[] = [];
@@ -164,19 +175,9 @@ const Board = () => {
       // raccoons need to hit back
     } while (activeEnemies.length > 0);
   };
-  const entityDeathHandler = (entity: Entity) => {
-    if (entity.idName !== 'death') {
-      entity.idName = 'death'
-      setCurrentEntities([...currentEntities])
-    }
-    setTimeout(() => {
-      let holderArray = currentEntities.filter((ent) => ent.name !== entity.name)
-      setCurrentEntities(holderArray)
-    }, 1400)
-  }
+
 
   return (
-
     <div className='board'>
       <Buttons startRound={startRound} />
       {currentEntities.map((entity, i) => (
