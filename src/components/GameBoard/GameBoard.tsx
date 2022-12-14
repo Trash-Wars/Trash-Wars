@@ -143,7 +143,7 @@ const Buttons = () => {
   const { setScreen } = useContext(ScreenContext)
   const { winWidth, winHeight } = useWindowDimensions()
   if (winWidth > winHeight) {
-    // console.log("wide")
+    
     return (
       <div className="buttonsContainerWide">
         <button className="button">Options ⚙️</button>
@@ -152,7 +152,7 @@ const Buttons = () => {
       </div>
     )
   } else {
-    // console.log("tall")
+    
     return (
       <div className="buttonsContainerTall">
         <button className="button">Options ⚙️</button>
