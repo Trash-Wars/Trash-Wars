@@ -1,4 +1,12 @@
 import axeIcon from '../assets/battle_axe1.png';
+import goldCrownIcon from '../assets/items/goldCrown.png'
+import greenCrownIcon from '../assets/items/greenCrown.png'
+import metalGlovesIcon from '../assets/items/metalGloves.png'
+import tickleMittensIcon from '../assets/items/tickleMittens.png'
+import wizardHatBlueIcon from '../assets/items/wizardHatBlue.png'
+import wizardHatGreenIcon from '../assets/items/wizardHatgreen.png'
+
+import simpleBowIcon from '../assets/items/longbow_1.png'
 
 export class Entity {
   constructor(
@@ -109,11 +117,64 @@ export class Axe extends Weapon {
       }
     });
     if (!enemyTile) return;
-    console.log(`Tile: ${origin} targeting tile: ${enemyTile.position}`)
-    console.log(`${parent.name} is attacking ${enemyTile.contents[0].name} with ${this.name}`);
+    let solid: Mob | undefined;
+    if (enemyTile.contents.length !== 0) solid = enemyTile.contents.find(entity => entity.isSolid) as Mob;
+    // ^ Defines the first solid entity in adjacent tile
 
+    if (solid) {
+      console.log(`${this.name} is attacking ${solid.name}`);
+      solid.takeDamage(this.damage, parent);
+      return;
+    }// ^ attacks the solid if one was found
   }
 }
+
+export class SimpleBow extends Weapon {
+  constructor() {
+    super('Simple bow', simpleBowIcon, 'Simple, yet deadly', 3, 3)
+  }
+  use(parent: Raccoon) {
+    const origin = parent.position;
+    if (!origin) return;
+    let enemyTile: Tile | undefined;
+    
+    parent.getAdjacentTiles()!.forEach((neighbor: Tile) => {
+      if (neighbor.position[0] === origin[0] + 1) {
+        enemyTile = neighbor;
+      }
+    });
+    if (!enemyTile) return;
+    console.log(`Tile: ${origin} targeting tile: ${enemyTile.position}`)
+    console.log(`${parent.name} is attacking ${enemyTile.contents[0].name} with ${this.name}`);
+  }
+}
+
+
+
+export class GoldCrown extends Apparel {
+  constructor() {
+    super('Gold Crown', goldCrownIcon, "A powerful artefact that is said to grant the wearer increased strength and defense", 3)
+  }
+}
+
+export class GreenCrown extends Apparel {
+  constructor() {
+    super('Green Crown', greenCrownIcon, "A talisman that is said to grant the wearer increased magic powers and the ability to cast powerful spells.", 2)
+  }
+}
+
+export class wizardHatBlue extends Apparel {
+  constructor() {
+    super('Blue wizard Hat', wizardHatBlueIcon, "RAVENCLAW", 1)
+  }
+}
+
+export class wizardHatGreen extends Apparel {
+  constructor() {
+    super('Green wizard Hat', wizardHatGreenIcon, "SLYTHERIN", 1)
+  }
+}
+
 
 export class SpentSoupCan extends Weapon {
   name = "Spent Soup Can"
@@ -149,7 +210,6 @@ class Mob extends Entity {
     this.health = health;
   }
   health: number;
-
   takeDamage(damage: number, attacker: Entity | undefined): void {
     // ^ attacker is optional
     this.health = this.health - damage;
