@@ -37,3 +37,7 @@ body, .root, .App {
     transform: rotate(360deg);
   }
 }
+
+.App {
+  background-image: url('./assets/marble_wall1.png');
+}
