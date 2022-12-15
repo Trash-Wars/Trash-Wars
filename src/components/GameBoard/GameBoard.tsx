@@ -8,34 +8,35 @@ import racc from '../../assets/racc.png'
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import { range } from '../../helpers/array';
 import { allTileBackgrounds } from '../../assets/grass/allTiles';
+import { useOptions } from '../../hooks/useOptions/useOptions';
+import { useSound } from '../../hooks/useSound';
 
+const buttonSelect = require('../../assets/sounds/buttonSelect.wav')
 const Buttons = (props: any) => {
   const { setScreen } = useContext(ScreenContext)
   const { startRound } = props;
   const { winWidth, winHeight } = useWindowDimensions()
-  if (winWidth > winHeight) {
-
+  const {Options, isOpen, toggle} = useOptions(false)
+  const { play: playSelect } = useSound(buttonSelect);
+  const handleOptions = () => {
+    playSelect();
+    toggle();
+  };
     return (
-      <div className="buttonsContainerWide">
-        <button className="button">Options ⚙️</button>
-        <button className="button" onClick={() => startRound()}>Start Round</button>
+      <div className="buttons">
+        <button className="button" onClick ={handleOptions}>Options ⚙️</button>
+        <button className="button" onClick={() => startRound()}>Start Round ▶️</button>
         <button className="button" onClick={() => setScreen!(3)}>Quit Out 🏳️</button>
+        {isOpen && <Options />}
       </div>
     )
-  } else {
-
-    return (
-      <div className="buttonsContainerTall">
-        <button className="button">Options ⚙️</button>
-        <button className="button" onClick={() => startRound()}>Start Round</button>
-        <button className="button" onClick={() => setScreen!(3)}>Quit Out 🏳️</button>
-      </div>
-    )
-  }
+  
 }
+
+
+
 const Board = () => {
   const persistence = useContext(PersistenceContext)
-  const screen = useContext(ScreenContext)
   const { winWidth, winHeight } = useWindowDimensions()
   const [board] = useState(new Gameboard(6, 4))
   const [currentEntities, setCurrentEntities] = useState<Entity[]>([]);
@@ -43,7 +44,7 @@ const Board = () => {
 
   const { tilePx, tileSize, entitySize } = getTileSize()
   function getTileSize() {
-    const tilePx = (Math.min(winWidth / board.rows, winHeight / board.cols))
+    const tilePx = (Math.min(winWidth / board.rows, winHeight / board.cols))*.9115
     return {
       tilePx,
       tileSize: { width: `${tilePx}px`, height: `${tilePx}px`, backgroundSize: `${tilePx}px` },
@@ -53,7 +54,7 @@ const Board = () => {
 
   function getPosValues(entity: Entity): { marginLeft: string, marginTop: string } | undefined {
     if (!entity.position) return undefined;// If entity is (somehow) in the void, it has no position
-    const pixelX = (entity.position[0] * tilePx) - (0.15 * entity.position[0])
+    const pixelX = ((entity.position[0] * tilePx) - (0.15 * entity.position[0]))
     const pixelY = ((board.cols - 1 - entity.position[1]) * tilePx) + (board.cols - 1 - entity.position[1])
     return { marginLeft: `${pixelX}px`, marginTop: `${pixelY}px` }
   }
@@ -81,8 +82,8 @@ const Board = () => {
 
   //on gameboardLoad, randomly get tilebackgrounds then save them into state
   useEffect(() => {
-    setTileBackgrounds(range(0, board.cols * board.rows).map(_ => {
-      return allTileBackgrounds[Math.round(Math.random() * 8)]
+    setTileBackgrounds(range(0, board.cols * board.rows).map(el => {
+      return allTileBackgrounds[Math.round(Math.random()*8)]
     }))
   }, [board.cols, board.rows])
 
@@ -103,7 +104,7 @@ const Board = () => {
   }
 
   const entityMovementHandler = (e: any, entity: Entity) => {
-    console.log("entity", entity)
+    console.log("entity Moved", entity)
     entity.position![0]++
     setCurrentEntities([...currentEntities])
   }
