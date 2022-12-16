@@ -16,6 +16,35 @@ import { allTileBackgrounds } from '../../assets/grass/allTiles';
 import { useOptions } from '../../hooks/useOptions/useOptions';
 import { useSound } from '../../hooks/useSound';
 
+
+let isRunning = false;
+
+const update = (
+  currentEntities: Entity[],
+  enemyQueue: Entity[],
+  findEnemySpawnTile: () => [number, number] | undefined,
+  moveEntity: (entity: Entity, pos: [number, number]) => any,//entity: Entity, pos: [number, number]
+  ): [Entity[], Entity[]] => {
+  // cannot rely on react stuff
+
+  const spawnTile = findEnemySpawnTile(); // find spawns
+  const entityList = [...currentEntities];// state value
+
+  const remainingSpawns = [...enemyQueue]
+  if (remainingSpawns.length > 0 && spawnTile) {
+    const enemy = remainingSpawns.pop()!// not queue
+    moveEntity(enemy, spawnTile);// moveEntity
+    entityList.push(enemy)
+  };//moveEntity returns the entity
+  // ^ searches for a valid spawn point
+  // ^ moves an enemy from the queue to the battlefield at that spawn if valid
+  // ^ assigns enemy to the currently active enemies list
+
+  return [entityList, remainingSpawns];
+}
+
+
+
 const buttonSelect = require('../../assets/sounds/buttonSelect.wav')
 const Buttons = (props: any) => {
   const { setScreen } = useContext(ScreenContext)
@@ -45,7 +74,8 @@ const Board = () => {
   const { winWidth, winHeight } = useWindowDimensions()
   const [board] = useState(new Gameboard(6, 4))
   const [currentEntities, setCurrentEntities] = useState<Entity[]>([]);
-  const [tileBackgrounds, setTileBackgrounds] = useState(['../../assets/grass/blue1.png'])
+  const [tileBackgrounds, setTileBackgrounds] = useState(['../../assets/grass/blue1.png']);
+  const [enemyQueue, setEnemyQueue] = useState<Entity[]>([])
 
   const { tilePx, tileSize, entitySize } = getTileSize()
   function getTileSize() {
@@ -75,7 +105,7 @@ const Board = () => {
 
   //when game board loads, 
   useEffect(() => {
-    if(currentEntities.length > 0) {
+    if (currentEntities.length > 0) {
       return;
     }
     const raccoons: Entity[] = [];
@@ -145,61 +175,55 @@ const Board = () => {
     return undefined;
   }
 
-  //  
-  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));//request animationFrame rather than this?
-  // ^ https://stackoverflow.com/questions/951021/what-is-the-javascript-version-of-sleep
-  // credit to StackOverflow for our sleep function
 
   // startRound should be a useEffect()
   // effect should read 'isRunning' bool  to start running game
   // button should toggle isRunning
   const startRound = async () => {
-    const enemyQueue: Enemy[] = generateEnemies(5); // TODO: difficulty should be math on the current round with a multiplier. In other words, round# * 3 = enemy count
+    // TODO: difficulty should be math on the current round with a multiplier. In other words, round# * 3 = enemy count
+    const enemies = generateEnemies(5);
+    console.log(enemies.length);
+    setEnemyQueue(enemies);
+    isRunning = true;
+  };
 
-    let activeEnemies: number = 0;
-    do {
-      const spawnTile = findEnemySpawnTile();
-      const entityList = [...currentEntities];
-      if (enemyQueue.length > 0 && spawnTile) {
-        const enemy = enemyQueue.pop()!
-        moveEntity(enemy, spawnTile);
-        entityList.push(enemy)
-        activeEnemies++;
-      };//moveEntity returns the entity
-      // ^ searches for a valid spawn point
-      // ^ moves an enemy from the queue to the battlefield at that spawn if valid
-      // ^ assigns enemy to the currently active enemies list
-      
-      setCurrentEntities(entityList);
-      //cleanup for dead entities
+  useEffect(() => {
+    const timer = setInterval(() => {
+      console.log(isRunning);
+      if (!isRunning) return; // this is  no active enemies case, figure out later
+      const masterList = update(currentEntities, enemyQueue, findEnemySpawnTile, moveEntity);
+      const entityList = masterList[0];
+      const enemyList = masterList[1];
+      // console.log(entityList);
+      // console.log(enemyList);
+
+      // cleanup for dead entities
       // raccons.forEach attack
       // foreach entity do conditions
       // raccoons need to hit back
-      // eslint-disable-next-line no-loop-func
-      currentEntities.forEach(entity => {
+
+      entityList.forEach(entity => {
         if (entity instanceof Raccoon) {
+          console.log(`${entity.name} is a Raccoon and uses weapon`);
           entity.useWeapon();
         }
         if (entity instanceof Enemy) {
+          console.log(`${entity.name} is an Enemy and advances`);
           entity.advance();
         }
-        if (entity instanceof Mob) {
-
+        if (entity instanceof Mob && entity.health <= 0) {
           //doCondition or other generics
-          if (entity.health <= 0) {
-            entityDeathHandler(entity);
-            if (entity instanceof Enemy) {
-              activeEnemies--;
-            }
-          }
+          console.log(`${entity.name} dies`);
+          entityDeathHandler(entity);// entityDeath
         }
       });
-
-
-      await sleep(1000);
-    } while (activeEnemies > 0);
-  };
-
+      const enemyCheck = currentEntities.find(entity => entity instanceof Enemy);
+      if(!enemyCheck) isRunning = false;
+      setCurrentEntities([...entityList]);
+      setEnemyQueue([...enemyList]);
+    }, 1000)
+    return () => { clearInterval(timer) }
+  }, []);
 
   return (
     <div className='board'>
