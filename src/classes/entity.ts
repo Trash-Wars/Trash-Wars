@@ -1,6 +1,14 @@
 import axeIcon from '../assets/battle_axe1.png';
 import goblinIcon from '../assets/enemies/goblin_base.png';
 import goblinTankIcon from '../assets/enemies/goblin_shield.png';
+import goldCrownIcon from '../assets/items/goldCrown.png'
+import greenCrownIcon from '../assets/items/greenCrown.png'
+import metalGlovesIcon from '../assets/items/metalGloves.png'
+import tickleMittensIcon from '../assets/items/tickleMittens.png'
+import wizardHatBlueIcon from '../assets/items/wizardHatBlue.png'
+import wizardHatGreenIcon from '../assets/items/wizardHatgreen.png'
+
+import simpleBowIcon from '../assets/items/longbow_1.png'
 
 export class Entity {
   constructor(
@@ -123,6 +131,36 @@ export class Axe extends Weapon {
   }
 }
 
+
+export class SimpleBow extends Weapon {
+  constructor() {
+    super('Simple bow', simpleBowIcon, 'Simple, yet deadly', 3, 3)
+  }
+  use(parent: Raccoon) {
+    const origin = parent.position;
+    if (!origin) return;
+    let enemyTile: Tile | undefined;
+    
+    parent.getAdjacentTiles()!.forEach((neighbor: Tile) => {
+      console.log(neighbor)
+      if (neighbor.position[0] === origin[0] + 1) {
+        enemyTile = neighbor;
+      }
+    });
+    if (!enemyTile) return;
+    let solid: Mob | undefined;
+    if (enemyTile.contents.length !== 0) solid = enemyTile.contents.find(entity => entity.isSolid) as Mob;
+    // ^ Defines the first solid entity in adjacent tile
+
+    if (solid) {
+      console.log(`${this.name} is attacking ${solid.name}`);
+      solid.takeDamage(this.damage, parent);
+      return;
+    }// ^ attacks the solid if one was found
+  }
+}
+
+
 export class SpentSoupCan extends Weapon {
   name = "Spent Soup Can"
   emoji = "https://via.placeholder.com/150"
@@ -139,12 +177,15 @@ class CoolShades extends Apparel {
   description = "an empty case"
 }
 
-class TopHat extends Apparel {
-  name = "Top Hat"
-  emoji = "https://via.placeholder.com/150"
-  //health = 2
-  armor = 1
-  description = "an empty case"
+export class TopHat extends Apparel {
+  constructor() {
+    super(
+      "Top Hat",
+      "https://via.placeholder.com/150",
+      "an empty case",
+      1
+      )
+  }
 }
 
 export class Mob extends Entity {
@@ -157,7 +198,6 @@ export class Mob extends Entity {
     this.health = health;
   }
   health: number;
-
   takeDamage(damage: number, attacker: Entity | undefined): void {
     // ^ attacker is optional
     this.health = this.health - damage;

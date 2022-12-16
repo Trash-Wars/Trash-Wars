@@ -34,8 +34,7 @@ function Title() {
           display: "flex",
           alignItems: "center",
           flexDirection: "column",
-        }}
-      >
+        }} >
         <button className="titleButton" onClick={handleStart}>
           Start Game
         </button>
