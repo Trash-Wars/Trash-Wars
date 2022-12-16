@@ -129,6 +129,7 @@ export class Axe extends Weapon {
   }
 }
 
+
 export class SimpleBow extends Weapon {
   constructor() {
     super('Simple bow', simpleBowIcon, 'Simple, yet deadly', 3, 3)
@@ -139,6 +140,7 @@ export class SimpleBow extends Weapon {
     let enemyTile: Tile | undefined;
     
     parent.getAdjacentTiles()!.forEach((neighbor: Tile) => {
+      console.log(neighbor)
       if (neighbor.position[0] === origin[0] + 1) {
         enemyTile = neighbor;
       }
