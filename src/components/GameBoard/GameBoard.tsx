@@ -1,10 +1,15 @@
 import { Enemy, Gameboard, } from '../../classes/entity';
 import React, { useState, useEffect, useContext, useCallback } from 'react'
-import { Entity, Raccoon, Axe } from '../../classes/entity';
+import { Entity, Raccoon, Axe, Mob } from '../../classes/entity';
 import { ScreenContext } from '../../context/ScreenContext';
 import { PersistenceContext } from '../../context/PersistenceContext';
 import './GameBoard.css'
 import racc from '../../assets/racc.png'
+import coconut from '../../assets/coconut.jpg'
+import hedgehog from '../../assets/hedgehog.png'
+import grumpy from '../../assets/grumpy.jpeg'
+import tiger from '../../assets/tigr.png'
+import bread from '../../assets/bread.gif'
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import { range } from '../../helpers/array';
 import { allTileBackgrounds } from '../../assets/grass/allTiles';
@@ -70,12 +75,16 @@ const Board = () => {
 
   //when game board loads, 
   useEffect(() => {
+    if(currentEntities.length > 0) {
+      return;
+    }
     const raccoons: Entity[] = [];
     let counter = 0;
     for (const raccoon of persistence.raccoonTeam) {
       raccoons.push(raccoon)
       moveEntity(raccoon, [0, counter]);
       counter++;
+      console.log('Raccoon coords', raccoon.position)
     }
     setCurrentEntities([...raccoons])
   }, [moveEntity, persistence])
@@ -91,62 +100,36 @@ const Board = () => {
     const { marginLeft, marginTop } = event.currentTarget.style
   }
 
-  const EntityDamageHandler = (entity: Entity) => {
-    if (entity.idName !== 'damage') {
-      entity.idName = 'damage'
-      setCurrentEntities([...currentEntities])
-    }
-    setTimeout(() => {
-      entity.idName = '';
-      setCurrentEntities([...currentEntities])
-    }, 200)
-    console.log(currentEntities)
-  }
-
-  const entityMovementHandler = (e: any, entity: Entity) => {
-    console.log("entity Moved", entity)
-    entity.position![0]++
-    setCurrentEntities([...currentEntities])
-  }
-
-  const doCombat = (entity: Entity) => {
-    const zombie = new Enemy('Zombie', racc, 10, 5)
-    moveEntity(zombie, [entity.position![0] + 1, entity.position![1]])
-    if (entity instanceof Raccoon) {
-      const raccoon = entity as Raccoon;
-      raccoon.changeWeapon(new Axe());
-      raccoon.useWeapon();
-    };
-    zombie.advance();
-    EntityDamageHandler(entity)
-    return;
-  };
-
-
-  const entityDeathHandler = (entity:Entity) => {
-    if(entity.idName !== 'death'){
+  const entityDeathHandler = (entity: Entity) => {
+    if (entity.idName !== 'death') {
       entity.idName = 'death'
       setCurrentEntities([...currentEntities])
     }
-    setTimeout(()=> {
+    setTimeout(() => {
       let holderArray = currentEntities.filter((ent) => ent.name !== entity.name)
       setCurrentEntities(holderArray)
-    },1400)
+    }, 1400)
   }
 
   const generateEnemies = (difficulty: number): Enemy[] => {
     // start round should generate a list of enemies that it will generate for the round and where they will go, then begin a loop that continues until all enemies have been killed or the player has lost using the advance() method on enemies. It will loop over every enemy to call advance() on them
     let enemySpawns: Enemy[] = [];
     // ^ defines a stack/queue of enemies to place onto the board
-    const possibleEnemies: Enemy[] = []; // TODO: write enemy types for this list
+    const possibleEnemies: Enemy[] = [
+      new Enemy('Tiger', tiger, 10, 5),
+      new Enemy('Coconut', coconut, 10, 5),
+      new Enemy('Bread', bread, 10, 5),
+      new Enemy('Hedgehog', hedgehog, 10, 5),
+      new Enemy('Grumpy', grumpy, 10, 5),
+    ]; // TODO: write enemy types for this list
     // ^ this could be automatically generated later based off subclasses, and possibly a difficulty rating
 
     for (let i = 0; i < difficulty; i++) {
       const randIdx = Math.round(Math.random() * possibleEnemies.length);
       const enemy = possibleEnemies[randIdx]
-      enemySpawns.push(new Enemy('Zombie', racc, 10, 5)); // this may need to call new
+      enemySpawns.push(enemy); // this may need to call new
     };// ^ randomly selects from the list of all enemies and pushes them to the enemy spawns queue
-    return enemySpawns;
+    return possibleEnemies;
   };
 
   const findEnemySpawnTile = (): [number, number] | undefined => {
@@ -162,19 +145,59 @@ const Board = () => {
     return undefined;
   }
 
-  const startRound = () => {
+  //  
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));//request animationFrame rather than this?
+  // ^ https://stackoverflow.com/questions/951021/what-is-the-javascript-version-of-sleep
+  // credit to StackOverflow for our sleep function
+
+  // startRound should be a useEffect()
+  // effect should read 'isRunning' bool  to start running game
+  // button should toggle isRunning
+  const startRound = async () => {
     const enemyQueue: Enemy[] = generateEnemies(5); // TODO: difficulty should be math on the current round with a multiplier. In other words, round# * 3 = enemy count
-    const activeEnemies: Enemy[] = [];
+
+    let activeEnemies: number = 0;
     do {
-      const spawnTile = findEnemySpawnTile()
-      if (enemyQueue.length > 0 && spawnTile) activeEnemies.push(moveEntity(enemyQueue.pop()!, spawnTile) as Enemy);//moveEntity returns the entity
+      const spawnTile = findEnemySpawnTile();
+      const entityList = [...currentEntities];
+      if (enemyQueue.length > 0 && spawnTile) {
+        const enemy = enemyQueue.pop()!
+        moveEntity(enemy, spawnTile);
+        entityList.push(enemy)
+        activeEnemies++;
+      };//moveEntity returns the entity
       // ^ searches for a valid spawn point
       // ^ moves an enemy from the queue to the battlefield at that spawn if valid
       // ^ assigns enemy to the currently active enemies list
-
-      activeEnemies.forEach(enemy => enemy.advance());
+      
+      setCurrentEntities(entityList);
+      //cleanup for dead entities
+      // raccons.forEach attack
+      // foreach entity do conditions
       // raccoons need to hit back
-    } while (activeEnemies.length > 0);
+      // eslint-disable-next-line no-loop-func
+      currentEntities.forEach(entity => {
+        if (entity instanceof Raccoon) {
+          entity.useWeapon();
+        }
+        if (entity instanceof Enemy) {
+          entity.advance();
+        }
+        if (entity instanceof Mob) {
+
+          //doCondition or other generics
+          if (entity.health <= 0) {
+            entityDeathHandler(entity);
+            if (entity instanceof Enemy) {
+              activeEnemies--;
+            }
+          }
+        }
+      });
+
+
+      await sleep(1000);
+    } while (activeEnemies > 0);
   };
 
 

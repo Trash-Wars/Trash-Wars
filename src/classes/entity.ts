@@ -144,34 +144,15 @@ export class SimpleBow extends Weapon {
       }
     });
     if (!enemyTile) return;
-    console.log(`Tile: ${origin} targeting tile: ${enemyTile.position}`)
-    console.log(`${parent.name} is attacking ${enemyTile.contents[0].name} with ${this.name}`);
-  }
-}
+    let solid: Mob | undefined;
+    if (enemyTile.contents.length !== 0) solid = enemyTile.contents.find(entity => entity.isSolid) as Mob;
+    // ^ Defines the first solid entity in adjacent tile
 
-
-
-export class GoldCrown extends Apparel {
-  constructor() {
-    super('Gold Crown', goldCrownIcon, "A powerful artefact that is said to grant the wearer increased strength and defense", 3)
-  }
-}
-
-export class GreenCrown extends Apparel {
-  constructor() {
-    super('Green Crown', greenCrownIcon, "A talisman that is said to grant the wearer increased magic powers and the ability to cast powerful spells.", 2)
-  }
-}
-
-export class wizardHatBlue extends Apparel {
-  constructor() {
-    super('Blue wizard Hat', wizardHatBlueIcon, "RAVENCLAW", 1)
-  }
-}
-
-export class wizardHatGreen extends Apparel {
-  constructor() {
-    super('Green wizard Hat', wizardHatGreenIcon, "SLYTHERIN", 1)
+    if (solid) {
+      console.log(`${this.name} is attacking ${solid.name}`);
+      solid.takeDamage(this.damage, parent);
+      return;
+    }// ^ attacks the solid if one was found
   }
 }
 
@@ -200,7 +181,7 @@ class TopHat extends Apparel {
   description = "an empty case"
 }
 
-class Mob extends Entity {
+export class Mob extends Entity {
   constructor(
     name: string,
     emoji: string,
@@ -213,9 +194,8 @@ class Mob extends Entity {
   takeDamage(damage: number, attacker: Entity | undefined): void {
     // ^ attacker is optional
     this.health = this.health - damage;
-    if(this.health >= 0) {
+    if (this.health >= 0) {
       console.log(`${this.name} died!`);
-      // call death function
     }
   }
 }
@@ -280,7 +260,7 @@ export class Enemy extends Mob {
 
   attack(target: Mob) {
     //play damage animation on target
-    if(target.team === this.team) return; // prevents team-killing and allows attacking neutral
+    if (target.team === this.team) return; // prevents team-killing and allows attacking neutral
     target.takeDamage(this.damage, this);
   };
 
