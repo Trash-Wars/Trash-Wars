@@ -1,4 +1,6 @@
 import axeIcon from '../assets/battle_axe1.png';
+import goblinIcon from '../assets/enemies/goblin_base.png';
+import goblinTankIcon from '../assets/enemies/goblin_shield.png';
 
 export class Entity {
   constructor(
@@ -216,7 +218,7 @@ export class Enemy extends Mob {
   ) {
     super(name, emoji, health);
     this.team = 'hostile';
-    this.className = 'enemy';
+    this.className = 'raccoon';
     this.idName = '';
     this.damage = damage;
   }
@@ -251,6 +253,26 @@ export class Enemy extends Mob {
     return this.moveToPosition(targetTile);
     // ^ move to tile if unoccupied
   };
+}
+
+export class GoblinBasic extends Enemy {
+  constructor(){
+    super('Goblin', goblinIcon, 10, 3);
+  }
+}
+export class GoblinTank extends Enemy {
+  constructor(){
+    super('Goblin Tank', goblinTankIcon, 15, 4);
+  }
+  takeDamage(damage: number, attacker: Entity | undefined): void {
+        const damageReduction = 3;
+        const damageAfterReduction = damage - damageReduction;
+        const damageTaken = damageAfterReduction >= 0 ? damageAfterReduction : 0;
+        this.health = this.health - damageTaken;
+        if (this.health >= 0) {
+          console.log(`${this.name} died!`);
+        }
+  }
 }
 
 export interface Tile {
