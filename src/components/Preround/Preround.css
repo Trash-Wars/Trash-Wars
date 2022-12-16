@@ -1,5 +1,4 @@
 .Preround {
-  padding: 1rem;
   background-image: url(../../assets/grey_dirt0.png);
   background-repeat: repeat;
   background-size: 128px, 128px;
@@ -7,6 +6,32 @@
   height: 100vh;
   width: 100vw;
   color: white;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.raccoon-modal {
+  position: relative;
+  height: 480px !important;
+  background-size: cover;
+  background-position: center;
+}
+
+.rm-section {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.rm-section, .raccoon-modal > div {
+  margin: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  z-index: 1;
+}
+
+.raccoon-modal > div {
+  width: 480 !important;
+  height: 480 !important;
 }
 
 .inventory-item {
@@ -54,4 +79,9 @@
 
 .dimmed {
   filter: brightness(40%);
+}
+
+.raccoon-name {
+  text-align: center;
+  font-size: 30px;
 }

@@ -12,7 +12,7 @@ export type UserOptionsContextProps = {
 };
 
 export const userOptionsInitialState: UserOptionsContextProps = {
-  userOptions: { music: true, soundfx: true, volume: 10 },
+  userOptions: { music: false, soundfx: false, volume: 10 },
   setUserOptions: () => {},
 };
 
