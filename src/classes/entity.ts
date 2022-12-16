@@ -128,12 +128,15 @@ class CoolShades extends Apparel {
   description = "an empty case"
 }
 
-class TopHat extends Apparel {
-  name = "Top Hat"
-  emoji = "https://via.placeholder.com/150"
-  //health = 2
-  armor = 1
-  description = "an empty case"
+export class TopHat extends Apparel {
+  constructor() {
+    super(
+      "Top Hat",
+      "https://via.placeholder.com/150",
+      "an empty case",
+      1
+      )
+  }
 }
 
 class Mob extends Entity {

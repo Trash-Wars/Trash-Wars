@@ -3,11 +3,15 @@ import { Raccoon } from "../../classes/entity";
 import { Apparel, Item, Weapon } from "../../classes/entity";
 import { PersistenceContext } from "../../context/PersistenceContext";
 import { ScreenContext, SCREEN_GAMEBOARD } from "../../context/ScreenContext";
-import { range } from "../../helpers/array";
+import { paginate, range } from "../../helpers/array";
 import useMousePosition from "../../hooks/useMousePosition";
-import './Preround.css'
+import './Preround.css';
 import raccoonIcon from '../../assets/doll.png';
-import todo from '../../assets/todo.png'
+import todo from '../../assets/todo.png';
+import Modal from 'react-bootstrap/Modal';
+import { portraits } from "../../assets/portrait/portraits";
+
+const ITEMS_PER_PAGE = 8
 
 // give this type to anything that should pass or use handleGrab
 type GrabSupported = {
@@ -80,10 +84,12 @@ const Preround = () => {
       </div>
       <div style={{display: "flex", justifyContent: "center"}}>
         <InventoryCarousel
-          handleGrab={handleGrab} grabbed={grabbed} />
+          handleGrab={handleGrab}
+          grabbed={grabbed} />
       </div>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <button
+          style={{color:"white"}}
           onClick={() => {
             setScreen!(SCREEN_GAMEBOARD);
           }} >
@@ -97,6 +103,8 @@ const Preround = () => {
 const InventoryCarousel = (props: GrabSupported) => {
   const { handleGrab, grabbed } = props;
   const { inventory } = useContext(PersistenceContext);
+
+  const [page, setPage] = useState(0)
 
   const modifyInventory: modifySlotFunc = (grabbed: Item | undefined, setGrabbed: setGrabFunc, clickedIndex?: number) => {
     if(grabbed) {
@@ -114,21 +122,23 @@ const InventoryCarousel = (props: GrabSupported) => {
     }
   }
 
+  const invBook = paginate(inventory.items, ITEMS_PER_PAGE)
+
   return (
     <div style={{ display: "flex" }}>
-      <img className="forward-back" src={todo} alt="back" />
-        {range(1,8).map((_, i) => (
+      <img onClick={() => setPage(page - 1)} className="forward-back" src={todo} alt="back" />
+        {range(1,ITEMS_PER_PAGE).map((_, i) => (
           <ItemSlot
-            dimmed={isDimmed(inventory.items[i])}
+            dimmed={isDimmed(invBook[page][i])}
             validItemInSlot={() => true} //all items welcome, obviously
             modifySlot={modifyInventory}
             key={i}
-            item={inventory.items[i]}
+            item={invBook[page][i]}
             className={`${i}`}
             handleGrab={handleGrab}
             grabbed={grabbed} />
         ))}
-      <img className="forward-back" src={todo} alt="forward" />
+      <img onClick={() => setPage(page + 1)} className="forward-back" src={todo} alt="forward" />
     </div>
   )
 }
@@ -213,6 +223,7 @@ const RaccoonSlot = (props: RaccoonSlotProps) => {
   }
 
   const modifyApparel: modifySlotFunc = (grabbed: Item | undefined, setGrabbed: setGrabFunc, clickedIndex?: number) => {
+
     if(!raccoon) {
       console.warn("attempted to give a nonexistant raccoon a hat");
       return;
@@ -253,6 +264,7 @@ const RaccoonSlot = (props: RaccoonSlotProps) => {
       {raccoon ? (
         <div>
           <img width={256} height={256} src={raccoonIcon} alt={raccoon.name} />
+          <div className="raccoon-name">{raccoon.name}</div>
           <ItemSlot
             validItemInSlot={validWeapon}
             dimmed={isDimmedWeapon(raccoon.weapon)}
@@ -271,10 +283,35 @@ const RaccoonSlot = (props: RaccoonSlotProps) => {
             item={raccoon.hat} />
         </div>
       ) : (
-        <div style={{textAlign: "center"}}>
-          Select a Raccoon
-        </div>
+        <EmptyRaccoonSlot />
       )}
+    </div>
+  )
+}
+
+const EmptyRaccoonSlot = () => {
+  
+  const {inventory} = useContext(PersistenceContext)
+  const [isOpen, setIsOpen] = useState(false);
+  const [raccIndex, setRaccIndex] = useState(0);
+  const {sidelineRaccoons} = inventory;
+
+  const possibleRaccoon = sidelineRaccoons[raccIndex];
+  const modalImage = portraits[raccIndex]
+
+  return (
+    <div className="raccoon-name">
+      <Modal
+        centered
+        show={isOpen}
+        onHide={() => setIsOpen(false)}>
+        <Modal.Body className="gold-modal raccoon-modal">
+          <img width={490} height={472} src={modalImage} alt="racc" style={{position: "absolute"}} />
+          <img src={todo} alt="img" />
+          <div className="rm-section"><h3>{possibleRaccoon.name}</h3></div>
+        </Modal.Body>
+      </Modal>
+      <button onClick={() => setIsOpen(!isOpen)}>Select a Raccoon</button>
     </div>
   )
 }
