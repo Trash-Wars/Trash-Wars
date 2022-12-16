@@ -1,4 +1,12 @@
 import axeIcon from '../assets/battle_axe1.png';
+import goldCrownIcon from '../assets/items/goldCrown.png'
+import greenCrownIcon from '../assets/items/greenCrown.png'
+import metalGlovesIcon from '../assets/items/metalGloves.png'
+import tickleMittensIcon from '../assets/items/tickleMittens.png'
+import wizardHatBlueIcon from '../assets/items/wizardHatBlue.png'
+import wizardHatGreenIcon from '../assets/items/wizardHatgreen.png'
+
+import simpleBowIcon from '../assets/items/longbow_1.png'
 
 export class Entity {
   constructor(
@@ -121,6 +129,36 @@ export class Axe extends Weapon {
   }
 }
 
+
+export class SimpleBow extends Weapon {
+  constructor() {
+    super('Simple bow', simpleBowIcon, 'Simple, yet deadly', 3, 3)
+  }
+  use(parent: Raccoon) {
+    const origin = parent.position;
+    if (!origin) return;
+    let enemyTile: Tile | undefined;
+    
+    parent.getAdjacentTiles()!.forEach((neighbor: Tile) => {
+      console.log(neighbor)
+      if (neighbor.position[0] === origin[0] + 1) {
+        enemyTile = neighbor;
+      }
+    });
+    if (!enemyTile) return;
+    let solid: Mob | undefined;
+    if (enemyTile.contents.length !== 0) solid = enemyTile.contents.find(entity => entity.isSolid) as Mob;
+    // ^ Defines the first solid entity in adjacent tile
+
+    if (solid) {
+      console.log(`${this.name} is attacking ${solid.name}`);
+      solid.takeDamage(this.damage, parent);
+      return;
+    }// ^ attacks the solid if one was found
+  }
+}
+
+
 export class SpentSoupCan extends Weapon {
   name = "Spent Soup Can"
   emoji = "https://via.placeholder.com/150"
@@ -158,7 +196,6 @@ export class Mob extends Entity {
     this.health = health;
   }
   health: number;
-
   takeDamage(damage: number, attacker: Entity | undefined): void {
     // ^ attacker is optional
     this.health = this.health - damage;
