@@ -1,8 +1,12 @@
+
 import React, { useContext, useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
+import { PersistenceContext } from '../../context/PersistenceContext';
+
 import { ScreenContext} from '../../context/ScreenContext'
 import { addScore } from '../../routes/routes';
 import './GameOver.css'
+
 
 type ScoreEntry = {
   _id: string,
@@ -15,6 +19,7 @@ type ScoreEntry = {
 
 const GameOver = () => {
   const {setScreen} =useContext(ScreenContext)
+
   const [scores, setScores] = useState<ScoreEntry[]>([]);
   const [isNewScore, setIsNewScore] = useState<boolean>(false);
   const [roundsWon, setRoundsWon] = useState<number>(0);
@@ -35,11 +40,13 @@ const GameOver = () => {
     fetchScores();
   }, [roundsWon, scores]);
 
+  const {rounds}  = useContext(PersistenceContext)
+
   return (
     <div id="GameOverContainer">
       <div id = "readables">
         <h1 id= "GameOver">Game Over 💀</h1>
-        {isNewScore || roundsWon === 0 ? null : <p id = "GameOver">YOU SURVIVED {roundsWon} ROUNDS</p>}
+        {isNewScore || roundsWon === 0 ? null : <p id = "GameOver">YOU SURVIVED {rounds} ROUNDS</p>}
         <p id = "GameOver">HIGH SCORES</p>
         <table>
           <thead>
@@ -61,6 +68,7 @@ const GameOver = () => {
             })}
           </tbody>
         </table>
+
         <button id = "button" onClick={() =>setScreen!(0)}>Return to Menu</button>
         <ScoreModal isNewScore={isNewScore} roundsWon={roundsWon} setRoundsWon={setRoundsWon}/>
       </div>
