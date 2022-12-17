@@ -23,6 +23,10 @@ import arbalestIcon from '../assets/arbalest_2.png'
 import goblinIcon from '../assets/enemies/goblin_base.png';
 import goblinTankIcon from '../assets/enemies/goblin_shield.png';
 import gnomeWizardIcon from '../assets/enemies/gnome.png';
+import pulsatingLumpIcon from '../assets/enemies/pulsating_lump.png'
+import ravenIcon from '../assets/enemies/raven.png'
+import skeletonIcon from '../assets/enemies/skeletal_warrior_new.png'
+import wraithIcon from '../assets/enemies/wraith.png'
 
 export class Entity {
   constructor(
@@ -291,13 +295,13 @@ export class Arbalest extends Weapon {
 
 export class JesterHat extends Apparel {
   constructor() {
-    super("Jester Cap", jesterIcon, "God gives his silliest battles to his most tragic of clowns", 12)
+    super("Jester Cap", jesterIcon, "God gives his silliest battles to his most tragic of clowns", 6)
   }
 }
 
 export class GoldCrown extends Apparel {
   constructor() {
-    super("Royal Crown", goldCrownIcon, "A very regal crown", 2)
+    super("Royal Crown", goldCrownIcon, "A very regal crown", 1)
   }
 }
 
@@ -307,7 +311,7 @@ export class KnightHelmet extends Apparel {
       "Knight Helmet",
       knightHelmetIcon,
       "an knight's helmet",
-      7
+      4
     )
   }
 }
@@ -425,7 +429,7 @@ export class GoblinBasic extends Enemy {
 }
 export class GoblinTank extends Enemy {
   constructor() {
-    super('Goblin Tank', goblinTankIcon, 15, 4, 'goblin, but in a tank');
+    super('Goblin Tank', goblinTankIcon, 15, 5, 'goblin, but in a tank');
   }
   takeDamage(damage: number, attacker: Entity | undefined): void {
     const damageReduction = 3;
@@ -438,6 +442,51 @@ export class GoblinTank extends Enemy {
   }
 }
 
+export class PulsatingLump extends Enemy {
+  constructor() {
+    super('Pulsating Lump', pulsatingLumpIcon, 20, 7, 'A lump of flesh')
+  }
+  attack(target: Mob) {
+    //play damage animation on target
+    target.takeDamage(this.damage, this);
+  }
+  takeDamage(damage: number, attacker: Entity | undefined): void {
+    const damageReduction = 3;
+    const damageAfterReduction = damage - damageReduction;
+    const damageTaken = damageAfterReduction >= 0 ? damageAfterReduction : 0;
+    this.health = this.health - damageTaken;
+    if (this.health >= 0) {
+      console.log(`${this.name} died!`);
+    }
+  }
+}
+
+export class Raven extends Enemy {
+  constructor() {
+    super('Raven', ravenIcon, 7, 4, 'A bird')
+  }
+}
+
+export class Wraith extends Enemy {
+  constructor() {
+    super('Wraith', wraithIcon, 12, 6, 'An angry ghost')
+  }
+  takeDamage(damage: number, attacker: Entity | undefined): void {
+    const damageReduction = 4;
+    const damageAfterReduction = damage - damageReduction;
+    const damageTaken = damageAfterReduction >= 0 ? damageAfterReduction : 0;
+    this.health = this.health - damageTaken;
+    if (this.health >= 0) {
+      console.log(`${this.name} died!`);
+    }
+  }
+}
+
+export class Skeleton extends Enemy {
+  constructor() {
+    super('Skeleton', skeletonIcon, 15, 5, 'BONES')
+  }
+}
 export class GnomeWizard extends Enemy {
   constructor() {
     super('Gnome Wizard', gnomeWizardIcon, 5, 2, '');
