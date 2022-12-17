@@ -12,6 +12,7 @@ import jesterIcon from '../assets/items/cap_jester.png'
 /////////////////////////////
 
 import simpleBowIcon from '../assets/items/longbow_1.png'
+import { Tile } from './shared-types';
 import axeIcon from '../assets/battle_axe1.png';
 import katanaIcon from '../assets/katana.png'
 import scytheIcon from '../assets/scythe_1_new.png'
