@@ -11,8 +11,12 @@ export class Gameboard {
   currentEntities: Entity[] = [];
   tiles: Tile[] = [];
   rerender?: () => void;
+
   setScreen?: (newScreen: 0 | 1 | 2 | 3) => void;
   rounds?: number;
+
+  roundInProgress: boolean = false;
+
 
   constructor(readonly rows: number, readonly cols: number) {
     this.generateGameBoard();
@@ -20,7 +24,11 @@ export class Gameboard {
     console.log('Setting interval')
     setInterval(() => {
       /// make special return constants that are handled differently in a switch case
-      const shouldRun = this.endCondition()
+      const shouldRun = this.shouldTick()
+      if(!shouldRun) {
+        this.roundInProgress = false;
+        return;
+      }
       if(shouldRun) {
         this.update();
         if(this.rerender) {
@@ -80,11 +88,13 @@ export class Gameboard {
   
     const spawnTile = this.findEnemySpawnTile(); // find spawns
   
+
     if (this.enemyQueue.length > 0 && spawnTile) {
       const enemy = this.enemyQueue.pop()!// not queue
       this.moveEntity(enemy, spawnTile);// moveEntity
       this.currentEntities.push(enemy)
     };
+
 
     this.currentEntities.forEach(entity => {
       if (entity instanceof Raccoon) {
@@ -99,6 +109,14 @@ export class Gameboard {
         this.entityDeathHandler(entity);// entityDeath
       }
     });
+    
+    const remainingSpawns = [...this.enemyQueue]
+    if (remainingSpawns.length > 0 && spawnTile) {
+      const enemy = remainingSpawns.pop()!// not queue
+      this.moveEntity(enemy, spawnTile);// moveEntity
+      this.currentEntities.push(enemy)
+    };
+
   }
 
   findEnemySpawnTile = (): [number, number] | undefined => {
@@ -123,16 +141,12 @@ export class Gameboard {
   }
   
   firstRender = (raccoonTeam: Raccoon[]) => {
-    if (this.currentEntities.length > 0) {
-      return;
-    }
     let counter = 0;
     for (const raccoon of raccoonTeam) {
       this.currentEntities.push(raccoon)
       
       this.moveEntity(raccoon, [0, counter]);
       counter++;
-      console.log('Raccoon coords', raccoon.position)
     }
   }
 
@@ -146,8 +160,12 @@ export class Gameboard {
     }, 1400)
   }
 
+
   endCondition = () => {
-    console.log('pog')
+  shouldTick = () => {
+    if(!this.roundInProgress) {
+      return false; //round not started
+    }
     if(this.enemyQueue) {
       return true; //round not over
     }
