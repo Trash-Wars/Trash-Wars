@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Entity } from './classes/entity';
-import { ScreenContext, screenInitialState, SCREEN_GAMEBOARD } from './context/ScreenContext'
+import { ScreenContext, screenInitialState } from './context/ScreenContext'
 import { PersistenceContext, persistenceInitialState } from './context/PersistenceContext'
 import { UserOptions, UserOptionsContext, userOptionsInitialState } from './context/OptionsContext';
 import './App.css';
