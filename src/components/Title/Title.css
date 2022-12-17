@@ -50,3 +50,26 @@
     transform: translate3d(4px, 0, 0) scale(1.05);
   }
 }
+
+.title-img {
+  animation: wibblewobble 20s linear infinite alternate;
+  image-rendering: crisp-edges;
+}
+
+@keyframes wibblewobble {
+  0%, 25% {
+    transform: scale(0.9);
+  }
+  25%, 50% {
+    transform: scale(0.95);
+  }
+  50%, 75% {
+    transform: scale(1);
+  }
+  75%, 100% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}
