@@ -19,10 +19,10 @@ export const persistenceInitialState: PersistenceStyle = {
   raccoonTeam: [],
   inventory: {
     sidelineRaccoons: [
-      new Raccoon("Hugo", racc, 10),
-      new Raccoon("Zayah", racc, 10),
-      new Raccoon("Jim", racc, 10),
-      new Raccoon("Luis", racc, 10),
+      new Raccoon("Hugo", racc, 500, "Bill Gates' child"),
+      new Raccoon("Zayah", racc, 500, 'waterproof'),
+      new Raccoon("Jim", racc, 500, 'bendy'),
+      new Raccoon("Luis", racc, 500, 'laughy'),
     ],
     items: [new Axe(), new TopHat(), new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),],
   },
