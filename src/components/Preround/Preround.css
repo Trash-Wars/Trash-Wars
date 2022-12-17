@@ -73,6 +73,26 @@
   left: 78px;
 }
 
+.raccSelectButton{
+  background-color:transparent;
+  border: 0;
+  color: white;
+  animation: shimmer 2s linear infinite
+}
+
+@keyframes shimmer {
+  0% {
+      color: transparent;
+  }
+  50% {
+      
+      color: white;
+  }
+  100% {
+      color: transparent;
+  }
+}
+
 .weapon-slot {
   position: relative;
   bottom: 150px;
@@ -95,7 +115,7 @@
 }
 
 #button {
-  background-color: black;
+  background-color: black !important;
   border: none;
   color: white;
   padding: 15px 32px;
@@ -105,12 +125,14 @@
   border-radius: 10px;
   transition: color 0.3s;
   animation: shimmer 1s linear infinite;
+  /* border-radius: 20%; */
 }
 
 #button:hover {
-  /* background-color: #b00202; */
+  background-color: #b00202;
   transition: color 1s;
-  background-color: black;
+  background-color: white;
+  color:black
 }
 
 @keyframes shimmer {
