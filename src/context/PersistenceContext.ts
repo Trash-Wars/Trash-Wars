@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { Entity, Raccoon, TopHat } from '../classes/entity';
+import { Entity, Raccoon } from '../classes/entity';
 import { Axe, Item } from '../classes/entity';
 import racc from '../assets/racc.png'
 
@@ -24,7 +24,7 @@ export const persistenceInitialState: PersistenceStyle = {
   ],
   inventory: {
     sidelineRaccoons: [],
-    items: [new Axe(), new TopHat(), new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),],
+    items: [new Axe(), new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),new Axe(),],
   },
 };
 export const PersistenceContext = createContext<PersistenceStyle>(persistenceInitialState)

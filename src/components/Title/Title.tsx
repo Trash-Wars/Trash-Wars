@@ -3,6 +3,7 @@ import { ScreenContext } from "../../context/ScreenContext";
 import { useOptions } from "../../hooks/useOptions/useOptions";
 import { useSound } from "../../hooks/useSound";
 import "./Title.css";
+import titleImg from '../../assets/ui/title.png';
 const buttonSelect = require("../../assets/sounds/buttonSelect.wav");
 
 function Title() {
@@ -26,9 +27,7 @@ function Title() {
 
   return (
     <div className="Title">
-      <div>
-        <h1>Trash Wars</h1>
-      </div>
+      <img src={titleImg} alt="Trash Wars" className="title-img" />
       <div
         style={{
           display: "flex",
