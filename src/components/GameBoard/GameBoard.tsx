@@ -70,8 +70,8 @@ const Board = () => {
   // button should toggle isRunning
   const startRound = async () => {
     // TODO: difficulty should be math on the current round with a multiplier. In other words, round# * 3 = enemy count
-    const enemies = board.generateEnemies(5);
-    console.log(enemies.length);
+    board.generateEnemies(5);
+    board.roundInProgress = true;
   };
 
   return (
@@ -83,7 +83,7 @@ const Board = () => {
           key={i}
           className={entity.className}
           onClick={() => board.entityDeathHandler(entity)}
-          style={{ ...entitySize, ...getPosValues(entity) }}
+          style={{ ...entitySize, ...getPosValues(entity), imageRendering: "pixelated" }}
           src={entity.emoji}
           alt={entity.name} />
       ))}

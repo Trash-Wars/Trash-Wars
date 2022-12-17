@@ -1,11 +1,6 @@
 import { allTileBackgrounds } from "../assets/grass/allTiles";
-import { Enemy, Entity, Mob, Raccoon } from "./entity";
+import { Enemy, Entity, GnomeWizard, GoblinBasic, Mob, Raccoon } from "./entity";
 import { Tile } from "./shared-types";
-import coconut from '../assets/coconut.jpg'
-import hedgehog from '../assets/hedgehog.png'
-import grumpy from '../assets/grumpy.jpeg'
-import tiger from '../assets/tigr.png'
-import bread from '../assets/bread.gif'
 
 export function comparePos(a: [number, number], b: [number, number]) {
   return a[0] === b[0] && a[1] === b[1];
@@ -17,13 +12,18 @@ export class Gameboard {
   currentEntities: Entity[] = [];
   tiles: Tile[] = [];
   rerender?: () => void;
+  roundInProgress: boolean = false;
 
   constructor(readonly rows: number, readonly cols: number) {
     this.generateGameBoard();
     // start ticking
     setInterval(() => {
       /// make special return constants that are handled differently in a switch case
-      const shouldRun = this.endCondition()
+      const shouldRun = this.shouldTick()
+      if(!shouldRun) {
+        this.roundInProgress = false;
+        return;
+      }
       if(shouldRun) {
         this.update();
         if(this.rerender) {
@@ -83,13 +83,6 @@ export class Gameboard {
   
     const spawnTile = this.findEnemySpawnTile(); // find spawns
   
-    const remainingSpawns = [...this.enemyQueue]
-    if (remainingSpawns.length > 0 && spawnTile) {
-      const enemy = remainingSpawns.pop()!// not queue
-      this.moveEntity(enemy, spawnTile);// moveEntity
-      this.currentEntities.push(enemy)
-    };
-
     this.currentEntities.forEach(entity => {
       if (entity instanceof Raccoon) {
         console.log(`${entity.name} is a Raccoon and uses weapon`);
@@ -105,6 +98,14 @@ export class Gameboard {
         this.entityDeathHandler(entity);// entityDeath
       }
     });
+    
+    const remainingSpawns = [...this.enemyQueue]
+    if (remainingSpawns.length > 0 && spawnTile) {
+      const enemy = remainingSpawns.pop()!// not queue
+      this.moveEntity(enemy, spawnTile);// moveEntity
+      this.currentEntities.push(enemy)
+    };
+
   }
 
   findEnemySpawnTile = (): [number, number] | undefined => {
@@ -130,16 +131,12 @@ export class Gameboard {
   }
   
   firstRender = (raccoonTeam: Raccoon[]) => {
-    if (this.currentEntities.length > 0) {
-      return;
-    }
     let counter = 0;
     for (const raccoon of raccoonTeam) {
       this.currentEntities.push(raccoon)
       
       this.moveEntity(raccoon, [0, counter]);
       counter++;
-      console.log('Raccoon coords', raccoon.position)
     }
   }
 
@@ -152,7 +149,10 @@ export class Gameboard {
     }, 1400)
   }
 
-  endCondition = () => {
+  shouldTick = () => {
+    if(!this.roundInProgress) {
+      return false; //round not started
+    }
     if(this.enemyQueue) {
       return true; //round not over
     }
@@ -171,11 +171,7 @@ export class Gameboard {
     let enemySpawns: Enemy[] = [];
     // ^ defines a stack/queue of enemies to place onto the board
     const possibleEnemies: Enemy[] = [
-      new Enemy('Tiger', tiger, 10, 5, "tiger desc"),
-      new Enemy('Coconut', coconut, 10, 5, "coco desc"),
-      new Enemy('Bread', bread, 10, 5, "bread desc"),
-      new Enemy('Hedgehog', hedgehog, 10, 5, "hedge desc"),
-      new Enemy('Grumpy', grumpy, 10, 5, "grump desc"),
+      new GoblinBasic()
     ]; // TODO: write enemy types for this list
     // ^ this could be automatically generated later based off subclasses, and possibly a difficulty rating
 
