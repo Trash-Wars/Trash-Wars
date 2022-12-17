@@ -12,26 +12,33 @@
 }
 
 .raccoon-modal {
+  display: flex;
+  justify-content: center;
   position: relative;
   height: 480px !important;
   background-size: cover;
   background-position: center;
+  padding: 0px !important;
 }
 
 .rm-section {
   background: rgba(0, 0, 0, 0.8);
+  width: 200px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
 }
 
 .rm-section, .raccoon-modal > div {
-  margin: 0.5rem;
+  /* margin: 0.5rem; */
   padding: 0.5rem;
   border-radius: 4px;
   z-index: 1;
 }
 
 .raccoon-modal > div {
-  width: 480 !important;
-  height: 480 !important;
+  /* width: 480 !important;
+  height: 480 !important; */
 }
 
 .inventory-item {
@@ -54,6 +61,7 @@
   height: 256px;
   margin: 1rem;
 }
+
 
 .raccoon-entity {
   background-image: url(../../assets/doll.png);
@@ -84,4 +92,36 @@
 .raccoon-name {
   text-align: center;
   font-size: 30px;
+}
+
+#button {
+  background-color: black;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 24px;
+  border-radius: 10px;
+  transition: color 0.3s;
+  animation: shimmer 1s linear infinite;
+}
+
+#button:hover {
+  /* background-color: #b00202; */
+  transition: color 1s;
+  background-color: black;
+}
+
+@keyframes shimmer {
+  0% {
+      color: transparent;
+  }
+  50% {
+      
+      color: white;
+  }
+  100% {
+      color: transparent;
+  }
 }

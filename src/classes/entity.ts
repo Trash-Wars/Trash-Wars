@@ -122,6 +122,7 @@ export class Axe extends Weapon {
     if (!origin) return;
     let enemyTile: Tile | undefined;
     parent.getAdjacentTiles()!.forEach((neighbor: Tile) => {
+
       if (neighbor.position[0] === origin[0] + 1) {
         enemyTile = neighbor;
       }
@@ -139,7 +140,7 @@ export class Axe extends Weapon {
   }
 }
 
-
+//getTile(pos: [x,y])
 export class SimpleBow extends Weapon {
   constructor() {
     super('Simple bow', simpleBowIcon, 'Simple, yet deadly', 3, 3)
@@ -148,7 +149,6 @@ export class SimpleBow extends Weapon {
     const origin = parent.position;
     if (!origin) return;
     let enemyTile: Tile | undefined;
-
     parent.getAdjacentTiles()!.forEach((neighbor: Tile) => {
       console.log(neighbor)
       if (neighbor.position[0] === origin[0] + 1) {
@@ -197,15 +197,13 @@ export class TopHat extends Apparel {
 }
 
 export class Mob extends Entity {
-  constructor(
-    name: string,
-    emoji: string,
-    health: number,
-  ) {
+  constructor(name: string, emoji: string, health: number, description: string | undefined) {
     super(name, emoji)
     this.health = health;
+    this.description = description
   }
   health: number;
+  description: string | undefined
   takeDamage(damage: number, attacker: Entity | undefined): void {
     // ^ attacker is optional
     if (this.health <= 0) return;
@@ -218,13 +216,15 @@ export class Raccoon extends Mob {
     name: string,
     emoji: string,
     health: number,
+    description: string
   ) {
-    super(name, emoji, health);
+    super(name, emoji, health, description);
     this.team = 'friendly';
     this.className = 'raccoon';
     this.idName = '';
+    // this.description=description
   }
-  description: 'string' | undefined;
+  // description: string | undefined;
   hat: Apparel | undefined;
   weapon: Weapon | undefined;
 
@@ -261,8 +261,9 @@ export class Enemy extends Mob {
     emoji: string,
     health: number,
     damage: number,
+    description: string,
   ) {
-    super(name, emoji, health);
+    super(name, emoji, health, description);
     this.team = 'hostile';
     this.className = 'raccoon';
     this.idName = '';
@@ -303,12 +304,12 @@ export class Enemy extends Mob {
 
 export class GoblinBasic extends Enemy {
   constructor() {
-    super('Goblin', goblinIcon, 10, 3);
+    super('Goblin', goblinIcon, 10, 3, 'goblin description');
   }
 }
 export class GoblinTank extends Enemy {
   constructor() {
-    super('Goblin Tank', goblinTankIcon, 15, 4);
+    super('Goblin Tank', goblinTankIcon, 15, 4, 'goblin, but in a tank');
   }
   takeDamage(damage: number, attacker: Entity | undefined): void {
     const damageReduction = 3;
@@ -323,7 +324,7 @@ export class GoblinTank extends Enemy {
 
 export class GnomeWizard extends Enemy {
   constructor() {
-    super('Gnome Wizard', gnomeWizardIcon, 5, 2);
+    super('Gnome Wizard', gnomeWizardIcon, 5, 2, '');
   };
 
   getDiagonal(origin: Tile): Tile {
@@ -392,6 +393,15 @@ export interface Tile {
 
 export function comparePos(a: [number, number], b: [number, number]) {
   return a[0] === b[0] && a[1] === b[1];
+}
+
+export function getTileFunction(pos: [number, number], gameboard: Gameboard): Tile | undefined {
+  for (const tile of gameboard.tiles) {
+    if (comparePos(pos, tile.position)) {
+      return tile;
+    }
+  }
+  return undefined;
 }
 
 export class Gameboard {

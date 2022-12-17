@@ -146,11 +146,11 @@ const Board = () => {
     let enemySpawns: Enemy[] = [];
     // ^ defines a stack/queue of enemies to place onto the board
     const possibleEnemies: Enemy[] = [
-      new Enemy('Tiger', tiger, 10, 5),
-      new Enemy('Coconut', coconut, 10, 5),
-      new Enemy('Bread', bread, 10, 5),
-      new Enemy('Hedgehog', hedgehog, 10, 5),
-      new Enemy('Grumpy', grumpy, 10, 5),
+      new Enemy('Tiger', tiger, 10, 5, 'tiger description'),
+      new Enemy('Coconut', coconut, 10, 5, 'Coconut description'),
+      new Enemy('Bread', bread, 10, 5, 'bread description'),
+      new Enemy('Hedgehog', hedgehog, 10, 5, 'hedgehog discription'),
+      new Enemy('Grumpy', grumpy, 10, 5, 'grumpy description'),
     ]; // TODO: write enemy types for this list
     // ^ this could be automatically generated later based off subclasses, and possibly a difficulty rating
 
@@ -245,7 +245,7 @@ const Board = () => {
             <>
               <div className="tile" style={{
                 ...tileSize,
-                backgroundImage: `url('${tileBackgrounds[(24 - row - col)]}')`
+                backgroundImage: `url('${tileBackgrounds[Math.round(Math.random()*8)]}')`
               }} key={row}>
                 {row}, {col},
               </div>

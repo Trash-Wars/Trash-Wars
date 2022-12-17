@@ -10,6 +10,7 @@ import raccoonIcon from '../../assets/doll.png';
 import todo from '../../assets/todo.png';
 import Modal from 'react-bootstrap/Modal';
 import { portraits } from "../../assets/portrait/portraits";
+import { url } from "inspector";
 
 const ITEMS_PER_PAGE = 8
 
@@ -103,7 +104,6 @@ const Preround = () => {
 const InventoryCarousel = (props: GrabSupported) => {
   const { handleGrab, grabbed } = props;
   const { inventory } = useContext(PersistenceContext);
-
   const [page, setPage] = useState(0)
 
   const modifyInventory: modifySlotFunc = (grabbed: Item | undefined, setGrabbed: setGrabFunc, clickedIndex?: number) => {
@@ -299,17 +299,39 @@ const EmptyRaccoonSlot = () => {
   const possibleRaccoon = sidelineRaccoons[raccIndex];
   const modalImage = portraits[raccIndex]
 
+ const activeRaccoonHandler = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>, newRaccoon:Raccoon) => {
+  console.log(newRaccoon)
+  }
+  
   return (
     <div className="raccoon-name">
       <Modal
+        
         centered
         show={isOpen}
         onHide={() => setIsOpen(false)}>
-        <Modal.Body className="gold-modal raccoon-modal">
-          <img width={490} height={472} src={modalImage} alt="racc" style={{position: "absolute"}} />
-          <img src={todo} alt="img" />
-          <div className="rm-section"><h3>{possibleRaccoon.name}</h3></div>
+        <Modal.Body className="gold-modal raccoon-modal"
+        style = {{
+          backgroundImage: `url(${modalImage})`
+        }}
+        >
+          <div>
+            
+          </div>
+          <div className="rm-section"><h3>{possibleRaccoon.name}</h3>
+          <p>
+            HI{possibleRaccoon!.description}
+          </p>
+          <p>
+            Health:{possibleRaccoon.health}
+          </p>
+          
+          </div>
+          
         </Modal.Body>
+        <button id = 'button'
+        onClick = {(e)=> activeRaccoonHandler(e, possibleRaccoon)}
+        >Add to Team</button>
       </Modal>
       <button onClick={() => setIsOpen(!isOpen)}>Select a Raccoon</button>
     </div>
