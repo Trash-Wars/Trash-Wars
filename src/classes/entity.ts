@@ -27,6 +27,8 @@ import pulsatingLumpIcon from '../assets/enemies/pulsating_lump.png'
 import ravenIcon from '../assets/enemies/raven.png'
 import skeletonIcon from '../assets/enemies/skeletal_warrior_new.png'
 import wraithIcon from '../assets/enemies/wraith.png'
+import impIcon from '../assets/enemies/imp.png'
+import devilIcon from '../assets/enemies/red_devil_new.png'
 
 export class Entity {
   constructor(
@@ -501,7 +503,7 @@ export class GnomeWizard extends Enemy {
     // ^ finds the next tile forward
     let coinflip: Tile[] = [];
     hostTile.edges.forEach((neighbor: Tile) => {
-      if(neighbor) {
+      if (neighbor) {
         const hasSolid: Entity | undefined = neighbor.contents.find(entity => entity.isSolid)
         if (neighbor.position[1] === hostTile.position[1] - 1 && !hasSolid) coinflip.push(neighbor);
         if (neighbor.position[1] === hostTile.position[1] + 1 && !hasSolid) coinflip.push(neighbor);
@@ -548,6 +550,108 @@ export class GnomeWizard extends Enemy {
     }
     // ^ attacks the solid if one was found
     return;
+    // ^ move to tile if unoccupied
+  };
+}
+
+export class Imp extends Enemy {
+  constructor() {
+    super('Imp', impIcon, 8, 6, 'A fiery fiend')
+  }
+  advance(): this | undefined {
+    if (!this.tile) return;
+    let movementTile: Tile | undefined;
+    // ^ Finds diagonal tile or returns its own tile
+    this.getAdjacentTiles()!.forEach((neighbor: Tile) => {
+      if (neighbor.position[0] === this.position![0] - 1) movementTile = neighbor;
+    });
+    if (movementTile && !movementTile.contents.find(entity => entity.isSolid)) {
+      this.moveToPosition(movementTile);
+    };
+    let solid: Entity | undefined = undefined;
+    let stack = [movementTile];
+    while (stack.length > 0) {
+      let current = stack.pop()!;
+      let held: Entity | undefined;
+      current.edges.forEach((neighbor: Tile) => {
+        const left = current.position[0] - 1
+        if (neighbor.position[0] === left) {
+          const found: Entity | undefined = neighbor.contents.find(entity => entity.isSolid);
+          if (found) {
+            held = found;
+          } else {
+            stack.push(neighbor);
+          }
+        }
+      });
+      if (held) {
+        solid = held;
+        break;
+      }
+    }
+    if (!solid) return;
+    // this should be game-loss as the Gnome shoots your trash
+    if (solid instanceof Mob && solid.team !== this.team) {
+      solid.takeDamage(this.damage, this);
+    }
+    // ^ attacks the solid if one was found
+    return;
+    // ^ move to tile if unoccupied
+  };
+}
+
+export class Devil extends Enemy {
+  constructor() {
+    super('Devil', devilIcon, 25, 6, 'A greater fiend')
+  }
+  damageReduction = 2;
+  attack(target: Mob) {
+    //play damage animation on target
+    target.takeDamage(this.damage, this);
+    if (target.health >= 0) {
+      this.damageReduction++;
+      this.damage++;
+      this.health = this.health + 2;
+    }
+  }
+  takeDamage(damage: number, attacker: Entity | undefined): void {
+    const damageReduction = this.damageReduction;
+    const damageAfterReduction = damage - damageReduction;
+    const damageTaken = damageAfterReduction >= 0 ? damageAfterReduction : 0;
+    this.health = this.health - damageTaken;
+    if (this.health >= 0) {
+      console.log(`${this.name} died!`);
+    }
+  }
+  advance(): this | undefined {
+    if (!this.position) return;
+    let movementTile: Tile | undefined;
+    this.getAdjacentTiles()!.forEach((neighbor: Tile) => {
+      if (neighbor.position[0] === this.position![0] - 1) movementTile = neighbor;
+    });
+    if (movementTile && movementTile.contents.find(entity => entity.isSolid)) this.moveToPosition(movementTile);
+    const hitList: Entity[] = [];
+    const diagQueue: Tile[] = [];
+    this.getAdjacentTiles()!.forEach((neighbor: Tile) => {
+      if (neighbor) {
+        const found = neighbor.contents.find(entity => entity.isSolid);
+        if (found) hitList.push(found);
+        if (neighbor.position[0] === this.position![0] - 1 || neighbor.position[0] === this.position![0] + 1) diagQueue.push(neighbor);
+      }
+    });
+    diagQueue.forEach((cardinal: Tile) => {
+      cardinal.edges.forEach((neighbor) => {
+        if (neighbor && (neighbor.position[1] === cardinal.position[1] + 1 || neighbor.position[1] === cardinal.position[1] - 1)) {
+          const found = neighbor.contents.find(entity => entity.isSolid);
+          if (found) hitList.push(found);
+        }
+      })
+    })
+    // ^ Defines the first solid entity in adjacent tile
+
+    hitList.forEach(entity => {
+      if (entity instanceof Mob) this.attack(entity);
+    });
     // ^ move to tile if unoccupied
   };
 }
