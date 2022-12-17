@@ -6,11 +6,17 @@ import metalGlovesIcon from '../assets/items/metalGloves.png'
 import tickleMittensIcon from '../assets/items/tickleMittens.png'
 import wizardHatBlueIcon from '../assets/items/wizardHatBlue.png'
 import wizardHatGreenIcon from '../assets/items/wizardHatgreen.png'
+import knightHelmetIcon from '../assets/items/helmet_5.png'
+import jesterIcon from '../assets/items/cap_jester.png'
 
 /////////////////////////////
 
 import simpleBowIcon from '../assets/items/longbow_1.png'
 import axeIcon from '../assets/battle_axe1.png';
+import katanaIcon from '../assets/katana.png'
+import scytheIcon from '../assets/scythe_1_new.png'
+import spearIcon from '../assets/spear_1.png'
+import arbalestIcon from '../assets/arbalest_2.png'
 
 /////////////////////////////
 
@@ -108,90 +114,200 @@ export class Weapon extends Item {
   attackSpeed: number;
 
   use(parent: Raccoon) {
-    console.log(`${this.name} deals ${this.damage} damage ${this.attackSpeed} times. Used by ${parent.name}`);
+    const origin = parent.position;
+    if (!origin) return;
+    let enemyTile: Tile | undefined;
+    parent.getAdjacentTiles()!.forEach((neighbor: Tile) => {
+
+      if (neighbor.position[0] === origin[0] + 1) {
+        enemyTile = neighbor;
+      }
+    });
+    if (!enemyTile) return;
+    let solid: Mob | undefined;
+    if (enemyTile.contents.length !== 0) solid = enemyTile.contents.find(entity => entity.isSolid) as Mob;
+    // ^ Defines the first solid entity in adjacent tile
+
+    if (solid) {
+      console.log(`${this.name} is attacking ${solid.name}`);
+      this.dealDamage(solid, parent);
+      return;
+    }// ^ attacks the solid if one was found
+  }
+
+  dealDamage(target: Mob, parent: Raccoon) {
+    for (let i = 0; i < this.attackSpeed; i++) {
+      target.takeDamage(this.damage, parent);
+    }
   }
 }
 
 export class Axe extends Weapon {
   constructor() {
-    super('Axe', axeIcon, 'An axe', 5, 4)
-  }
-
-  use(parent: Raccoon) {
-    const origin = parent.position;
-    if (!origin) return;
-    let enemyTile: Tile | undefined;
-    parent.getAdjacentTiles()!.forEach((neighbor: Tile) => {
-
-      if (neighbor.position[0] === origin[0] + 1) {
-        enemyTile = neighbor;
-      }
-    });
-    if (!enemyTile) return;
-    let solid: Mob | undefined;
-    if (enemyTile.contents.length !== 0) solid = enemyTile.contents.find(entity => entity.isSolid) as Mob;
-    // ^ Defines the first solid entity in adjacent tile
-
-    if (solid) {
-      console.log(`${this.name} is attacking ${solid.name}`);
-      solid.takeDamage(this.damage, parent);
-      return;
-    }// ^ attacks the solid if one was found
+    super('Axe', axeIcon, 'An axe', 9, 1)
   }
 }
 
-//getTile(pos: [x,y])
+export class Katana extends Weapon {
+  constructor() {
+    super('Katana', katanaIcon, 'Folded one thousand times', 5, 2);
+  }
+}
+
+export class Scythe extends Weapon {
+  constructor() {
+    super('Scythe', scytheIcon, `Don't fear the reaper`, 4, 1);
+  }
+  use(parent: Raccoon) {
+    const origin = parent.position;
+    const hitList: Tile[] = [];
+    if (!origin) return;
+    let targetTile: Tile | undefined;
+    parent.getAdjacentTiles()!.forEach((neighbor: Tile) => {
+
+      if (neighbor.position[0] === origin[0] + 1) {
+        targetTile = neighbor;
+        hitList.push(neighbor);
+      }
+    });
+    if (!targetTile) return;
+    targetTile.edges.forEach((neighbor: Tile) => {
+      if (neighbor.position[1] === targetTile!.position[1] - 1) hitList.push(neighbor);
+      if (neighbor.position[1] === targetTile!.position[1] + 1) hitList.push(neighbor);
+    });
+    //let solid: Mob | undefined;
+    //if (enemyTile.contents.length !== 0) solid = enemyTile.contents.find(entity => entity.isSolid) as Mob;
+    // ^ Defines the first solid entity in adjacent tile
+    hitList.forEach((tile: Tile) => {
+      const target = tile.contents.find(entity => entity.isSolid);
+      if (target && target instanceof Mob) {
+        console.log(`${this.name} is attacking ${target.name}`);
+        this.dealDamage(target, parent)
+      };
+    });// ^ attacks the solid if one was found
+  }
+}
+
+export class Spear extends Weapon {
+  constructor() {
+    super('Spear', spearIcon, `It's pointy!`, 4, 2)
+  }
+  use(parent: Raccoon) {
+    const origin = parent.position;
+    const hitList: Tile[] = [];
+    if (!origin) return;
+    let targetTile: Tile | undefined;
+    parent.getAdjacentTiles()!.forEach((neighbor: Tile) => {
+
+      if (neighbor.position[0] === origin[0] + 1) {
+        targetTile = neighbor;
+        hitList.push(neighbor);
+      }
+    });
+    if (!targetTile) return;
+    targetTile.edges.forEach((neighbor: Tile) => {
+      if (neighbor.position[1] === targetTile!.position[0] + 1) hitList.push(neighbor);
+    });
+    //let solid: Mob | undefined;
+    //if (enemyTile.contents.length !== 0) solid = enemyTile.contents.find(entity => entity.isSolid) as Mob;
+    // ^ Defines the first solid entity in adjacent tile
+    hitList.forEach((tile: Tile) => {
+      const target = tile.contents.find(entity => entity.isSolid);
+      if (target && target instanceof Mob) {
+        console.log(`${this.name} is attacking ${target.name}`);
+        this.dealDamage(target, parent)
+      };
+    });// ^ attacks the solid if one was found
+  }
+}
+
 export class SimpleBow extends Weapon {
   constructor() {
-    super('Simple bow', simpleBowIcon, 'Simple, yet deadly', 3, 3)
+    super('Simple bow', simpleBowIcon, 'Simple, yet deadly', 4, 1)
   }
   use(parent: Raccoon) {
-    const origin = parent.position;
-    if (!origin) return;
-    let enemyTile: Tile | undefined;
-    parent.getAdjacentTiles()!.forEach((neighbor: Tile) => {
-      console.log(neighbor)
-      if (neighbor.position[0] === origin[0] + 1) {
-        enemyTile = neighbor;
+    let solid: Entity | undefined = undefined;
+    let stack = [parent.tile];
+    while (stack.length > 0) {
+      let current = stack.pop()!;
+      let held: Entity | undefined;
+      current.edges.forEach((neighbor: Tile) => {
+        const right = current.position[0] + 1
+        if (neighbor.position[0] === right) {
+          const found: Entity | undefined = neighbor.contents.find(entity => entity.isSolid);
+          if (found) {
+            held = found;
+          } else {
+            stack.push(neighbor);
+          }
+        }
+      });
+      if (held) {
+        solid = held;
+        break;
       }
-    });
-    if (!enemyTile) return;
-    let solid: Mob | undefined;
-    if (enemyTile.contents.length !== 0) solid = enemyTile.contents.find(entity => entity.isSolid) as Mob;
-    // ^ Defines the first solid entity in adjacent tile
+    }
+    if (!solid) return;
+    if (solid instanceof Mob && solid.team !== this.team) {
+      this.dealDamage(solid, parent)
+    }
+  }
+}
 
-    if (solid) {
-      console.log(`${this.name} is attacking ${solid.name}`);
-      solid.takeDamage(this.damage, parent);
-      return;
-    }// ^ attacks the solid if one was found
+export class Arbalest extends Weapon {
+  constructor() {
+    super('Arbalest', arbalestIcon, 'A mighty siege weapon', 5, 1)
+  }
+  use(parent: Raccoon) {
+    const hitList: Entity[] = [];
+    let stack = [parent.tile];
+    while (stack.length > 0) {
+      let current = stack.pop()!;
+      let held: Entity | undefined;
+      current.edges.forEach((neighbor: Tile) => {
+        const right = current.position[0] + 1
+        if (neighbor.position[0] === right) {
+          const found: Entity | undefined = neighbor.contents.find(entity => entity.isSolid);
+          if (found) {
+            held = found;
+          } else {
+            stack.push(neighbor);
+          }
+        }
+      });
+      if (held) {
+        hitList.push(held);
+      }
+    }
+    hitList.forEach((target: Entity) => {
+      if (target instanceof Mob) {
+        console.log(`${this.name} is attacking ${target.name}`);
+        this.dealDamage(target, parent)
+      };
+    });
   }
 }
 
 
-export class SpentSoupCan extends Weapon {
-  name = "Spent Soup Can"
-  emoji = "https://via.placeholder.com/150"
-  damage = 3
-  attackSpeed = 3
-  description = "an empty soup can"
+export class JesterHat extends Apparel {
+  constructor() {
+    super("Jester Cap", jesterIcon, "God gives his silliest battles to his most tragic of clowns", 12)
+  }
 }
 
-class CoolShades extends Apparel {
-  name = "Cool Shades"
-  emoji = "https//via.placeholder.com/150"
-  //health = 2
-  armor = 1
-  description = "an empty case"
+export class GoldCrown extends Apparel {
+  constructor() {
+    super("Royal Crown", goldCrownIcon, "A very regal crown", 2)
+  }
 }
 
-export class TopHat extends Apparel {
+export class KnightHelmet extends Apparel {
   constructor() {
     super(
-      "Top Hat",
-      "https://via.placeholder.com/150",
-      "an empty case",
-      1
+      "Knight Helmet",
+      knightHelmetIcon,
+      "an knight's helmet",
+      7
     )
   }
 }
@@ -336,9 +452,11 @@ export class GnomeWizard extends Enemy {
     // ^ finds the next tile forward
     let coinflip: Tile[] = [];
     hostTile.edges.forEach((neighbor: Tile) => {
-      const hasSolid: Entity | undefined = neighbor.contents.find(entity => entity.isSolid)
-      if (neighbor.position[1] === hostTile.position[1] - 1 && !hasSolid) coinflip.push(neighbor);
-      if (neighbor.position[1] === hostTile.position[1] + 1 && !hasSolid) coinflip.push(neighbor);
+      if(neighbor) {
+        const hasSolid: Entity | undefined = neighbor.contents.find(entity => entity.isSolid)
+        if (neighbor.position[1] === hostTile.position[1] - 1 && !hasSolid) coinflip.push(neighbor);
+        if (neighbor.position[1] === hostTile.position[1] + 1 && !hasSolid) coinflip.push(neighbor);
+      }
     });
     // ^ checks each neighbor if they contain a solid and are above or below, and pushees to coinflip if valid tile
     if (coinflip.length === 0) return origin;
