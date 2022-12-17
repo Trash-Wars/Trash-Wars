@@ -17,7 +17,7 @@ const GameOver = () => {
   const {setScreen} =useContext(ScreenContext)
   const [scores, setScores] = useState<ScoreEntry[]>([]);
   const [isNewScore, setIsNewScore] = useState<boolean>(false);
-  const [roundsWon, setRoundsWon] = useState<number>(60);
+  const [roundsWon, setRoundsWon] = useState<number>(0);
 
   useEffect(() => {
     const fetchScores = async () => {
