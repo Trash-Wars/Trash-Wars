@@ -171,11 +171,11 @@ export class Gameboard {
     let enemySpawns: Enemy[] = [];
     // ^ defines a stack/queue of enemies to place onto the board
     const possibleEnemies: Enemy[] = [
-      new Enemy('Tiger', tiger, 10, 5),
-      new Enemy('Coconut', coconut, 10, 5),
-      new Enemy('Bread', bread, 10, 5),
-      new Enemy('Hedgehog', hedgehog, 10, 5),
-      new Enemy('Grumpy', grumpy, 10, 5),
+      new Enemy('Tiger', tiger, 10, 5, "tiger desc"),
+      new Enemy('Coconut', coconut, 10, 5, "coco desc"),
+      new Enemy('Bread', bread, 10, 5, "bread desc"),
+      new Enemy('Hedgehog', hedgehog, 10, 5, "hedge desc"),
+      new Enemy('Grumpy', grumpy, 10, 5, "grump desc"),
     ]; // TODO: write enemy types for this list
     // ^ this could be automatically generated later based off subclasses, and possibly a difficulty rating
 

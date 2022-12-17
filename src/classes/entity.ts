@@ -1,9 +1,23 @@
-import axeIcon from '../assets/battle_axe1.png';
-import goblinIcon from '../assets/enemies/goblin_base.png';
-import goblinTankIcon from '../assets/enemies/goblin_shield.png';
+/////////////////////////////
+
+import goldCrownIcon from '../assets/items/goldCrown.png'
+import greenCrownIcon from '../assets/items/greenCrown.png'
+import metalGlovesIcon from '../assets/items/metalGloves.png'
+import tickleMittensIcon from '../assets/items/tickleMittens.png'
+import wizardHatBlueIcon from '../assets/items/wizardHatBlue.png'
+import wizardHatGreenIcon from '../assets/items/wizardHatgreen.png'
+
+/////////////////////////////
 
 import simpleBowIcon from '../assets/items/longbow_1.png'
 import { Tile } from './shared-types';
+import axeIcon from '../assets/battle_axe1.png';
+
+/////////////////////////////
+
+import goblinIcon from '../assets/enemies/goblin_base.png';
+import goblinTankIcon from '../assets/enemies/goblin_shield.png';
+import gnomeWizardIcon from '../assets/enemies/gnome.png';
 
 export class Entity {
   constructor(
@@ -109,6 +123,7 @@ export class Axe extends Weapon {
     if (!origin) return;
     let enemyTile: Tile | undefined;
     parent.getAdjacentTiles()!.forEach((neighbor: Tile) => {
+
       if (neighbor.position[0] === origin[0] + 1) {
         enemyTile = neighbor;
       }
@@ -126,7 +141,7 @@ export class Axe extends Weapon {
   }
 }
 
-
+//getTile(pos: [x,y])
 export class SimpleBow extends Weapon {
   constructor() {
     super('Simple bow', simpleBowIcon, 'Simple, yet deadly', 3, 3)
@@ -135,7 +150,6 @@ export class SimpleBow extends Weapon {
     const origin = parent.position;
     if (!origin) return;
     let enemyTile: Tile | undefined;
-    
     parent.getAdjacentTiles()!.forEach((neighbor: Tile) => {
       console.log(neighbor)
       if (neighbor.position[0] === origin[0] + 1) {
@@ -179,26 +193,22 @@ export class TopHat extends Apparel {
       "https://via.placeholder.com/150",
       "an empty case",
       1
-      )
+    )
   }
 }
 
 export class Mob extends Entity {
-  constructor(
-    name: string,
-    emoji: string,
-    health: number,
-  ) {
+  constructor(name: string, emoji: string, health: number, description: string | undefined) {
     super(name, emoji)
     this.health = health;
+    this.description = description
   }
   health: number;
+  description: string | undefined
   takeDamage(damage: number, attacker: Entity | undefined): void {
     // ^ attacker is optional
+    if (this.health <= 0) return;
     this.health = this.health - damage;
-    if (this.health >= 0) {
-      console.log(`${this.name} died!`);
-    }
   }
 }
 
@@ -207,13 +217,15 @@ export class Raccoon extends Mob {
     name: string,
     emoji: string,
     health: number,
+    description: string
   ) {
-    super(name, emoji, health);
+    super(name, emoji, health, description);
     this.team = 'friendly';
     this.className = 'raccoon';
     this.idName = '';
+    // this.description=description
   }
-  description: 'string' | undefined;
+  // description: string | undefined;
   hat: Apparel | undefined;
   weapon: Weapon | undefined;
 
@@ -250,8 +262,9 @@ export class Enemy extends Mob {
     emoji: string,
     health: number,
     damage: number,
+    description: string,
   ) {
-    super(name, emoji, health);
+    super(name, emoji, health, description);
     this.team = 'hostile';
     this.className = 'raccoon';
     this.idName = '';
@@ -291,21 +304,84 @@ export class Enemy extends Mob {
 }
 
 export class GoblinBasic extends Enemy {
-  constructor(){
-    super('Goblin', goblinIcon, 10, 3);
+  constructor() {
+    super('Goblin', goblinIcon, 10, 3, 'goblin description');
   }
 }
 export class GoblinTank extends Enemy {
-  constructor(){
-    super('Goblin Tank', goblinTankIcon, 15, 4);
+  constructor() {
+    super('Goblin Tank', goblinTankIcon, 15, 4, 'goblin, but in a tank');
   }
   takeDamage(damage: number, attacker: Entity | undefined): void {
-        const damageReduction = 3;
-        const damageAfterReduction = damage - damageReduction;
-        const damageTaken = damageAfterReduction >= 0 ? damageAfterReduction : 0;
-        this.health = this.health - damageTaken;
-        if (this.health >= 0) {
-          console.log(`${this.name} died!`);
-        }
+    const damageReduction = 3;
+    const damageAfterReduction = damage - damageReduction;
+    const damageTaken = damageAfterReduction >= 0 ? damageAfterReduction : 0;
+    this.health = this.health - damageTaken;
+    if (this.health >= 0) {
+      console.log(`${this.name} died!`);
+    }
   }
+}
+
+export class GnomeWizard extends Enemy {
+  constructor() {
+    super('Gnome Wizard', gnomeWizardIcon, 5, 2, '');
+  };
+
+  getDiagonal(origin: Tile): Tile {
+    let targetTile: Tile = origin;
+    let hostTile: Tile = origin;
+    targetTile.edges.forEach((neighbor: Tile) => {
+      if (neighbor.position[0] === targetTile.position[0] - 1) hostTile = neighbor;
+    });
+    // ^ finds the next tile forward
+    let coinflip: Tile[] = [];
+    hostTile.edges.forEach((neighbor: Tile) => {
+      const hasSolid: Entity | undefined = neighbor.contents.find(entity => entity.isSolid)
+      if (neighbor.position[1] === hostTile.position[1] - 1 && !hasSolid) coinflip.push(neighbor);
+      if (neighbor.position[1] === hostTile.position[1] + 1 && !hasSolid) coinflip.push(neighbor);
+    });
+    // ^ checks each neighbor if they contain a solid and are above or below, and pushees to coinflip if valid tile
+    if (coinflip.length === 0) return origin;
+    // ^ gnome stays in place if no valid diagonal tiles
+    return coinflip[Math.round(Math.random() * coinflip.length)];
+    // ^ randomly selects a valid tile (which could be just a single tile)
+  }
+
+  advance(): this | undefined {
+    if (!this.tile) return;
+    let movementTile: Tile = this.getDiagonal(this.tile);
+    // ^ Finds diagonal tile or returns its own tile
+    this.moveToPosition(movementTile);
+
+    let solid: Entity | undefined = undefined;
+    let stack = [movementTile];
+    while (stack.length > 0) {
+      let current = stack.pop()!;
+      let held: Entity | undefined;
+      current.edges.forEach((neighbor: Tile) => {
+        const left = current.position[0] - 1
+        if (neighbor.position[0] === left) {
+          const found: Entity | undefined = neighbor.contents.find(entity => entity.isSolid);
+          if (found) {
+            held = found;
+          } else {
+            stack.push(neighbor);
+          }
+        }
+      });
+      if (held) {
+        solid = held;
+        break;
+      }
+    }
+    if (!solid) return;
+    // this should be game-loss as the Gnome shoots your trash
+    if (solid instanceof Mob && solid.team !== this.team) {
+      solid.takeDamage(this.damage, this);
+    }
+    // ^ attacks the solid if one was found
+    return;
+    // ^ move to tile if unoccupied
+  };
 }

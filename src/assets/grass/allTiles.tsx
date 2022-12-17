@@ -7,6 +7,7 @@ import grass6 from './yellow3.png'
 import grass7 from './red1.png'
 import grass8 from './red2.png'
 import grass9 from './red3.png'
+
 export const allTileBackgrounds = [
   grass1,
   grass2,
