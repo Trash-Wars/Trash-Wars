@@ -84,7 +84,7 @@ const Preround = () => {
           }}
           height={100}
           width={100}
-          src={grabbed.emoji}
+          src={grabbed.sprite}
           alt={grabbed.name} />
       )}
       <div>
@@ -216,8 +216,8 @@ const ItemSlot = (props: ItemSlotProps) => {
           pointerEvents: grabbed === item ? "none" : "initial",
         }}>
         {item && (
-          <img style={{ imageRendering: "pixelated" }} height={100} width={100} src={item.emoji} alt={item.name} />
-        )}
+          <img style={{imageRendering: "pixelated"}} height={100} width={100} src={item.sprite} alt={item.name} />
+          )}
       </div>
     </div>
   )
