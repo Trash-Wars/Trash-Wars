@@ -16,11 +16,9 @@ export type PersistenceStyle = {
 
 export const persistenceInitialState: PersistenceStyle = {
   entities: [],
-  raccoonTeam: [],
+  raccoonTeam: [new Raccoon("Hugo", racc, 10), new Raccoon("Zayah", racc, 10),],
   inventory: {
     sidelineRaccoons: [
-      new Raccoon("Hugo", racc, 10),
-      new Raccoon("Zayah", racc, 10),
       new Raccoon("Jim", racc, 10),
       new Raccoon("Luis", racc, 10),
     ],

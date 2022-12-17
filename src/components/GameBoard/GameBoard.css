@@ -18,20 +18,14 @@
   background-image: url('../../assets/marble_wall1.png');
 }
 
-.tile:last-child {
-  border-right: 1px solid green;
-}
-
-.rows:last-child > .tile {
-  border-bottom: 1px solid blue;
+.tile:last-child, .rows:last-child > .tile {
+  border-right: 1px solid black;
 }
 
 .raccoon {
   position: absolute;
   margin: 1px 1px;
 }
-
-
 
 #death {
   animation: fadeNFloat 1.2s linear; 

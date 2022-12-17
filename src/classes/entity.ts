@@ -1,14 +1,9 @@
 import axeIcon from '../assets/battle_axe1.png';
 import goblinIcon from '../assets/enemies/goblin_base.png';
 import goblinTankIcon from '../assets/enemies/goblin_shield.png';
-import goldCrownIcon from '../assets/items/goldCrown.png'
-import greenCrownIcon from '../assets/items/greenCrown.png'
-import metalGlovesIcon from '../assets/items/metalGloves.png'
-import tickleMittensIcon from '../assets/items/tickleMittens.png'
-import wizardHatBlueIcon from '../assets/items/wizardHatBlue.png'
-import wizardHatGreenIcon from '../assets/items/wizardHatgreen.png'
 
 import simpleBowIcon from '../assets/items/longbow_1.png'
+import { Tile } from './shared-types';
 
 export class Entity {
   constructor(
@@ -313,63 +308,4 @@ export class GoblinTank extends Enemy {
           console.log(`${this.name} died!`);
         }
   }
-}
-
-export interface Tile {
-  contents: Entity[];
-  position: [number, number];
-  edges: Set<Tile>;
-}
-
-export function comparePos(a: [number, number], b: [number, number]) {
-  return a[0] === b[0] && a[1] === b[1];
-}
-
-export class Gameboard {
-  tiles: Tile[] = [];
-
-  constructor(readonly rows: number, readonly cols: number) {
-    this.generateGameBoard();
-  }
-
-  generateGameBoard() {
-    for (let x = 0; x <= this.rows - 1; x++) {
-      for (let y = 0; y <= this.cols - 1; y++) {
-        // add the tile
-        const tile: Tile = {
-          contents: [],
-          position: [x, y],
-          edges: new Set(),
-        };
-        this.tiles.push(tile);
-        // add the tile's neighbors
-        const left = [x - 1, y]
-        const right = [x + 1, y]
-        const up = [x, y + 1]
-        const down = [x, y - 1]
-        for (let coord of [left, right, up, down] as [number, number][]) {
-          const neighbor = this.getTile(coord);
-          if (!neighbor) {
-            continue;
-          }
-          this.addEdge(tile, neighbor);
-        }
-      }
-    }
-  }
-
-  addEdge(a: Tile, b: Tile): void {
-    a.edges.add(b);
-    b.edges.add(a);
-  }
-
-  getTile(pos: [number, number]): Tile | undefined {
-    for (const tile of this.tiles) {
-      if (comparePos(pos, tile.position)) {
-        return tile;
-      }
-    }
-    return undefined;
-  }
-
 }

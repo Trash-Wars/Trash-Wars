@@ -11,7 +11,7 @@ export type ScreenStyle = {
 }
 
 export const screenInitialState: ScreenStyle = {
-  screen: SCREEN_TITLE,
+  screen: SCREEN_GAMEBOARD,
 }
 
 export const ScreenContext = createContext<ScreenStyle>(screenInitialState)
