@@ -86,7 +86,7 @@ const Board = () => {
           className={entity.className}
           onClick={() => board.entityDeathHandler(entity)}
           style={{ ...entitySize, ...getPosValues(entity), imageRendering: "pixelated" }}
-          src={entity.emoji}
+          src={entity.sprite}
           alt={entity.name} />
       ))}
       {range(0, board.cols - 1).reverse().map(col => (

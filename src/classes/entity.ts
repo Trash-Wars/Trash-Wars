@@ -1,11 +1,6 @@
 /////////////////////////////
 
 import goldCrownIcon from '../assets/items/goldCrown.png'
-import greenCrownIcon from '../assets/items/greenCrown.png'
-import metalGlovesIcon from '../assets/items/metalGloves.png'
-import tickleMittensIcon from '../assets/items/tickleMittens.png'
-import wizardHatBlueIcon from '../assets/items/wizardHatBlue.png'
-import wizardHatGreenIcon from '../assets/items/wizardHatgreen.png'
 import knightHelmetIcon from '../assets/items/helmet_5.png'
 import jesterIcon from '../assets/items/cap_jester.png'
 
@@ -20,6 +15,7 @@ import arbalestIcon from '../assets/items/arbalest_2.png'
 
 /////////////////////////////
 
+import raccIcon from '../assets/raccoon_sprite.png';
 import goblinIcon from '../assets/enemies/goblin_base.png';
 import goblinTankIcon from '../assets/enemies/goblin_shield.png';
 import gnomeWizardIcon from '../assets/enemies/gnome.png';
@@ -33,10 +29,10 @@ import devilIcon from '../assets/enemies/red_devil_new.png'
 export class Entity {
   constructor(
     name: string,
-    emoji: string,
+    sprite: string,
   ) {
     this.name = name;
-    this.emoji = emoji;
+    this.sprite = sprite;
     this.isSolid = true;
   }
   className: string | undefined;
@@ -44,7 +40,7 @@ export class Entity {
   tile: Tile | undefined;
   name: string;
   position: [number, number] | undefined;
-  emoji: string;
+  sprite: string;
   team: 'friendly' | 'neutral' | 'hostile' | undefined;
   isSolid: boolean;
   changeTeams(newTeam: 'friendly' | 'neutral' | 'hostile'): void {
@@ -78,10 +74,10 @@ export class Entity {
 export class Item extends Entity {
   constructor(
     name: string,
-    emoji: string,
+    sprite: string,
     description: string
   ) {
-    super(name, emoji)
+    super(name, sprite)
     this.description = description;
   }
   description: string;
@@ -90,11 +86,11 @@ export class Item extends Entity {
 export class Apparel extends Item {
   constructor(
     name: string,
-    emoji: string,
+    sprite: string,
     description: string,
     armor: number,
   ) {
-    super(name, emoji, description);
+    super(name, sprite, description);
     this.armor = armor;
     this.className = 'apparel';
     this.idName = '';
@@ -105,12 +101,12 @@ export class Apparel extends Item {
 export class Weapon extends Item {
   constructor(
     name: string,
-    emoji: string,
+    sprite: string,
     description: string,
     damage: number,
     attackSpeed: number,
   ) {
-    super(name, emoji, description)
+    super(name, sprite, description)
     this.damage = damage;
     this.attackSpeed = attackSpeed;
     this.className = 'weapon';
@@ -319,8 +315,8 @@ export class KnightHelmet extends Apparel {
 }
 
 export class Mob extends Entity {
-  constructor(name: string, emoji: string, health: number, description: string | undefined) {
-    super(name, emoji)
+  constructor(name: string, sprite: string, health: number, description: string | undefined) {
+    super(name, sprite)
     this.health = health;
     this.description = description
   }
@@ -336,11 +332,10 @@ export class Mob extends Entity {
 export class Raccoon extends Mob {
   constructor(
     name: string,
-    emoji: string,
     health: number,
     description: string
   ) {
-    super(name, emoji, health, description);
+    super(name, raccIcon, health, description);
     this.team = 'friendly';
     this.className = 'raccoon';
     this.idName = '';
@@ -380,12 +375,12 @@ export class Enemy extends Mob {
 
   constructor(
     name: string,
-    emoji: string,
+    sprite: string,
     health: number,
     damage: number,
     description: string,
   ) {
-    super(name, emoji, health, description);
+    super(name, sprite, health, description);
     this.team = 'hostile';
     this.className = 'raccoon';
     this.idName = '';
@@ -655,72 +650,4 @@ export class Devil extends Enemy {
     });
     // ^ move to tile if unoccupied
   };
-}
-
-export interface Tile {
-  contents: Entity[];
-  position: [number, number];
-  edges: Set<Tile>;
-}
-
-export function comparePos(a: [number, number], b: [number, number]) {
-  return a[0] === b[0] && a[1] === b[1];
-}
-
-export function getTileFunction(pos: [number, number], gameboard: Gameboard): Tile | undefined {
-  for (const tile of gameboard.tiles) {
-    if (comparePos(pos, tile.position)) {
-      return tile;
-    }
-  }
-  return undefined;
-}
-
-export class Gameboard {
-  tiles: Tile[] = [];
-
-  constructor(readonly rows: number, readonly cols: number) {
-    this.generateGameBoard();
-  }
-
-  generateGameBoard() {
-    for (let x = 0; x <= this.rows - 1; x++) {
-      for (let y = 0; y <= this.cols - 1; y++) {
-        // add the tile
-        const tile: Tile = {
-          contents: [],
-          position: [x, y],
-          edges: new Set(),
-        };
-        this.tiles.push(tile);
-        // add the tile's neighbors
-        const left = [x - 1, y]
-        const right = [x + 1, y]
-        const up = [x, y + 1]
-        const down = [x, y - 1]
-        for (let coord of [left, right, up, down] as [number, number][]) {
-          const neighbor = this.getTile(coord);
-          if (!neighbor) {
-            continue;
-          }
-          this.addEdge(tile, neighbor);
-        }
-      }
-    }
-  }
-
-  addEdge(a: Tile, b: Tile): void {
-    a.edges.add(b);
-    b.edges.add(a);
-  }
-
-  getTile(pos: [number, number]): Tile | undefined {
-    for (const tile of this.tiles) {
-      if (comparePos(pos, tile.position)) {
-        return tile;
-      }
-    }
-    return undefined;
-  }
-
 }
