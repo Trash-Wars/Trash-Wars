@@ -1,5 +1,5 @@
 import { allTileBackgrounds } from "../assets/grass/allTiles";
-import { Enemy, Entity, GnomeWizard, GoblinBasic, Mob, Raccoon } from "./entity";
+import { Devil, Enemy, Entity, GnomeWizard, GoblinBasic, GoblinTank, Imp, Mob, PulsatingLump, Raccoon, Raven, Skeleton, Wraith } from "./entity";
 import { Tile } from "./shared-types";
 
 export function comparePos(a: [number, number], b: [number, number]) {
@@ -7,16 +7,21 @@ export function comparePos(a: [number, number], b: [number, number]) {
 }
 
 export class Gameboard {
-  remainingSpawns: Enemy[] = [];
   enemyQueue: Enemy[] = [];
   currentEntities: Entity[] = [];
   tiles: Tile[] = [];
   rerender?: () => void;
+
+  setScreen?: (newScreen: 0 | 1 | 2 | 3) => void;
+  rounds?: number;
+
   roundInProgress: boolean = false;
+
 
   constructor(readonly rows: number, readonly cols: number) {
     this.generateGameBoard();
     // start ticking
+    console.log('Setting interval')
     setInterval(() => {
       /// make special return constants that are handled differently in a switch case
       const shouldRun = this.shouldTick()
@@ -83,13 +88,19 @@ export class Gameboard {
   
     const spawnTile = this.findEnemySpawnTile(); // find spawns
   
+
+    if (this.enemyQueue.length > 0 && spawnTile) {
+      const enemy = this.enemyQueue.pop()!// not queue
+      this.moveEntity(enemy, spawnTile);// moveEntity
+      this.currentEntities.push(enemy)
+    };
+
+
     this.currentEntities.forEach(entity => {
       if (entity instanceof Raccoon) {
-        console.log(`${entity.name} is a Raccoon and uses weapon`);
         entity.useWeapon();
       }
       if (entity instanceof Enemy) {
-        console.log(`${entity.name} is an Enemy and advances`);
         entity.advance();
       }
       if (entity instanceof Mob && entity.health <= 0) {
@@ -110,15 +121,14 @@ export class Gameboard {
 
   findEnemySpawnTile = (): [number, number] | undefined => {
     const length = this.tiles.length;
+    const validSpawns: Tile[] = [];
     for (let i = length - 1; i >= length - 4; i--) { // starts at the last board tiles and checks moving forward for valid spawns through the final 4 tiles
-      if (this.tiles[i].contents) {
-        if (this.tiles[i].contents.find(entity => entity.isSolid)) continue;
-      }
+      if (this.tiles[i] && !this.tiles[i].contents.find(entity => entity.isSolid)) validSpawns.push(this.tiles[i]);
       // ^ if the contents of the spawn tile contains a solid, skip the tile
-      return this.tiles[i].position;
-      // ^ retuprn the spawn tile that is open
     }
-    return undefined;
+    const spawn = validSpawns[Math.floor(Math.random()*validSpawns.length)];
+    if(!spawn) return;
+    return spawn.position
   }
 
   moveEntity = (entity: Entity, pos: [number, number]) => {
@@ -145,10 +155,13 @@ export class Gameboard {
       entity.idName = 'death'
     }
     setTimeout(() => {
+      entity.tile!.contents.splice(entity.tile!.contents.indexOf(entity), 1)
       this.currentEntities = this.currentEntities.filter((ent) => ent.name !== entity.name)
     }, 1400)
   }
 
+
+  endCondition = () => {
   shouldTick = () => {
     if(!this.roundInProgress) {
       return false; //round not started
@@ -156,32 +169,71 @@ export class Gameboard {
     if(this.enemyQueue) {
       return true; //round not over
     }
-    if(this.currentEntities.find(entity => entity instanceof Enemy)) {
-      return false; //you won
-    }
-    //change this to hitting left side of the board
-    if(this.currentEntities.find(entity => entity instanceof Raccoon)) {
-      return false; //you lost
+    let enemyCount = 0;
+    this.currentEntities.forEach(entity => {
+      if(entity instanceof Enemy) {
+        enemyCount++;
+        if(entity.position && entity.position[0] === 0) {
+          this.setScreen!(3);
+          console.log('Lose!');
+          return false;
+        }
+      }
+    });
+    if(enemyCount === 0) {
+      if(!this.rounds) {
+        this.rounds = 1
+      } else {
+        this.rounds++;
+      }
+      //modal popup
+      //modal should kick player to preround screen when they select an item
+      return false;
     }
     return true;
   }
 
+  createEnemy = (className: any) => {
+    return new className()
+  }
   generateEnemies = (difficulty: number): Enemy[] => {
     // start round should generate a list of enemies that it will generate for the round and where they will go, then begin a loop that continues until all enemies have been killed or the player has lost using the advance() method on enemies. It will loop over every enemy to call advance() on them
     let enemySpawns: Enemy[] = [];
     // ^ defines a stack/queue of enemies to place onto the board
-    const possibleEnemies: Enemy[] = [
-      new GoblinBasic()
+    const possibleEnemies: any[] = [
+      GoblinBasic,
+      GoblinBasic,
+      GoblinBasic,
+      GoblinBasic,
+      GoblinBasic,
+      GoblinBasic,
+      GoblinTank,
+      GoblinTank,
+      GoblinTank,
+      GnomeWizard,
+      GnomeWizard,
+      GnomeWizard,
+      PulsatingLump,
+      PulsatingLump,
+      Raven,
+      Raven,
+      Wraith,
+      Wraith,
+      Skeleton,
+      Skeleton,
+      Imp,
+      Imp,
+      Devil,
     ]; // TODO: write enemy types for this list
     // ^ this could be automatically generated later based off subclasses, and possibly a difficulty rating
 
     for (let i = 0; i < difficulty; i++) {
-      const randIdx = Math.round(Math.random() * possibleEnemies.length);
+      const randIdx = Math.floor(Math.random() * possibleEnemies.length);
       const enemy = possibleEnemies[randIdx]
-      enemySpawns.push(enemy); // this may need to call new
+      enemySpawns.push(this.createEnemy(enemy)); // this may need to call new
     };// ^ randomly selects from the list of all enemies and pushes them to the enemy spawns queue
-    this.enemyQueue = possibleEnemies;
-    return possibleEnemies;
+    this.enemyQueue = enemySpawns;
+    return enemySpawns;
   };
 
 }

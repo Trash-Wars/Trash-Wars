@@ -7,8 +7,7 @@ import jesterIcon from '../assets/items/cap_jester.png'
 /////////////////////////////
 
 import simpleBowIcon from '../assets/items/longbow_1.png'
-import { Tile } from './shared-types';
-import axeIcon from '../assets/battle_axe1.png';
+import axeIcon from '../assets/items/battle_axe1.png';
 import katanaIcon from '../assets/items/katana.png'
 import scytheIcon from '../assets/items/scythe_1_new.png'
 import spearIcon from '../assets/items/spear_1.png'
@@ -400,7 +399,7 @@ export class Enemy extends Mob {
     if (!this.position) return;
     let targetTile: Tile | undefined;
     this.getAdjacentTiles()!.forEach((neighbor: Tile) => {
-      if (neighbor.position[0] === this.position![0] - 1) targetTile = neighbor;
+      if (neighbor.position[0] === this.position![0] - 1 && neighbor.position[1] === this.position![1]) targetTile = neighbor;
     });
     if (!targetTile) return;
     // ^ Finds adjacent tile
@@ -410,7 +409,6 @@ export class Enemy extends Mob {
     // ^ Defines the first solid entity in adjacent tile
 
     if (solid) {
-      console.log(`${this.name} is attacking ${solid.name}`);
       this.attack(solid);
       return;
     }// ^ attacks the solid if one was found
@@ -516,10 +514,10 @@ export class GnomeWizard extends Enemy {
     if (!this.tile) return;
     let movementTile: Tile = this.getDiagonal(this.tile);
     // ^ Finds diagonal tile or returns its own tile
-    this.moveToPosition(movementTile);
+    if(movementTile) this.moveToPosition(movementTile);
 
     let solid: Entity | undefined = undefined;
-    let stack = [movementTile];
+    let stack = [this.tile];
     while (stack.length > 0) {
       let current = stack.pop()!;
       let held: Entity | undefined;
@@ -559,16 +557,18 @@ export class Imp extends Enemy {
     let movementTile: Tile | undefined;
     // ^ Finds diagonal tile or returns its own tile
     this.getAdjacentTiles()!.forEach((neighbor: Tile) => {
-      if (neighbor.position[0] === this.position![0] - 1) movementTile = neighbor;
+      if (neighbor.position[0] === this.position![0] - 1 && neighbor.position[1] === this.position![1]) movementTile = neighbor;
     });
     if (movementTile && !movementTile.contents.find(entity => entity.isSolid)) {
+      console.log(movementTile.edges)
       this.moveToPosition(movementTile);
     };
     let solid: Entity | undefined = undefined;
-    let stack = [movementTile];
+    let stack = [this.tile];
     while (stack.length > 0) {
       let current = stack.pop()!;
       let held: Entity | undefined;
+      if(!current) continue
       current.edges.forEach((neighbor: Tile) => {
         const left = current.position[0] - 1
         if (neighbor.position[0] === left) {
@@ -625,7 +625,7 @@ export class Devil extends Enemy {
     this.getAdjacentTiles()!.forEach((neighbor: Tile) => {
       if (neighbor.position[0] === this.position![0] - 1) movementTile = neighbor;
     });
-    if (movementTile && movementTile.contents.find(entity => entity.isSolid)) this.moveToPosition(movementTile);
+    if (movementTile && !movementTile.contents.find(entity => entity.isSolid)) this.moveToPosition(movementTile);
     const hitList: Entity[] = [];
     const diagQueue: Tile[] = [];
     this.getAdjacentTiles()!.forEach((neighbor: Tile) => {
