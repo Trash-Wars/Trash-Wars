@@ -36,7 +36,7 @@ const Board = () => {
   const { winWidth, winHeight } = useWindowDimensions()
   const [, updateState] = useState({});
   const forceUpdate = useCallback(() => updateState({}), []);
-
+  const { setScreen } = useContext(ScreenContext)
   const boardRef = useRef(new Gameboard(6, 4))
   const board = boardRef.current as Gameboard
 
@@ -60,7 +60,9 @@ const Board = () => {
   const firstRender = useCallback(() => {
     board.firstRender(persistence.raccoonTeam);
     board.rerender = forceUpdate;
-  }, [board, persistence.raccoonTeam, forceUpdate])
+    board.setScreen = setScreen;
+    board.rounds = persistence.rounds;
+  }, [board, persistence.raccoonTeam, forceUpdate, setScreen, persistence.rounds])
 
   //when game board loads, 
   useEffect(() => firstRender(), [firstRender])
@@ -94,16 +96,16 @@ const Board = () => {
             if(!tile) {
               return (
                 <div
-                  key={row}
-                  className="tile"
-                  style={{
-                    ...tileSize,
-                    backgroundImage: fallbackGrass,
-                  }} />
-              )
-            }
-            return (
-              <>
+                key={row}
+                className="tile"
+                style={{
+                  ...tileSize,
+                  backgroundImage: fallbackGrass,
+                }} />
+                )
+              }
+              return (
+                <>
                 <div
                   key={row}
                   className="tile"
