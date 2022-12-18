@@ -1,3 +1,4 @@
+import { type } from "os";
 import { allTileBackgrounds } from "../assets/grass/allTiles";
 import { Devil, Enemy, Entity, GnomeWizard, GoblinBasic, GoblinTank, Imp, Mob, PulsatingLump, Raccoon, Raven, Skeleton, Wraith } from "./entity";
 import { Tile } from "./shared-types";
@@ -20,18 +21,17 @@ export class Gameboard {
 
   constructor(readonly rows: number, readonly cols: number) {
     this.generateGameBoard();
-    // start ticking
-    console.log('Setting interval')
+    console.log('Setting interval');
     setInterval(() => {
       /// make special return constants that are handled differently in a switch case
-      const shouldRun = this.shouldTick()
-      if(!shouldRun) {
+      const shouldRun = this.shouldTick(this.currentEntities);
+      if (!shouldRun) {
         this.roundInProgress = false;
         return;
       }
-      if(shouldRun) {
+      if (shouldRun) {
         this.update();
-        if(this.rerender) {
+        if (this.rerender) {
           this.rerender()
         }
       };
@@ -42,10 +42,10 @@ export class Gameboard {
     for (let x = 0; x <= this.rows - 1; x++) {
       for (let y = 0; y <= this.cols - 1; y++) {
         // add the tile
-        const tileIndex = Math.floor(Math.random()*allTileBackgrounds.length)
+        const tileIndex = Math.floor(Math.random() * allTileBackgrounds.length)
         const tileSprite = allTileBackgrounds[tileIndex]
-        if(!tileSprite) {
-          console.log("NO TILE SPRITE:", allTileBackgrounds.length-1, tileIndex)
+        if (!tileSprite) {
+          console.log("NO TILE SPRITE:", allTileBackgrounds.length - 1, tileIndex)
         }
         const tile: Tile = {
           contents: [],
@@ -85,9 +85,9 @@ export class Gameboard {
   }
 
   update = () => {
-  
+
     const spawnTile = this.findEnemySpawnTile(); // find spawns
-  
+
 
     if (this.enemyQueue.length > 0 && spawnTile) {
       const enemy = this.enemyQueue.pop()!// not queue
@@ -109,7 +109,7 @@ export class Gameboard {
         this.entityDeathHandler(entity);// entityDeath
       }
     });
-    
+
     const remainingSpawns = [...this.enemyQueue]
     if (remainingSpawns.length > 0 && spawnTile) {
       const enemy = remainingSpawns.pop()!// not queue
@@ -126,8 +126,8 @@ export class Gameboard {
       if (this.tiles[i] && !this.tiles[i].contents.find(entity => entity.isSolid)) validSpawns.push(this.tiles[i]);
       // ^ if the contents of the spawn tile contains a solid, skip the tile
     }
-    const spawn = validSpawns[Math.floor(Math.random()*validSpawns.length)];
-    if(!spawn) return;
+    const spawn = validSpawns[Math.floor(Math.random() * validSpawns.length)];
+    if (!spawn) return;
     return spawn.position
   }
 
@@ -139,12 +139,16 @@ export class Gameboard {
     }
     return entity.moveToPosition(tile)
   }
-  
+
   firstRender = (raccoonTeam: Raccoon[]) => {
     let counter = 0;
+    console.log('First render')
     for (const raccoon of raccoonTeam) {
-      this.currentEntities.push(raccoon)
-      
+      if(!this.currentEntities.find(entity => entity === raccoon)){
+
+        this.currentEntities.push(raccoon)
+      }
+
       this.moveEntity(raccoon, [0, counter]);
       counter++;
     }
@@ -156,32 +160,34 @@ export class Gameboard {
     }
     setTimeout(() => {
       entity.tile!.contents.splice(entity.tile!.contents.indexOf(entity), 1)
-      this.currentEntities = this.currentEntities.filter((ent) => ent.name !== entity.name)
+      this.currentEntities = this.currentEntities.filter((ent) => ent !== entity)
     }, 1400)
   }
 
 
-  endCondition = () => {
-  shouldTick = () => {
-    if(!this.roundInProgress) {
+  endCondition = () => { }
+  shouldTick = (entityList: Entity[]) => {
+    if (!this.roundInProgress) {
       return false; //round not started
     }
-    if(this.enemyQueue) {
+    if (this.enemyQueue) {
       return true; //round not over
     }
     let enemyCount = 0;
-    this.currentEntities.forEach(entity => {
-      if(entity instanceof Enemy) {
+    console.log(entityList.length, 'Entities')
+    entityList.forEach((critter: Entity) => {
+      if (critter instanceof Enemy) {
+        console.log('Baddy detected')
         enemyCount++;
-        if(entity.position && entity.position[0] === 0) {
+        if (critter.position && critter.position[0] === 0) {
           this.setScreen!(3);
           console.log('Lose!');
           return false;
         }
       }
     });
-    if(enemyCount === 0) {
-      if(!this.rounds) {
+    if (enemyCount === 0) {
+      if (!this.rounds) {
         this.rounds = 1
       } else {
         this.rounds++;

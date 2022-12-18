@@ -2,7 +2,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import { PersistenceContext } from '../../context/PersistenceContext';
-
 import { ScreenContext} from '../../context/ScreenContext'
 import { addScore } from '../../routes/routes';
 import './GameOver.css'

@@ -25,6 +25,7 @@ import skeletonIcon from '../assets/enemies/skeletal_warrior_new.png'
 import wraithIcon from '../assets/enemies/wraith.png'
 import impIcon from '../assets/enemies/imp.png'
 import devilIcon from '../assets/enemies/red_devil_new.png'
+import { Tile } from './shared-types';
 
 export class Entity {
   constructor(
@@ -514,7 +515,7 @@ export class GnomeWizard extends Enemy {
     if (!this.tile) return;
     let movementTile: Tile = this.getDiagonal(this.tile);
     // ^ Finds diagonal tile or returns its own tile
-    if(movementTile) this.moveToPosition(movementTile);
+    if (movementTile) this.moveToPosition(movementTile);
 
     let solid: Entity | undefined = undefined;
     let stack = [this.tile];
@@ -568,7 +569,7 @@ export class Imp extends Enemy {
     while (stack.length > 0) {
       let current = stack.pop()!;
       let held: Entity | undefined;
-      if(!current) continue
+      if (!current) continue
       current.edges.forEach((neighbor: Tile) => {
         const left = current.position[0] - 1
         if (neighbor.position[0] === left) {
