@@ -14,35 +14,37 @@ const buttonSelect = require('../../assets/sounds/buttonSelect.wav')
 const Buttons = (props: any) => {
   const { setScreen } = useContext(ScreenContext)
   const { startRound } = props;
-  const {Options, isOpen, toggle} = useOptions(false)
+  const { Options, isOpen, toggle } = useOptions(false)
   const { play: playSelect } = useSound(buttonSelect);
   const handleOptions = () => {
     playSelect();
     toggle();
   };
-    return (
-      <div className="buttons">
-        <button className="button" onClick ={handleOptions}>Options ⚙️</button>
-        <button className="button" onClick={() => startRound()}>Start Round ▶️</button>
-        <button className="button" onClick={() => setScreen!(3)}>Quit Out 🏳️</button>
-        {isOpen && <Options />}
-      </div>
-    )
-  
-}
+  return (
+    <div className="buttons">
+      <button className="button" onClick={handleOptions}>Options ⚙️</button>
+      <button className="button" onClick={() => startRound()}>Start Round ▶️</button>
+      <button className="button" onClick={() => setScreen!(3)}>Quit Out 🏳️</button>
+      {isOpen && <Options />}
+    </div>
+  )
 
+}
+const board = new Gameboard(6, 4);
+// https://stackoverflow.com/a/70633116
+// Thank you Som Shekhar Mukherjee for saving us from near infinite board instances.
 const Board = () => {
   const persistence = useContext(PersistenceContext)
   const { winWidth, winHeight } = useWindowDimensions()
   const [, updateState] = useState({});
   const forceUpdate = useCallback(() => updateState({}), []);
   const { setScreen } = useContext(ScreenContext)
-  const boardRef = useRef(new Gameboard(6, 4))
-  const board = boardRef.current as Gameboard
+  //const boardRef = useRef(new Gameboard(6, 4))
+  //const board = boardRef.current as Gameboard
 
   const { tilePx, tileSize, entitySize } = getTileSize()
   function getTileSize() {
-    const tilePx = (Math.min(winWidth / board.rows, winHeight / board.cols))*.9115
+    const tilePx = (Math.min(winWidth / board.rows, winHeight / board.cols)) * .9115
     return {
       tilePx,
       tileSize: { width: `${tilePx}px`, height: `${tilePx}px`, backgroundSize: `${tilePx}px` },
@@ -62,7 +64,7 @@ const Board = () => {
     board.rerender = forceUpdate;
     board.setScreen = setScreen;
     board.rounds = persistence.rounds;
-  }, [board, persistence.raccoonTeam, forceUpdate, setScreen, persistence.rounds])
+  }, [persistence.raccoonTeam, forceUpdate, setScreen, persistence.rounds])
 
   //when game board loads, 
   useEffect(() => firstRender(), [firstRender])
@@ -93,19 +95,19 @@ const Board = () => {
         <div className='rows' key={col} style={{ display: "flex" }}>
           {range(0, board.rows - 1).map((row) => {
             const tile = board.getTile([row, col]);
-            if(!tile) {
+            if (!tile) {
               return (
                 <div
-                key={row}
-                className="tile"
-                style={{
-                  ...tileSize,
-                  backgroundImage: fallbackGrass,
-                }} />
-                )
-              }
-              return (
-                <>
+                  key={row}
+                  className="tile"
+                  style={{
+                    ...tileSize,
+                    backgroundImage: fallbackGrass,
+                  }} />
+              )
+            }
+            return (
+              <>
                 <div
                   key={row}
                   className="tile"
