@@ -13,7 +13,7 @@ import { portraits } from "../../assets/portrait/portraits";
 import { url } from "inspector";
 import Carousel from 'react-bootstrap/Carousel';
 import Card from 'react-bootstrap/Card';
-const ITEMS_PER_PAGE = 8
+const ITEMS_PER_PAGE =8
 
 
 
@@ -134,13 +134,15 @@ const InventoryCarousel = (props: GrabSupported) => {
   const { handleGrab, grabbed } = props;
   const { inventory } = useContext(PersistenceContext);
   const [page, setPage] = useState(0)
-
+  const invBook = paginate(inventory.items, ITEMS_PER_PAGE)
+  
   const modifyInventory: modifySlotFunc = (grabbed: Item | undefined, setGrabbed: setGrabFunc, clickedIndex?: number) => {
+    console.log('modifyInventory ran');
     if (grabbed) {
-      inventory.items.splice(clickedIndex!, 0, grabbed)
+      invBook[page].splice(clickedIndex!, 0, grabbed)
       setGrabbed(undefined);
     } else {
-      const taken = inventory.items.splice(clickedIndex!, 1)[0]
+      const taken = invBook[page].splice(clickedIndex!, 1)[0]
       setGrabbed(taken);
     }
   }
@@ -151,9 +153,8 @@ const InventoryCarousel = (props: GrabSupported) => {
     }
   }
 
-  const invBook = paginate(inventory.items, ITEMS_PER_PAGE)
-  // console.log(invBook);
-  // console.log(inventory.items);
+  
+ 
   return (
     <div style={{ display: "flex" }}>
       {page> 0 ? <img onClick={() => setPage(page - 1)} className="forward-back" src={todo} alt="back" /> : <img className="forward-back" src={todo} alt="back" />}
@@ -385,9 +386,9 @@ const RaccoonCarousel = (props: RaccoonCarouselProps) => {
         return (
           <Carousel.Item>
             <Card 
-            style={{ width: '18rem' , height: '480px'}}
+            style={{ width: '18rem' , height: '480px', imageRendering:'pixelated'}}
             >
-      <Card.Img variant="top" src={`${raccoon.emoji}`} />
+      <Card.Img variant="top" src={`${raccoon.sprite}`} />
       <Card.Body>
         <Card.Title> hi{`${raccoon.name}`}</Card.Title>
         <Card.Text>
@@ -400,14 +401,6 @@ const RaccoonCarousel = (props: RaccoonCarouselProps) => {
         </div>
       </Card.Body>
     </Card>
-            />
-            <Carousel.Caption>
-              <h3>{`${raccoon.name}`}</h3>
-              <p>{`${raccoon.description}`}</p>
-              <button id='button'
-                onClick={(e) => props.handleAddRaccoon(raccoon)}
-              >Add to Team</button>
-            </Carousel.Caption>
           </Carousel.Item>
         )
       })}
