@@ -13,9 +13,8 @@ import { portraits } from "../../assets/portrait/portraits";
 import { url } from "inspector";
 import Carousel from 'react-bootstrap/Carousel';
 import Card from 'react-bootstrap/Card';
+const ITEMS_PER_PAGE = 8
 
-
-const ITEMS_PER_PAGE =8
 
 
 // give this type to anything that should pass or use handleGrab
@@ -92,7 +91,7 @@ const Preround = () => {
           }}
           height={100}
           width={100}
-          src={grabbed.emoji}
+          src={grabbed.sprite}
           alt={grabbed.name} />
       )}
       <div>
@@ -145,7 +144,7 @@ const InventoryCarousel = (props: GrabSupported) => {
       setGrabbed(taken);
     }
   }
- 
+
   function isDimmed(item?: Item): boolean | undefined {
     if (!grabbed) {
       return !item;
@@ -226,7 +225,7 @@ const ItemSlot = (props: ItemSlotProps) => {
           pointerEvents: grabbed === item ? "none" : "initial",
         }}>
         {item && (
-          <img style={{ imageRendering: "pixelated" }} height={100} width={100} src={item.emoji} alt={item.name} />
+          <img style={{ imageRendering: "pixelated" }} height={100} width={100} src={item.sprite} alt={item.name} />
         )}
       </div>
     </div>
@@ -357,13 +356,13 @@ const EmptyRaccoonSlot = (props: emptyRaccoonSlotProps) => {
         show={isOpen}
         onHide={() => setIsOpen(false)}>
         <Modal.Body className="gold-modal raccoon-modal">
-          <RaccoonCarousel handleAddRaccoon = {props.handleAddRaccoon}/>
+          <RaccoonCarousel handleAddRaccoon={props.handleAddRaccoon} />
         </Modal.Body>
         {/* <button id='button'
           onClick={(e) => props.handleAddRaccoon(possibleRaccoon)}
         >Add to Team</button> */}
       </Modal>
-      <button className ="raccSelectButton" onClick={() => setIsOpen(!isOpen)}>Select a Raccoon</button>
+      <button className="raccSelectButton" onClick={() => setIsOpen(!isOpen)}>Select a Raccoon</button>
     </div>
   )
 }
@@ -399,17 +398,16 @@ const RaccoonCarousel = (props: RaccoonCarouselProps) => {
           onClick={(e) => props.handleAddRaccoon(raccoon)}
         >Add to Team</button>
         </div>
-        
       </Card.Body>
     </Card>
-            {/* <img
-              className="d-block w-100"
-              src={`${raccoon.emoji}`}
-              alt={`${raccoon.name}`}
-            /> */}
-            
-
-            
+            />
+            <Carousel.Caption>
+              <h3>{`${raccoon.name}`}</h3>
+              <p>{`${raccoon.description}`}</p>
+              <button id='button'
+                onClick={(e) => props.handleAddRaccoon(raccoon)}
+              >Add to Team</button>
+            </Carousel.Caption>
           </Carousel.Item>
         )
       })}
