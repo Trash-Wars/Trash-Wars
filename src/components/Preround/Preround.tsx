@@ -12,7 +12,10 @@ import Modal from 'react-bootstrap/Modal';
 import { portraits } from "../../assets/portrait/portraits";
 import { url } from "inspector";
 import Carousel from 'react-bootstrap/Carousel';
+import Card from 'react-bootstrap/Card';
 const ITEMS_PER_PAGE = 8
+
+
 
 // give this type to anything that should pass or use handleGrab
 type GrabSupported = {
@@ -61,10 +64,14 @@ const Preround = () => {
 
   function handleRemoveRaccoonFromTeam(raccoonToRemove: Raccoon): void {
     let index = raccoonTeam.findIndex((raccoon: Raccoon) => raccoon.name === raccoonToRemove.name);
-    if (raccoonToRemove.hat) inventory.items.push(raccoonToRemove.hat)
-    if (raccoonToRemove.weapon) inventory.items.push(raccoonToRemove.weapon)
-    raccoonToRemove.weapon = undefined
-    raccoonToRemove.hat = undefined
+    if(raccoonToRemove.hat) {
+      inventory.items.push(raccoonToRemove.hat)
+    }
+    if(raccoonToRemove.weapon)  {
+      inventory.items.push(raccoonToRemove.weapon)
+    }
+    raccoonToRemove.weapon= undefined
+    raccoonToRemove.hat= undefined
     let [raccoon] = raccoonTeam.splice(index, 1)
     inventory.sidelineRaccoons.push(raccoon)
   }
@@ -90,7 +97,7 @@ const Preround = () => {
       <div>
         <h1 style={{ textAlign: "center", marginTop: 0 }}>Prepare your Team...</h1>
       </div>
-      <div style={{ display: "flex", justifyContent: "space-around", margin: "2rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-around", margin: "2rem", marginBottom:'5rem' }}>
         {range(0, 3).map((i) => {
           return (
             <RaccoonSlot
@@ -145,11 +152,12 @@ const InventoryCarousel = (props: GrabSupported) => {
   }
 
   const invBook = paginate(inventory.items, ITEMS_PER_PAGE)
-  console.log(invBook);
-  console.log(inventory.items);
+  // console.log(invBook);
+  // console.log(inventory.items);
   return (
     <div style={{ display: "flex" }}>
-      <img onClick={() => setPage(page - 1)} className="forward-back" src={todo} alt="back" />
+      {page> 0 ? <img onClick={() => setPage(page - 1)} className="forward-back" src={todo} alt="back" /> : <img className="forward-back" src={todo} alt="back" />}
+      
       {range(1, ITEMS_PER_PAGE).map((_, i) => (
         <ItemSlot
           dimmed={isDimmed(invBook[page][i])}
@@ -161,7 +169,10 @@ const InventoryCarousel = (props: GrabSupported) => {
           handleGrab={handleGrab}
           grabbed={grabbed} />
       ))}
-      <img onClick={() => setPage(page + 1)} className="forward-back" src={todo} alt="forward" />
+      {page < invBook.length -1 ? <img onClick={() => setPage(page + 1)} className="forward-back" src={todo} alt="forward" /> : <img 
+      
+      className="forward-back" src={todo} alt="forward" /> }
+      
     </div>
   )
 }
@@ -195,9 +206,7 @@ const ItemSlot = (props: ItemSlotProps) => {
     dimmed,
   } = props;
   const { clientX, clientY } = useMousePosition();
-
   const isGrabbed = grabbed === item
-
   const grabStyle: React.CSSProperties = {
     position: isGrabbed ? "absolute" : "initial",
     left: isGrabbed ? (clientX || 0) - 50 : "initial",
@@ -222,7 +231,6 @@ const ItemSlot = (props: ItemSlotProps) => {
     </div>
   )
 }
-
 type RaccoonSlotProps = GrabSupported & {
   raccoon?: Raccoon;
   racIndex: number;
@@ -290,11 +298,18 @@ const RaccoonSlot = (props: RaccoonSlotProps) => {
     <div className="raccoon-slot"
     >
       {raccoon ? (
-        <div>
+
+        <div style={{  }}>
+        <div style={{
+          color: 'red',
+        }}
+        onClick={(e) => props.handleRemoveRaccoonFromTeam(raccoon)}>
+           &times;
           <img width={256} height={256} src={raccoonIcon} alt={raccoon.name}
-            onClick={(e) => props.handleRemoveRaccoonFromTeam(raccoon)} />
+            />
           <div className="raccoon-name">{raccoon.name}
 
+          </div>
           </div>
           <ItemSlot
             validItemInSlot={validWeapon}
@@ -369,10 +384,22 @@ const RaccoonCarousel = (props: RaccoonCarouselProps) => {
       {inventory.sidelineRaccoons.map((raccoon: Raccoon) => {
         return (
           <Carousel.Item>
-            <img
-              className="d-block w-100"
-              src={`${raccoon.sprite}`}
-              alt={`${raccoon.name}`}
+            <Card 
+            style={{ width: '18rem' , height: '480px'}}
+            >
+      <Card.Img variant="top" src={`${raccoon.emoji}`} />
+      <Card.Body>
+        <Card.Title> hi{`${raccoon.name}`}</Card.Title>
+        <Card.Text>
+        {`${raccoon.description}`}
+        </Card.Text>
+        <div id='addToTeamButtonContainer'>
+          <button id='addToTeamButton'
+          onClick={(e) => props.handleAddRaccoon(raccoon)}
+        >Add to Team</button>
+        </div>
+      </Card.Body>
+    </Card>
             />
             <Carousel.Caption>
               <h3>{`${raccoon.name}`}</h3>
@@ -381,7 +408,6 @@ const RaccoonCarousel = (props: RaccoonCarouselProps) => {
                 onClick={(e) => props.handleAddRaccoon(raccoon)}
               >Add to Team</button>
             </Carousel.Caption>
-
           </Carousel.Item>
         )
       })}

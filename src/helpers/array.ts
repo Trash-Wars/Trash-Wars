@@ -10,12 +10,13 @@ export function range(start: number, end: number) {
 export const paginate = <T>(collection: T[], maxPerPage: number): T[][] => {
   const pages: T[][] = [];
   let page: T[] = [];
-  let itemsToAdd = maxPerPage;
+  let itemsToAdd = maxPerPage+1;
 
   for (const item of collection) {
     page.push(item);
     itemsToAdd--;
-    if (!itemsToAdd) {
+    if (itemsToAdd % maxPerPage === 1) {
+      console.log('newPage')
       itemsToAdd = maxPerPage;
       pages.push(page);
       page = [];
