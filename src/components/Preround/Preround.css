@@ -11,14 +11,28 @@
   flex-direction: column;
 }
 
+.carousel-item.active {
+  display: block;
+  height:550px;
+}
+
 .raccoon-modal {
   display: flex;
   justify-content: center;
   position: relative;
-  height: 480px !important;
+  height: 600px !important;
   background-size: cover;
   background-position: center;
   padding: 0px !important;
+  color:black
+}
+
+.carousel-control-next-icon {
+  background-color: black;
+}
+
+.carousel-control-prev-icon {
+  background-color: black;
 }
 
 .rm-section {
@@ -40,6 +54,8 @@
   /* width: 480 !important;
   height: 480 !important; */
 }
+
+
 
 .inventory-item {
   width: 100px;
@@ -69,7 +85,7 @@
 
 .hat-slot {
   position: relative;
-  bottom: 390px;
+  bottom: 425px;
   left: 78px;
 }
 
@@ -95,8 +111,8 @@
 
 .weapon-slot {
   position: relative;
-  bottom: 150px;
-  right: 20px;
+  bottom: 180px;
+  right: 35px;
 }
 
 .forward-back {
@@ -146,4 +162,35 @@
   100% {
       color: transparent;
   }
+}
+
+#addToTeamButton {
+  background-color: transparent;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 24px;
+  border-radius: 10px;
+  transition: color 0.3s;
+  animation: shimmer 1s linear infinite;
+  /* border-radius: 20%; */
+  display: flex;
+  justify-content: center;
+}
+
+#addToTeamButtonContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.carousel-item {
+  position: relative;
+  display: none;
+  float: left;
+  width: 100%;
+  margin-right: -100%;
+  backface-visibility: hidden;
+  transition: transform .6s ease-in-out;
 }
