@@ -145,8 +145,8 @@ const InventoryCarousel = (props: GrabSupported) => {
   }
 
   const invBook = paginate(inventory.items, ITEMS_PER_PAGE)
-  console.log(invBook);
-  console.log(inventory.items);
+  //console.log(invBook);
+  //console.log(inventory.items);
   return (
     <div style={{ display: "flex" }}>
       <img onClick={() => setPage(page - 1)} className="forward-back" src={todo} alt="back" />
