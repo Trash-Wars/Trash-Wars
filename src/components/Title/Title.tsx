@@ -1,19 +1,16 @@
-import React, { useContext } from "react";
-import { ScreenContext } from "../../context/ScreenContext";
 import { useOptions } from "../../hooks/useOptions/useOptions";
 import { useSound } from "../../hooks/useSound";
 import "./Title.css";
 import titleImg from '../../assets/ui/title.png';
+import { Link } from "react-router-dom";
 const buttonSelect = require("../../assets/sounds/buttonSelect.wav");
 
 function Title() {
-  const { setScreen } = useContext(ScreenContext);
   const { Options, isOpen, toggle } = useOptions(false);
   const { play: playSelect } = useSound(buttonSelect);
 
   const handleStart = () => {
     playSelect();
-    setScreen!(1);
   };
   const handleOptions = () => {
     playSelect();
@@ -34,9 +31,11 @@ function Title() {
           alignItems: "center",
           flexDirection: "column",
         }} >
-        <button className="titleButton" onClick={handleStart}>
-          Start Game
-        </button>
+        <Link to="/preround">
+          <button className="titleButton" onClick={handleStart}>
+            Start Game
+          </button>
+        </Link>
         <button className="titleButton" onClick={handleOptions}>
           Options
         </button>
