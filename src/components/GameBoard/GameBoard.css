@@ -27,8 +27,14 @@
   margin: 1px 1px;
 }
 
+.enemy {
+  position: absolute;
+  margin: 1px 1px;
+  transition: .5s linear;
+}
+
 #death {
-  animation: fadeNFloat 1.2s linear; 
+  animation: fadeNFloat 2s linear; 
 }
 @keyframes fadeNFloat {
   0% {
@@ -53,18 +59,20 @@
 }
 
 #damage {
-  filter: blur(5px); 
-  transition: filter .1s linear;
-  animation: flash 0.1s linear;
+  filter:hue-rotate(50deg)
+  /* filter: blur(5px);  */
+  /* transition: filter .1s linear;
+  animation: flash 0.1s linear; */
 }
 @keyframes flash {
   from{
-    filter: brightness(100%)
+    filter: hue-rotate(0deg)
   }
   to {
-    filter:brightness(300%)
+    
   }
 }
+
  .entity:active{
   filter: blur(3px);
   transition: filter 0.1s ease;

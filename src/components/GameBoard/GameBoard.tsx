@@ -79,6 +79,7 @@ const Board = () => {
       console.log('Difficulty: ', difficulty)
       board.generateEnemies(difficulty);
     };
+
     board.roundInProgress = true;
   };
 
