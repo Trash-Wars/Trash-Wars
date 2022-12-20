@@ -392,7 +392,7 @@ export class Enemy extends Mob {
     if (!this.position) return;
     let targetTile: Tile | undefined;
     this.getAdjacentTiles()!.forEach((neighbor: Tile) => {
-      if (neighbor.position[0] === this.position![0] - 1 && neighbor.position[1] === this.position![1]) targetTile = neighbor;
+      if (neighbor.position[0] === this.position![0] - 1) targetTile = neighbor;
     });
     if (!targetTile) return;
     // ^ Finds adjacent tile
@@ -556,7 +556,7 @@ export class Imp extends Enemy {
     let movementTile: Tile | undefined;
     // ^ Finds diagonal tile or returns its own tile
     this.getAdjacentTiles()!.forEach((neighbor: Tile) => {
-      if (neighbor.position[0] === this.position![0] - 1 && neighbor.position[1] === this.position![1]) movementTile = neighbor;
+      if (neighbor.position[0] === this.position![0] - 1) movementTile = neighbor;
     });
     if (movementTile && !movementTile.contents.find(entity => entity.isSolid)) {
       this.moveToPosition(movementTile);
