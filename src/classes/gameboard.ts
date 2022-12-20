@@ -9,18 +9,18 @@ export function comparePos(a: [number, number], b: [number, number]) {
 export class Gameboard {
   enemyQueue: Enemy[] = [];
   currentEntities: Entity[] = [];
+  raccoonTeam: Raccoon[] = [];
   tiles: Tile[] = [];
   rerender?: () => void;
 
   setScreen?: (newScreen: 0 | 1 | 2 | 3) => void;
-  rounds?: number;
+  rounds: number = 0;
 
   roundInProgress: boolean = false;
 
 
   constructor(readonly rows: number, readonly cols: number) {
     this.generateGameBoard();
-    console.log('Setting interval');
     setInterval(() => {
       /// make special return constants that are handled differently in a switch case
       const shouldRun = this.shouldTick(this.currentEntities);
@@ -35,7 +35,7 @@ export class Gameboard {
           this.rerender()
         }
       };
-    }, 1000)
+    }, 2000)
   }
 
   generateGameBoard() {
@@ -93,7 +93,7 @@ export class Gameboard {
       this.moveEntity(enemy, spawnTile);// moveEntity
       this.currentEntities.push(enemy)
     };
-    
+
     this.currentEntities.forEach(entity => {
       if (entity instanceof Raccoon) {
         entity.useWeapon();
@@ -142,11 +142,23 @@ export class Gameboard {
     let counter = 0;
     console.log('First render')
     for (const raccoon of raccoonTeam) {
-      if(!this.currentEntities.find(entity => entity === raccoon)){
+      if (!this.currentEntities.find(entity => entity === raccoon)) {
 
-        this.currentEntities.push(raccoon)
+        this.currentEntities.push(raccoon);
+        this.raccoonTeam.push(raccoon);
       }
 
+      this.moveEntity(raccoon, [0, counter]);
+      counter++;
+    }
+  }
+
+  regenerate = () => {
+    let counter = 0;
+    this.currentEntities = [];
+    for (const raccoon of this.raccoonTeam) {
+      raccoon.health = raccoon.maxHealth;
+      this.currentEntities.push(raccoon);
       this.moveEntity(raccoon, [0, counter]);
       counter++;
     }
@@ -202,7 +214,7 @@ export class Gameboard {
       } else {
         this.rounds++;
       }
-      console.log(this.rounds);
+      console.log(this.rounds, "Rounds");
       //modal popup
       //modal should kick player to preround screen when they select an item
       this.setScreen!(1);
