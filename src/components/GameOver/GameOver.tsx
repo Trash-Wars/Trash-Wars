@@ -1,10 +1,11 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { PersistenceContext } from '../../context/PersistenceContext';
-import { ScreenContext} from '../../context/ScreenContext'
 import { addScore } from '../../routes/routes';
 import './GameOver.css'
+import { board } from '../GameBoard/GameBoard'
 
 
 type ScoreEntry = {
@@ -17,7 +18,6 @@ type ScoreEntry = {
 // TODO:will need to take these props from the gameboard to display number of rounds won in game
 
 const GameOver = () => {
-  const {setScreen} =useContext(ScreenContext)
 
   const [scores, setScores] = useState<ScoreEntry[]>([]);
   const [isNewScore, setIsNewScore] = useState<boolean>(false);
@@ -39,13 +39,12 @@ const GameOver = () => {
     fetchScores();
   }, [roundsWon, scores]);
 
-  const {rounds}  = useContext(PersistenceContext)
 
   return (
     <div id="GameOverContainer">
       <div id = "readables">
         <h1 id= "GameOver">Game Over 💀</h1>
-        {isNewScore || roundsWon === 0 ? null : <p id = "GameOver">YOU SURVIVED {rounds} ROUNDS</p>}
+        {isNewScore || roundsWon === 0 ? null : <p id = "GameOver">YOU SURVIVED {board.rounds} ROUNDS</p>}
         <p id = "GameOver">HIGH SCORES</p>
         <table>
           <thead>
@@ -67,8 +66,9 @@ const GameOver = () => {
             })}
           </tbody>
         </table>
-
-        <button id = "button" onClick={() =>setScreen!(0)}>Return to Menu</button>
+        <Link to="/preround">
+          <button id = "button">Return to Menu</button>
+        </Link>
         <ScoreModal isNewScore={isNewScore} roundsWon={roundsWon} setRoundsWon={setRoundsWon}/>
       </div>
     </div>

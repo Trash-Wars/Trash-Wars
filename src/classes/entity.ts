@@ -209,7 +209,7 @@ export class Spear extends Weapon {
     });
     if (!targetTile) return;
     targetTile.edges.forEach((neighbor: Tile) => {
-      if (neighbor.position[1] === targetTile!.position[0] + 1) hitList.push(neighbor);
+      if (neighbor.position[0] === targetTile!.position[0] + 1) hitList.push(neighbor);
     });
     //let solid: Mob | undefined;
     //if (enemyTile.contents.length !== 0) solid = enemyTile.contents.find(entity => entity.isSolid) as Mob;
@@ -315,21 +315,42 @@ export class KnightHelmet extends Apparel {
   }
 }
 
+
 export class Mob extends Entity {
   constructor(name: string, sprite: string, health: number, description: string | undefined) {
     super(name, sprite)
     this.health = health;
-    this.description = description
+    this.description = description;
+    this.maxHealth = health;
   }
   health: number;
+  maxHealth: number;
   description: string | undefined
   takeDamage(damage: number, attacker: Entity | undefined): void {
     // ^ attacker is optional
     if (this.health <= 0) return;
     this.health = this.health - damage;
+    console.log(this.name, "took damage")
+    // this.damageAnimation()
+    this.idName = 'damage';
+    setTimeout(() => {
+      this.emptyIdName()
+    }, 100)
   }
+
+  emptyIdName():void {
+    console.log(this.idName)
+    this.idName='hello'
+    console.log(this.idName)
+  }
+ 
 }
 
+export class Claws extends Weapon {
+  constructor() {
+    super('Raccoon claws', raccIcon, 'Claws', 1, 1)
+  }
+}
 export class Raccoon extends Mob {
   constructor(
     name: string,
@@ -347,28 +368,13 @@ export class Raccoon extends Mob {
   weapon: Weapon | undefined;
 
   useWeapon() {
-    if (!this.weapon) return;
+    if (!this.weapon) {
+      const claws = new Claws()
+      claws.use(this);
+      return;
+    };
     this.weapon.use(this);
   }
-
-  changeWeapon(newWeapon: Weapon) {
-    if (this.weapon) {
-      const oldWeapon = this.weapon;
-      // place oldWeapon back in player inventory
-    }
-    // remove newWeapon from player inventory
-    this.weapon = newWeapon;
-  }
-
-  changeApparel(newApparel: Apparel) {
-    if (this.hat) {
-      const oldApparel = this.hat;
-      // place oldApparel back in player inventory
-    }
-    // remove newApparel from player inventory
-    this.hat = newApparel;
-  }
-
 
 }
 
@@ -383,7 +389,7 @@ export class Enemy extends Mob {
   ) {
     super(name, sprite, health, description);
     this.team = 'hostile';
-    this.className = 'raccoon';
+    this.className = 'enemy';
     this.idName = '';
     this.damage = damage;
   }
@@ -400,7 +406,7 @@ export class Enemy extends Mob {
     if (!this.position) return;
     let targetTile: Tile | undefined;
     this.getAdjacentTiles()!.forEach((neighbor: Tile) => {
-      if (neighbor.position[0] === this.position![0] - 1 && neighbor.position[1] === this.position![1]) targetTile = neighbor;
+      if (neighbor.position[0] === this.position![0] - 1) targetTile = neighbor;
     });
     if (!targetTile) return;
     // ^ Finds adjacent tile
@@ -515,7 +521,13 @@ export class GnomeWizard extends Enemy {
     if (!this.tile) return;
     let movementTile: Tile = this.getDiagonal(this.tile);
     // ^ Finds diagonal tile or returns its own tile
-    if (movementTile) this.moveToPosition(movementTile);
+    if (movementTile) {
+      this.moveToPosition(movementTile);
+    } else {
+      this.tile.edges.forEach((neighbor: Tile) => {
+        if (neighbor.position[0] === this.tile!.position[0] - 1) this.moveToPosition(neighbor);
+      });
+    }
 
     let solid: Entity | undefined = undefined;
     let stack = [this.tile];
@@ -558,7 +570,7 @@ export class Imp extends Enemy {
     let movementTile: Tile | undefined;
     // ^ Finds diagonal tile or returns its own tile
     this.getAdjacentTiles()!.forEach((neighbor: Tile) => {
-      if (neighbor.position[0] === this.position![0] - 1 && neighbor.position[1] === this.position![1]) movementTile = neighbor;
+      if (neighbor.position[0] === this.position![0] - 1) movementTile = neighbor;
     });
     if (movementTile && !movementTile.contents.find(entity => entity.isSolid)) {
       this.moveToPosition(movementTile);

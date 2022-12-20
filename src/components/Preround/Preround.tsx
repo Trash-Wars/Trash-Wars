@@ -2,16 +2,14 @@ import React, { useContext, useState } from "react";
 import { Raccoon } from "../../classes/entity";
 import { Apparel, Item, Weapon } from "../../classes/entity";
 import { PersistenceContext } from "../../context/PersistenceContext";
-import { ScreenContext, SCREEN_GAMEBOARD } from "../../context/ScreenContext";
 import { paginate, range } from "../../helpers/array";
 import useMousePosition from "../../hooks/useMousePosition";
 import './Preround.css';
 import raccoonIcon from '../../assets/doll.png';
 import todo from '../../assets/todo.png';
 import Modal from 'react-bootstrap/Modal';
-import { portraits } from "../../assets/portrait/portraits";
-import { url } from "inspector";
 import Carousel from 'react-bootstrap/Carousel';
+import { Link } from "react-router-dom";
 import Card from 'react-bootstrap/Card';
 import { useSound } from "../../hooks/useSound";
 
@@ -19,7 +17,6 @@ const itemEquip = require("../../assets/sounds/itemEquip.mp3");
 const itemSelect = require("../../assets/sounds/itemSelect.mp3");
 const buttonSelect = require("../../assets/sounds/buttonSelect.wav");
 const ITEMS_PER_PAGE = 8
-
 
 
 // give this type to anything that should pass or use handleGrab
@@ -34,11 +31,10 @@ type modifySlotFunc = (grabbed: Item | undefined, setGrabbed: setGrabFunc, click
 
 const Preround = () => {
   const { raccoonTeam } = useContext(PersistenceContext);
+
   const { inventory } = useContext(PersistenceContext)
-  const { setScreen } = useContext(ScreenContext);
 
   const { clientX, clientY } = useMousePosition()
-
   const [grabbed, setGrabbed] = useState<Item | undefined>(undefined)
   const { play: playSelect } = useSound(buttonSelect);
 
@@ -122,14 +118,16 @@ const Preround = () => {
           grabbed={grabbed} />
       </div>
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <button
-          style={{ color: "white" }}
-          onClick={() => {
-            setScreen!(SCREEN_GAMEBOARD);
+        <Link to="/gameboard">
+          <button
+            style={{ color: "white" }}
+            onClick={() => {
             playSelect();
-          }} >
-          Start Match
-        </button>
+            }}
+            >
+            Start Match
+          </button>
+        </Link>
       </div>
     </div>
   );
@@ -253,14 +251,21 @@ type RaccoonSlotProps = GrabSupported & {
 const RaccoonSlot = (props: RaccoonSlotProps) => {
   const { raccoon, racIndex, handleGrab, grabbed,
   } = props;
+
   
   const { play: playEquip } = useSound(itemEquip);
   const { play: playSelect } = useSound(itemSelect);
+  
+  const { inventory } = useContext(PersistenceContext);
 
   const modifyWeapon: modifySlotFunc = (grabbed: Item | undefined, setGrabbed: setGrabFunc, clickedIndex?: number) => {
     if (!raccoon) {
       console.warn("attempted to give a nonexistant raccoon a weapon");
       return;
+    }
+    if(raccoon.weapon){
+      inventory.items.push(raccoon.weapon)
+      raccoon.weapon = grabbed as Weapon;
     }
     if (grabbed) {
       raccoon.weapon = grabbed as Weapon;
@@ -278,6 +283,10 @@ const RaccoonSlot = (props: RaccoonSlotProps) => {
     if (!raccoon) {
       console.warn("attempted to give a nonexistant raccoon a hat");
       return;
+    }
+    if(raccoon.hat){
+      inventory.items.push(raccoon.hat)
+      raccoon.hat = grabbed as Apparel;
     }
     if (grabbed) {
       raccoon.hat = grabbed as Apparel;
@@ -365,9 +374,7 @@ type emptyRaccoonSlotProps = {
 }
 
 const EmptyRaccoonSlot = (props: emptyRaccoonSlotProps) => {
-  // const { inventory } = useContext(PersistenceContext)
   const [isOpen, setIsOpen] = useState(false);
-  // const [raccIndex, setRaccIndex] = useState(0);
   // const { sidelineRaccoons } = inventory;
   // const modalImage = portraits[raccIndex]
 
