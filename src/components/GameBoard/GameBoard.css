@@ -59,17 +59,24 @@
 }
 
 #damage {
-  filter:hue-rotate(50deg)
-  /* filter: blur(5px);  */
-  /* transition: filter .1s linear;
-  animation: flash 0.1s linear; */
+  /* filter:hue-rotate(50deg);
+  background-color: black; */
+  filter: blur(5px); 
+  /* transition: filter .1s linear; */
+  animation: flash 2s linear infinite;
 }
 @keyframes flash {
-  from{
-    filter: hue-rotate(0deg)
-  }
-  to {
+  0%{
     
+  }
+  10% {
+    filter: brightness(300%)
+  }
+  11%{
+    filter: brightness(100%)
+  }
+  100% {
+    filter: brightness(100%)
   }
 }
 

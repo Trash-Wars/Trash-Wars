@@ -93,7 +93,7 @@ export class Gameboard {
       this.moveEntity(enemy, spawnTile);// moveEntity
       this.currentEntities.push(enemy)
     };
-
+    
     this.currentEntities.forEach(entity => {
       if (entity instanceof Raccoon) {
         entity.useWeapon();
