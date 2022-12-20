@@ -2,16 +2,14 @@ import React, { useContext, useState } from "react";
 import { Raccoon } from "../../classes/entity";
 import { Apparel, Item, Weapon } from "../../classes/entity";
 import { PersistenceContext } from "../../context/PersistenceContext";
-import { ScreenContext, SCREEN_GAMEBOARD } from "../../context/ScreenContext";
 import { paginate, range } from "../../helpers/array";
 import useMousePosition from "../../hooks/useMousePosition";
 import './Preround.css';
 import raccoonIcon from '../../assets/doll.png';
 import todo from '../../assets/todo.png';
 import Modal from 'react-bootstrap/Modal';
-import { portraits } from "../../assets/portrait/portraits";
-import { url } from "inspector";
 import Carousel from 'react-bootstrap/Carousel';
+import { Link } from "react-router-dom";
 import Card from 'react-bootstrap/Card';
 const ITEMS_PER_PAGE = 8
 
@@ -28,8 +26,9 @@ type modifySlotFunc = (grabbed: Item | undefined, setGrabbed: setGrabFunc, click
 
 const Preround = () => {
   const { raccoonTeam } = useContext(PersistenceContext);
-  const { inventory } = useContext(PersistenceContext);
-  const { setScreen } = useContext(ScreenContext);
+
+  const { inventory } = useContext(PersistenceContext)
+
   const { clientX, clientY } = useMousePosition()
   const [grabbed, setGrabbed] = useState<Item | undefined>(undefined)
 
@@ -113,13 +112,12 @@ const Preround = () => {
           grabbed={grabbed} />
       </div>
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <button
-          style={{ color: "white" }}
-          onClick={() => {
-            setScreen!(SCREEN_GAMEBOARD);
-          }} >
-          Start Match
-        </button>
+        <Link to="/gameboard">
+          <button
+            style={{ color: "white" }} >
+            Start Match
+          </button>
+        </Link>
       </div>
     </div>
   );
@@ -146,6 +144,7 @@ const InventoryCarousel = (props: GrabSupported) => {
       return !item;
     }
   }
+
 
   return (
     <div style={{ display: "flex" }}>
@@ -348,9 +347,7 @@ type emptyRaccoonSlotProps = {
 }
 
 const EmptyRaccoonSlot = (props: emptyRaccoonSlotProps) => {
-  // const { inventory } = useContext(PersistenceContext)
   const [isOpen, setIsOpen] = useState(false);
-  // const [raccIndex, setRaccIndex] = useState(0);
   // const { sidelineRaccoons } = inventory;
   // const modalImage = portraits[raccIndex]
 

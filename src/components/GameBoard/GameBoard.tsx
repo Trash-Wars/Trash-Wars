@@ -1,7 +1,6 @@
 import { Gameboard } from '../../classes/gameboard';
-import { useEffect, useContext, useRef, useCallback, useState } from 'react'
+import { useEffect, useContext, useCallback, useState } from 'react'
 import { Entity } from '../../classes/entity';
-import { ScreenContext } from '../../context/ScreenContext';
 import { PersistenceContext } from '../../context/PersistenceContext';
 import './GameBoard.css'
 import useWindowDimensions from '../../hooks/useWindowDimensions';
@@ -9,10 +8,10 @@ import { range } from '../../helpers/array';
 import { useOptions } from '../../hooks/useOptions/useOptions';
 import { useSound } from '../../hooks/useSound';
 import fallbackGrass from '../../assets/grass/blue1.png';
+import { Link } from 'react-router-dom';
 
 const buttonSelect = require('../../assets/sounds/buttonSelect.wav')
 const Buttons = (props: any) => {
-  const { setScreen } = useContext(ScreenContext)
   const { startRound } = props;
   const { Options, isOpen, toggle } = useOptions(false)
   const { play: playSelect } = useSound(buttonSelect);
@@ -24,13 +23,16 @@ const Buttons = (props: any) => {
     <div className="buttons">
       <button className="button" onClick={handleOptions}>Options ⚙️</button>
       <button className="button" onClick={() => startRound()}>Start Round ▶️</button>
-      <button className="button" onClick={() => setScreen!(3)}>Quit Out 🏳️</button>
+      <Link to="/gameover">
+        <button className="button">Quit Out 🏳️</button>
+      </Link>
       {isOpen && <Options />}
     </div>
   )
 
 }
 const board = new Gameboard(6, 4);
+
 // https://stackoverflow.com/a/70633116
 // Thank you Som Shekhar Mukherjee for saving us from near infinite board instances.
 const Board = () => {
@@ -38,7 +40,6 @@ const Board = () => {
   const { winWidth, winHeight } = useWindowDimensions()
   const [, updateState] = useState({});
   const forceUpdate = useCallback(() => updateState({}), []);
-  const { setScreen } = useContext(ScreenContext)
   //const boardRef = useRef(new Gameboard(6, 4))
   //const board = boardRef.current as Gameboard
 
@@ -62,9 +63,7 @@ const Board = () => {
   const firstRender = useCallback(() => {
     board.firstRender(persistence.raccoonTeam);
     board.rerender = forceUpdate;
-    board.setScreen = setScreen;
-    board.rounds = persistence.rounds;
-  }, [persistence.raccoonTeam, forceUpdate, setScreen, persistence.rounds])
+  }, [persistence, forceUpdate])
 
   //when game board loads, 
   useEffect(() => firstRender(), [firstRender])
@@ -74,7 +73,13 @@ const Board = () => {
   // button should toggle isRunning
   const startRound = async () => {
     // TODO: difficulty should be math on the current round with a multiplier. In other words, round# * 3 = enemy count
-    if(!board.roundInProgress) board.generateEnemies(1);
+    if (!board.roundInProgress) {
+      board.regenerate();
+      const difficulty = board.rounds + 3;
+      console.log('Difficulty: ', difficulty)
+      board.generateEnemies(difficulty);
+    };
+
     board.roundInProgress = true;
   };
 
@@ -134,4 +139,7 @@ const GameBoard = () => {
   )
 }
 
-export default GameBoard
+export {
+  GameBoard,
+  board,
+};
