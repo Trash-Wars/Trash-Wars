@@ -22,6 +22,6 @@ export const paginate = <T>(collection: T[], maxPerPage: number): T[][] => {
       page = [];
     }
   }
-  console.log(pages)
+  //console.log(pages)
   return pages;
 };
