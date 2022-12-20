@@ -74,7 +74,6 @@ const Board = () => {
   // button should toggle isRunning
   const startRound = async () => {
     // TODO: difficulty should be math on the current round with a multiplier. In other words, round# * 3 = enemy count
-    board.generateEnemies(5);
     board.roundInProgress = true;
   };
 

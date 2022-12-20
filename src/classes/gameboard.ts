@@ -22,6 +22,7 @@ export class Gameboard {
   constructor(readonly rows: number, readonly cols: number) {
     this.generateGameBoard();
     console.log('Setting interval');
+    this.generateEnemies(5);
     setInterval(() => {
       /// make special return constants that are handled differently in a switch case
       const shouldRun = this.shouldTick(this.currentEntities);
@@ -88,14 +89,15 @@ export class Gameboard {
 
     const spawnTile = this.findEnemySpawnTile(); // find spawns
 
-
     if (this.enemyQueue.length > 0 && spawnTile) {
       const enemy = this.enemyQueue.pop()!// not queue
       this.moveEntity(enemy, spawnTile);// moveEntity
+      
+      console.log(this.currentEntities.length, 'entity count before');
       this.currentEntities.push(enemy)
+      console.log(this.currentEntities.length, 'entity count after');
     };
-
-
+    
     this.currentEntities.forEach(entity => {
       if (entity instanceof Raccoon) {
         entity.useWeapon();
@@ -110,12 +112,12 @@ export class Gameboard {
       }
     });
 
-    const remainingSpawns = [...this.enemyQueue]
-    if (remainingSpawns.length > 0 && spawnTile) {
-      const enemy = remainingSpawns.pop()!// not queue
-      this.moveEntity(enemy, spawnTile);// moveEntity
-      this.currentEntities.push(enemy)
-    };
+    // const remainingSpawns = [...this.enemyQueue]
+    // if (remainingSpawns.length > 0 && spawnTile) {
+    //   const enemy = remainingSpawns.pop()!// not queue
+    //   this.moveEntity(enemy, spawnTile);// moveEntity
+    //   this.currentEntities.push(enemy)
+    // };
 
   }
 

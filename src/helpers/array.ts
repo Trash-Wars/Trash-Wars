@@ -23,6 +23,7 @@ export const paginate = <T>(collection: T[], maxPerPage: number): T[][] => {
       page = [];
     }
   }
+
   //if there are items left to add which would be less than a full page
   if (page.length > 0) {
     pages.push(page)
