@@ -16,7 +16,6 @@ import Card from 'react-bootstrap/Card';
 const ITEMS_PER_PAGE = 8
 
 
-
 // give this type to anything that should pass or use handleGrab
 type GrabSupported = {
   handleGrab: handleGrabFunc;
@@ -29,13 +28,10 @@ type modifySlotFunc = (grabbed: Item | undefined, setGrabbed: setGrabFunc, click
 
 const Preround = () => {
   const { raccoonTeam } = useContext(PersistenceContext);
-  const { inventory } = useContext(PersistenceContext)
+  const { inventory } = useContext(PersistenceContext);
   const { setScreen } = useContext(ScreenContext);
-
   const { clientX, clientY } = useMousePosition()
-
   const [grabbed, setGrabbed] = useState<Item | undefined>(undefined)
-
 
   function handleGrab(
     event: React.MouseEvent,
@@ -151,10 +147,6 @@ const InventoryCarousel = (props: GrabSupported) => {
     }
   }
 
-
-
-  const invBook = paginate(inventory.items, ITEMS_PER_PAGE)
-
   return (
     <div style={{ display: "flex" }}>
       {page > 0 ? <img onClick={() => setPage(page - 1)} className="forward-back" src={todo} alt="back" /> : <img className="forward-back" src={todo} alt="back" />}
@@ -242,11 +234,16 @@ type RaccoonSlotProps = GrabSupported & {
 const RaccoonSlot = (props: RaccoonSlotProps) => {
   const { raccoon, racIndex, handleGrab, grabbed,
   } = props;
+  const { inventory } = useContext(PersistenceContext);
 
   const modifyWeapon: modifySlotFunc = (grabbed: Item | undefined, setGrabbed: setGrabFunc, clickedIndex?: number) => {
     if (!raccoon) {
       console.warn("attempted to give a nonexistant raccoon a weapon");
       return;
+    }
+    if(raccoon.weapon){
+      inventory.items.push(raccoon.weapon)
+      raccoon.weapon = grabbed as Weapon;
     }
     if (grabbed) {
       raccoon.weapon = grabbed as Weapon;
@@ -262,6 +259,10 @@ const RaccoonSlot = (props: RaccoonSlotProps) => {
     if (!raccoon) {
       console.warn("attempted to give a nonexistant raccoon a hat");
       return;
+    }
+    if(raccoon.hat){
+      inventory.items.push(raccoon.hat)
+      raccoon.hat = grabbed as Apparel;
     }
     if (grabbed) {
       raccoon.hat = grabbed as Apparel;

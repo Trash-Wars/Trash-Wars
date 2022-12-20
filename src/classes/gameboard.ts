@@ -35,7 +35,7 @@ export class Gameboard {
           this.rerender()
         }
       };
-    }, 1000)
+    }, 2000)
   }
 
   generateGameBoard() {
@@ -85,7 +85,6 @@ export class Gameboard {
   }
 
   update = () => {
-
     const spawnTile = this.findEnemySpawnTile(); // find spawns
 
     if (this.enemyQueue.length > 0 && spawnTile) {
@@ -146,7 +145,6 @@ export class Gameboard {
 
         this.currentEntities.push(raccoon)
       }
-
       this.moveEntity(raccoon, [0, counter]);
       counter++;
     }
@@ -159,7 +157,7 @@ export class Gameboard {
     setTimeout(() => {
       entity.tile!.contents.splice(entity.tile!.contents.indexOf(entity), 1)
       this.currentEntities = this.currentEntities.filter((ent) => ent !== entity)
-    }, 1400)
+    }, 1)
   }
 
 

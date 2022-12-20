@@ -315,6 +315,7 @@ export class KnightHelmet extends Apparel {
   }
 }
 
+
 export class Mob extends Entity {
   constructor(name: string, sprite: string, health: number, description: string | undefined) {
     super(name, sprite)
@@ -327,7 +328,20 @@ export class Mob extends Entity {
     // ^ attacker is optional
     if (this.health <= 0) return;
     this.health = this.health - damage;
+    console.log(this.name, "took damage")
+    // this.damageAnimation()
+    this.idName = 'damage';
+    setTimeout(() => {
+      this.emptyIdName()
+    }, 100)
   }
+
+  emptyIdName():void {
+    console.log(this.idName)
+    this.idName='hello'
+    console.log(this.idName)
+  }
+ 
 }
 
 export class Raccoon extends Mob {
@@ -383,7 +397,7 @@ export class Enemy extends Mob {
   ) {
     super(name, sprite, health, description);
     this.team = 'hostile';
-    this.className = 'raccoon';
+    this.className = 'enemy';
     this.idName = '';
     this.damage = damage;
   }
