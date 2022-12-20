@@ -13,7 +13,6 @@ export type PersistenceStyle = {
   }
   persistEntity?: (addedEntity: Entity,) => void;
   unpersistEntity?: (removedEntity: Entity) => void;
-  rounds: number;
 }
 
 export const persistenceInitialState: PersistenceStyle = {
@@ -26,8 +25,7 @@ export const persistenceInitialState: PersistenceStyle = {
       new Raccoon("Jim", 500, 'bendy'),
       new Raccoon("Luis", 500, 'laughy'),
     ],
-    items: [new Axe(), new GoldCrown(), new Katana(), new Arbalest(), new Spear(), new Axe(), new JesterHat(), new KnightHelmet(),],
+    items: [new Axe(), new GoldCrown(), new Katana(), new Arbalest(), new Spear(), new Axe(), new JesterHat(), new KnightHelmet(), new Spear(), new Axe(), new Katana()],
   },
-  rounds: 0,
 };
 export const PersistenceContext = createContext<PersistenceStyle>(persistenceInitialState)

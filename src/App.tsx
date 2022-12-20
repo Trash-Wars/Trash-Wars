@@ -9,7 +9,7 @@ import { Route, Routes } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
 import Preround from './components/Preround/Preround';
 import GameOver from './components/GameOver/GameOver';
-import GameBoard from './components/GameBoard/GameBoard';
+import { GameBoard } from './components/GameBoard/GameBoard';
 const music = require("./assets/sounds/retroForest.mp3");
 
 function App() {

@@ -10,20 +10,22 @@ export function comparePos(a: [number, number], b: [number, number]) {
 export class Gameboard {
   enemyQueue: Enemy[] = [];
   currentEntities: Entity[] = [];
+  raccoonTeam: Raccoon[] = [];
   tiles: Tile[] = [];
   rerender?: () => void;
 
-  rounds?: number;
+  setScreen?: (newScreen: 0 | 1 | 2 | 3) => void;
+  rounds: number = 0;
 
   roundInProgress: boolean = false;
 
 
   constructor(readonly rows: number, readonly cols: number) {
     this.generateGameBoard();
-    console.log('Setting interval');
     setInterval(() => {
       /// make special return constants that are handled differently in a switch case
       const shouldRun = this.shouldTick(this.currentEntities);
+      console.log('Should run?', shouldRun);
       if (!shouldRun) {
         this.roundInProgress = false;
         return;
@@ -34,7 +36,7 @@ export class Gameboard {
           this.rerender()
         }
       };
-    }, 1000)
+    }, 2000)
   }
 
   generateGameBoard() {
@@ -87,13 +89,11 @@ export class Gameboard {
 
     const spawnTile = this.findEnemySpawnTile(); // find spawns
 
-
     if (this.enemyQueue.length > 0 && spawnTile) {
       const enemy = this.enemyQueue.pop()!// not queue
       this.moveEntity(enemy, spawnTile);// moveEntity
       this.currentEntities.push(enemy)
     };
-
 
     this.currentEntities.forEach(entity => {
       if (entity instanceof Raccoon) {
@@ -109,12 +109,12 @@ export class Gameboard {
       }
     });
 
-    const remainingSpawns = [...this.enemyQueue]
-    if (remainingSpawns.length > 0 && spawnTile) {
-      const enemy = remainingSpawns.pop()!// not queue
-      this.moveEntity(enemy, spawnTile);// moveEntity
-      this.currentEntities.push(enemy)
-    };
+    // const remainingSpawns = [...this.enemyQueue]
+    // if (remainingSpawns.length > 0 && spawnTile) {
+    //   const enemy = remainingSpawns.pop()!// not queue
+    //   this.moveEntity(enemy, spawnTile);// moveEntity
+    //   this.currentEntities.push(enemy)
+    // };
 
   }
 
@@ -143,11 +143,23 @@ export class Gameboard {
     let counter = 0;
     console.log('First render')
     for (const raccoon of raccoonTeam) {
-      if(!this.currentEntities.find(entity => entity === raccoon)){
+      if (!this.currentEntities.find(entity => entity === raccoon)) {
 
-        this.currentEntities.push(raccoon)
+        this.currentEntities.push(raccoon);
+        this.raccoonTeam.push(raccoon);
       }
 
+      this.moveEntity(raccoon, [0, counter]);
+      counter++;
+    }
+  }
+
+  regenerate = () => {
+    let counter = 0;
+    this.currentEntities = [];
+    for (const raccoon of this.raccoonTeam) {
+      raccoon.health = raccoon.maxHealth;
+      this.currentEntities.push(raccoon);
       this.moveEntity(raccoon, [0, counter]);
       counter++;
     }
@@ -164,23 +176,36 @@ export class Gameboard {
   }
 
 
-  endCondition = () => { }
+  // endCondition = () => {
+  //   if(this.enemyQueue) {
+  //     return true; //round not over
+  //   }
+  //   if(this.currentEntities.find(entity => entity instanceof Enemy)) {
+  //     return false; //you won
+  //   }
+  //   //change this to hitting left side of the board
+  //   if(this.currentEntities.find(entity => entity instanceof Raccoon)) {
+  //     return false; //you lost
+  //   }
+  //   return true;
+  // }
+
   shouldTick = (entityList: Entity[]) => {
     if (!this.roundInProgress) {
       return false; //round not started
     }
-    if (this.enemyQueue) {
+    if (this.enemyQueue.length > 0) {
       return true; //round not over
     }
     let enemyCount = 0;
     console.log(entityList.length, 'Entities')
     entityList.forEach((critter: Entity) => {
       if (critter instanceof Enemy) {
-        console.log('Baddy detected')
         enemyCount++;
         if (critter.position && critter.position[0] === 0) {
           redirect("/gameover")
           console.log('Lose!');
+          this.roundInProgress = false;
           return false;
         }
       }
@@ -191,8 +216,11 @@ export class Gameboard {
       } else {
         this.rounds++;
       }
+      console.log(this.rounds, "Rounds");
       //modal popup
       //modal should kick player to preround screen when they select an item
+      redirect("/preround")
+      this.roundInProgress = false;
       return false;
     }
     return true;

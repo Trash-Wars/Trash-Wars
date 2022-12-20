@@ -32,6 +32,7 @@ const Buttons = (props: any) => {
 
 }
 const board = new Gameboard(6, 4);
+
 // https://stackoverflow.com/a/70633116
 // Thank you Som Shekhar Mukherjee for saving us from near infinite board instances.
 const Board = () => {
@@ -62,8 +63,7 @@ const Board = () => {
   const firstRender = useCallback(() => {
     board.firstRender(persistence.raccoonTeam);
     board.rerender = forceUpdate;
-    board.rounds = persistence.rounds;
-  }, [persistence.raccoonTeam, forceUpdate, persistence.rounds])
+  }, [persistence, forceUpdate])
 
   //when game board loads, 
   useEffect(() => firstRender(), [firstRender])
@@ -73,7 +73,12 @@ const Board = () => {
   // button should toggle isRunning
   const startRound = async () => {
     // TODO: difficulty should be math on the current round with a multiplier. In other words, round# * 3 = enemy count
-    board.generateEnemies(5);
+    if (!board.roundInProgress) {
+      board.regenerate();
+      const difficulty = board.rounds + 3;
+      console.log('Difficulty: ', difficulty)
+      board.generateEnemies(difficulty);
+    };
     board.roundInProgress = true;
   };
 
@@ -133,4 +138,7 @@ const GameBoard = () => {
   )
 }
 
-export default GameBoard
+export {
+  GameBoard,
+  board,
+};
