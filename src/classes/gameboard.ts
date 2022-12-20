@@ -1,4 +1,3 @@
-import { type } from "os";
 import { allTileBackgrounds } from "../assets/grass/allTiles";
 import { Devil, Enemy, Entity, GnomeWizard, GoblinBasic, GoblinTank, Imp, Mob, PulsatingLump, Raccoon, Raven, Skeleton, Wraith } from "./entity";
 import { Tile } from "./shared-types";
@@ -22,10 +21,10 @@ export class Gameboard {
   constructor(readonly rows: number, readonly cols: number) {
     this.generateGameBoard();
     console.log('Setting interval');
-    this.generateEnemies(5);
     setInterval(() => {
       /// make special return constants that are handled differently in a switch case
       const shouldRun = this.shouldTick(this.currentEntities);
+      console.log('Should run?', shouldRun);
       if (!shouldRun) {
         this.roundInProgress = false;
         return;
@@ -92,10 +91,7 @@ export class Gameboard {
     if (this.enemyQueue.length > 0 && spawnTile) {
       const enemy = this.enemyQueue.pop()!// not queue
       this.moveEntity(enemy, spawnTile);// moveEntity
-      
-      console.log(this.currentEntities.length, 'entity count before');
       this.currentEntities.push(enemy)
-      console.log(this.currentEntities.length, 'entity count after');
     };
     
     this.currentEntities.forEach(entity => {
@@ -167,23 +163,35 @@ export class Gameboard {
   }
 
 
-  endCondition = () => { }
+  // endCondition = () => {
+  //   if(this.enemyQueue) {
+  //     return true; //round not over
+  //   }
+  //   if(this.currentEntities.find(entity => entity instanceof Enemy)) {
+  //     return false; //you won
+  //   }
+  //   //change this to hitting left side of the board
+  //   if(this.currentEntities.find(entity => entity instanceof Raccoon)) {
+  //     return false; //you lost
+  //   }
+  //   return true;
+  // }
+
   shouldTick = (entityList: Entity[]) => {
     if (!this.roundInProgress) {
       return false; //round not started
     }
-    if (this.enemyQueue) {
+    if (this.enemyQueue.length > 0) {
       return true; //round not over
     }
     let enemyCount = 0;
     console.log(entityList.length, 'Entities')
     entityList.forEach((critter: Entity) => {
       if (critter instanceof Enemy) {
-        console.log('Baddy detected')
         enemyCount++;
         if (critter.position && critter.position[0] === 0) {
           this.setScreen!(3);
-          console.log('Lose!');
+          this.roundInProgress = false;
           return false;
         }
       }
@@ -194,8 +202,11 @@ export class Gameboard {
       } else {
         this.rounds++;
       }
+      console.log(this.rounds);
       //modal popup
       //modal should kick player to preround screen when they select an item
+      this.setScreen!(1);
+      this.roundInProgress = false;
       return false;
     }
     return true;

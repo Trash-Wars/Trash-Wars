@@ -561,7 +561,6 @@ export class Imp extends Enemy {
       if (neighbor.position[0] === this.position![0] - 1 && neighbor.position[1] === this.position![1]) movementTile = neighbor;
     });
     if (movementTile && !movementTile.contents.find(entity => entity.isSolid)) {
-      console.log(movementTile.edges)
       this.moveToPosition(movementTile);
     };
     let solid: Entity | undefined = undefined;
