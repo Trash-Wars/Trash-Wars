@@ -6,7 +6,7 @@ import { UserOptions, UserOptionsContext, userOptionsInitialState } from './cont
 import './App.css';
 
 import Title from './components/Title/Title'
-import GameBoard from './components/GameBoard/GameBoard';
+import {GameBoard} from './components/GameBoard/GameBoard';
 import PreRound from './components/Preround/Preround';
 import GameOver from './components/GameOver/GameOver';
 const music = require("./assets/sounds/retroForest.mp3");

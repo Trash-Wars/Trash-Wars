@@ -153,7 +153,6 @@ const InventoryCarousel = (props: GrabSupported) => {
 
 
 
-  const invBook = paginate(inventory.items, ITEMS_PER_PAGE)
 
   return (
     <div style={{ display: "flex" }}>
