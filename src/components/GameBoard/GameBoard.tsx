@@ -10,22 +10,32 @@ import { useSound } from '../../hooks/useSound';
 import fallbackGrass from '../../assets/grass/blue1.png';
 import { Link } from 'react-router-dom';
 
-const buttonSelect = require('../../assets/sounds/buttonSelect.wav')
+const buttonSelect = require('../../assets/sounds/buttonSelect.wav');
+const gameStart = require("../../assets/sounds/gameStart.ogg");
+
 const Buttons = (props: any) => {
   const { startRound } = props;
   const { Options, isOpen, toggle } = useOptions(false)
   const { play: playSelect } = useSound(buttonSelect);
+  const { play: playStart } = useSound(gameStart);
+
   const handleOptions = () => {
     playSelect();
     toggle();
   };
+  const handleStart = () => {
+    playStart();
+    startRound();
+  }
+
   return (
     <div className="buttons">
       <button className="button" onClick={handleOptions}>Options ⚙️</button>
-      <button className="button" onClick={() => startRound()}>Start Round ▶️</button>
+      <button className="button" onClick={() => handleStart()}>Start Round ▶️</button>
       <Link to="/gameover">
         <button className="button">Quit Out 🏳️</button>
       </Link>
+
       {isOpen && <Options />}
     </div>
   )
