@@ -1,19 +1,7 @@
-interface Data {
+type Data = {
   name: string;
   score: number;
 }
-
-export const fetchScores = async () => {
-  try {
-    const response = await fetch(
-      "https://trash-wars-server.herokuapp.com/api/scores"
-    );
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(error);
-  }
-};
 
 export const addScore = async (data: Data) => {
   try {
