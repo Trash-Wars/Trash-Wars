@@ -1,43 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
 import { Entity } from './classes/entity';
-import { ScreenContext, screenInitialState } from './context/ScreenContext'
 import { PersistenceContext, persistenceInitialState } from './context/PersistenceContext'
 import { UserOptions, UserOptionsContext, userOptionsInitialState } from './context/OptionsContext';
 import './App.css';
 
 import Title from './components/Title/Title'
-import GameBoard from './components/GameBoard/GameBoard';
-import PreRound from './components/Preround/Preround';
+import { Route, Routes } from 'react-router';
+import { BrowserRouter } from 'react-router-dom';
+import Preround from './components/Preround/Preround';
 import GameOver from './components/GameOver/GameOver';
+import GameBoard from './components/GameBoard/GameBoard';
 const music = require("./assets/sounds/retroForest.mp3");
 
-const SCREEN2COMP = [
-  () => Title,
-  () => PreRound,
-  () => GameBoard,
-  () => GameOver,
-];
-
 function App() {
-  const [screenContext, setScreenContext] = useState(screenInitialState)
   const [persistence, setPersistence] = useState(persistenceInitialState)
-  const Screen = SCREEN2COMP[screenContext.screen]();
-
   const [userOptions, setUserOptions] = useState(userOptionsInitialState);
 
   function handleSetOptions(userOptions: UserOptions) {
     setUserOptions({userOptions})
-  }
-
-  function handleSetScreen(newScreen: 0 | 1 | 2 | 3) {
-    if(screenContext.screen === 2) {
-      const entities = persistence.entities
-      for(const entity of entities) {
-        entity.cleanup()
-      }
-      setPersistence({...persistence, entities})
-    }
-    setScreenContext({screen: newScreen, setScreen: handleSetScreen})
   }
 
   function persistEntity(addedEntity: Entity) {
@@ -72,16 +52,17 @@ function App() {
         persistEntity: persistEntity,
         unpersistEntity: unpersistEntity,
       }} >
-        <ScreenContext.Provider
-          value={{
-            ...screenContext,
-            setScreen: handleSetScreen,
-          }}>
-          <UserOptionsContext.Provider value={{...userOptions, setUserOptions: handleSetOptions}}>
+        <UserOptionsContext.Provider value={{...userOptions, setUserOptions: handleSetOptions}}>
           <audio ref={audioRef} src={music}/>
-          <Screen />
-          </UserOptionsContext.Provider>
-        </ScreenContext.Provider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="*" element={<Title />} />
+              <Route path="/preround" element={<Preround />} />
+              <Route path="/gameboard" element={<GameBoard />} />
+              <Route path="/gameover" element={<GameOver />} />
+            </Routes>
+          </BrowserRouter>
+        </UserOptionsContext.Provider>
       </PersistenceContext.Provider>
     </div>
   );

@@ -1,7 +1,6 @@
 import { Gameboard } from '../../classes/gameboard';
-import { useEffect, useContext, useRef, useCallback, useState } from 'react'
+import { useEffect, useContext, useCallback, useState } from 'react'
 import { Entity } from '../../classes/entity';
-import { ScreenContext } from '../../context/ScreenContext';
 import { PersistenceContext } from '../../context/PersistenceContext';
 import './GameBoard.css'
 import useWindowDimensions from '../../hooks/useWindowDimensions';
@@ -9,10 +8,10 @@ import { range } from '../../helpers/array';
 import { useOptions } from '../../hooks/useOptions/useOptions';
 import { useSound } from '../../hooks/useSound';
 import fallbackGrass from '../../assets/grass/blue1.png';
+import { Link } from 'react-router-dom';
 
 const buttonSelect = require('../../assets/sounds/buttonSelect.wav')
 const Buttons = (props: any) => {
-  const { setScreen } = useContext(ScreenContext)
   const { startRound } = props;
   const { Options, isOpen, toggle } = useOptions(false)
   const { play: playSelect } = useSound(buttonSelect);
@@ -24,7 +23,9 @@ const Buttons = (props: any) => {
     <div className="buttons">
       <button className="button" onClick={handleOptions}>Options ⚙️</button>
       <button className="button" onClick={() => startRound()}>Start Round ▶️</button>
-      <button className="button" onClick={() => setScreen!(3)}>Quit Out 🏳️</button>
+      <Link to="/gameover">
+        <button className="button">Quit Out 🏳️</button>
+      </Link>
       {isOpen && <Options />}
     </div>
   )
@@ -38,7 +39,6 @@ const Board = () => {
   const { winWidth, winHeight } = useWindowDimensions()
   const [, updateState] = useState({});
   const forceUpdate = useCallback(() => updateState({}), []);
-  const { setScreen } = useContext(ScreenContext)
   //const boardRef = useRef(new Gameboard(6, 4))
   //const board = boardRef.current as Gameboard
 
@@ -62,9 +62,8 @@ const Board = () => {
   const firstRender = useCallback(() => {
     board.firstRender(persistence.raccoonTeam);
     board.rerender = forceUpdate;
-    board.setScreen = setScreen;
     board.rounds = persistence.rounds;
-  }, [persistence.raccoonTeam, forceUpdate, setScreen, persistence.rounds])
+  }, [persistence.raccoonTeam, forceUpdate, persistence.rounds])
 
   //when game board loads, 
   useEffect(() => firstRender(), [firstRender])

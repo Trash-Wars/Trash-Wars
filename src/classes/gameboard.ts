@@ -1,7 +1,7 @@
-import { type } from "os";
 import { allTileBackgrounds } from "../assets/grass/allTiles";
 import { Devil, Enemy, Entity, GnomeWizard, GoblinBasic, GoblinTank, Imp, Mob, PulsatingLump, Raccoon, Raven, Skeleton, Wraith } from "./entity";
 import { Tile } from "./shared-types";
+import { redirect } from 'react-router';
 
 export function comparePos(a: [number, number], b: [number, number]) {
   return a[0] === b[0] && a[1] === b[1];
@@ -13,7 +13,6 @@ export class Gameboard {
   tiles: Tile[] = [];
   rerender?: () => void;
 
-  setScreen?: (newScreen: 0 | 1 | 2 | 3) => void;
   rounds?: number;
 
   roundInProgress: boolean = false;
@@ -180,7 +179,7 @@ export class Gameboard {
         console.log('Baddy detected')
         enemyCount++;
         if (critter.position && critter.position[0] === 0) {
-          this.setScreen!(3);
+          redirect("/gameover")
           console.log('Lose!');
           return false;
         }

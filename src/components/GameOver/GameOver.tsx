@@ -1,8 +1,8 @@
 
 import React, { useContext, useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { PersistenceContext } from '../../context/PersistenceContext';
-import { ScreenContext} from '../../context/ScreenContext'
 import { addScore } from '../../routes/routes';
 import './GameOver.css'
 
@@ -17,7 +17,6 @@ type ScoreEntry = {
 // TODO:will need to take these props from the gameboard to display number of rounds won in game
 
 const GameOver = () => {
-  const {setScreen} =useContext(ScreenContext)
 
   const [scores, setScores] = useState<ScoreEntry[]>([]);
   const [isNewScore, setIsNewScore] = useState<boolean>(false);
@@ -67,8 +66,9 @@ const GameOver = () => {
             })}
           </tbody>
         </table>
-
-        <button id = "button" onClick={() =>setScreen!(0)}>Return to Menu</button>
+        <Link to="/preround">
+          <button id = "button">Return to Menu</button>
+        </Link>
         <ScoreModal isNewScore={isNewScore} roundsWon={roundsWon} setRoundsWon={setRoundsWon}/>
       </div>
     </div>
