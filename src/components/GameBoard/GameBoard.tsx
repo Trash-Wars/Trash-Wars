@@ -10,20 +10,29 @@ import { useOptions } from '../../hooks/useOptions/useOptions';
 import { useSound } from '../../hooks/useSound';
 import fallbackGrass from '../../assets/grass/blue1.png';
 
-const buttonSelect = require('../../assets/sounds/buttonSelect.wav')
+const buttonSelect = require('../../assets/sounds/buttonSelect.wav');
+const gameStart = require("../../assets/sounds/gameStart.ogg");
+
 const Buttons = (props: any) => {
   const { setScreen } = useContext(ScreenContext)
   const { startRound } = props;
   const { Options, isOpen, toggle } = useOptions(false)
   const { play: playSelect } = useSound(buttonSelect);
+  const { play: playStart } = useSound(gameStart);
+
   const handleOptions = () => {
     playSelect();
     toggle();
   };
+  const handleStart = () => {
+    playStart();
+    startRound();
+  }
+
   return (
     <div className="buttons">
       <button className="button" onClick={handleOptions}>Options ⚙️</button>
-      <button className="button" onClick={() => startRound()}>Start Round ▶️</button>
+      <button className="button" onClick={() => handleStart()}>Start Round ▶️</button>
       <button className="button" onClick={() => setScreen!(3)}>Quit Out 🏳️</button>
       {isOpen && <Options />}
     </div>

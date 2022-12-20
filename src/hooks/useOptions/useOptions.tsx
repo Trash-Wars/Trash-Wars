@@ -36,7 +36,7 @@ export function useOptions(initialState: boolean) {
     };
 
     return (
-      <Modal show={isOpen} onHide={() => setIsOpen(false)} centered>
+      <Modal show={isOpen} onHide={() => setIsOpen(false)} centered animation={false}>
         <div className="gold-modal options-modal">
           <h1>Options</h1>
           <form style={{ display: "flex", flexDirection: "column" }}>

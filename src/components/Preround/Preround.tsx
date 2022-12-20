@@ -13,6 +13,11 @@ import { portraits } from "../../assets/portrait/portraits";
 import { url } from "inspector";
 import Carousel from 'react-bootstrap/Carousel';
 import Card from 'react-bootstrap/Card';
+import { useSound } from "../../hooks/useSound";
+
+const itemEquip = require("../../assets/sounds/itemEquip.mp3");
+const itemSelect = require("../../assets/sounds/itemSelect.mp3");
+const buttonSelect = require("../../assets/sounds/buttonSelect.wav");
 const ITEMS_PER_PAGE = 8
 
 
@@ -35,7 +40,7 @@ const Preround = () => {
   const { clientX, clientY } = useMousePosition()
 
   const [grabbed, setGrabbed] = useState<Item | undefined>(undefined)
-
+  const { play: playSelect } = useSound(buttonSelect);
 
   function handleGrab(
     event: React.MouseEvent,
@@ -121,6 +126,7 @@ const Preround = () => {
           style={{ color: "white" }}
           onClick={() => {
             setScreen!(SCREEN_GAMEBOARD);
+            playSelect();
           }} >
           Start Match
         </button>
@@ -134,13 +140,17 @@ const InventoryCarousel = (props: GrabSupported) => {
   const { inventory } = useContext(PersistenceContext);
   const [page, setPage] = useState(0)
   const invBook = paginate(inventory.items, ITEMS_PER_PAGE)
+  const { play: playItemSelect } = useSound(itemSelect);
+  const { play: playSelect } = useSound(buttonSelect);
 
   const modifyInventory: modifySlotFunc = (grabbed: Item | undefined, setGrabbed: setGrabFunc, clickedIndex?: number) => {
     if (grabbed) {
       inventory.items.splice(((page*8)+clickedIndex!), 0, grabbed)
+      playItemSelect();
       setGrabbed(undefined);
     } else {
       const taken = inventory.items.splice(((page*8)+clickedIndex!), 1)[0]
+      playItemSelect();
       setGrabbed(taken);
     }
   }
@@ -151,13 +161,14 @@ const InventoryCarousel = (props: GrabSupported) => {
     }
   }
 
-
-
-  const invBook = paginate(inventory.items, ITEMS_PER_PAGE)
+  const handleSetPage = (num: number) => {
+    setPage(page + num);
+    playSelect();
+  }
 
   return (
     <div style={{ display: "flex" }}>
-      {page > 0 ? <img onClick={() => setPage(page - 1)} className="forward-back" src={todo} alt="back" /> : <img className="forward-back" src={todo} alt="back" />}
+      {page > 0 ? <img onClick={() => handleSetPage(-1)} className="forward-back" src={todo} alt="back" /> : <img className="forward-back" src={todo} alt="back" />}
 
       {range(1, ITEMS_PER_PAGE).map((_, i) => (
         <ItemSlot
@@ -170,7 +181,7 @@ const InventoryCarousel = (props: GrabSupported) => {
           handleGrab={handleGrab}
           grabbed={grabbed} />
       ))}
-      {page < invBook.length - 1 ? <img onClick={() => setPage(page + 1)} className="forward-back" src={todo} alt="forward" /> : <img
+      {page < invBook.length - 1 ? <img onClick={() => handleSetPage(1)} className="forward-back" src={todo} alt="forward" /> : <img
 
         className="forward-back" src={todo} alt="forward" />}
 
@@ -242,6 +253,9 @@ type RaccoonSlotProps = GrabSupported & {
 const RaccoonSlot = (props: RaccoonSlotProps) => {
   const { raccoon, racIndex, handleGrab, grabbed,
   } = props;
+  
+  const { play: playEquip } = useSound(itemEquip);
+  const { play: playSelect } = useSound(itemSelect);
 
   const modifyWeapon: modifySlotFunc = (grabbed: Item | undefined, setGrabbed: setGrabFunc, clickedIndex?: number) => {
     if (!raccoon) {
@@ -250,9 +264,11 @@ const RaccoonSlot = (props: RaccoonSlotProps) => {
     }
     if (grabbed) {
       raccoon.weapon = grabbed as Weapon;
+      playEquip();
       setGrabbed(undefined);
     } else {
       setGrabbed(raccoon.weapon);
+      playSelect();
       raccoon.weapon = undefined;
     }
   }
@@ -265,9 +281,11 @@ const RaccoonSlot = (props: RaccoonSlotProps) => {
     }
     if (grabbed) {
       raccoon.hat = grabbed as Apparel;
+      playEquip();
       setGrabbed(undefined);
     } else {
       setGrabbed(raccoon.hat);
+      playSelect();
       raccoon.hat = undefined;
     }
   }
