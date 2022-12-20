@@ -331,7 +331,6 @@ export class Mob extends Entity {
     if (this.health <= 0) return;
     this.health = this.health - damage;
     console.log(this.name, "took damage")
-    // this.damageAnimation()
     this.idName = 'damage';
     setTimeout(() => {
       this.emptyIdName()
@@ -340,7 +339,7 @@ export class Mob extends Entity {
 
   emptyIdName():void {
     console.log(this.idName)
-    this.idName='hello'
+    this.idName=''
     console.log(this.idName)
   }
  
