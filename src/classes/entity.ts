@@ -35,6 +35,7 @@ export class Entity {
     this.name = name;
     this.sprite = sprite;
     this.isSolid = true;
+    this.id = Math.round(Math.random()*1000)
   }
   className: string | undefined;
   idName: string | undefined;
@@ -44,6 +45,7 @@ export class Entity {
   sprite: string;
   team: 'friendly' | 'neutral' | 'hostile' | undefined;
   isSolid: boolean;
+  id:number;
   changeTeams(newTeam: 'friendly' | 'neutral' | 'hostile'): void {
     this.team = newTeam;
   }
@@ -132,7 +134,6 @@ export class Weapon extends Item {
     // ^ Defines the first solid entity in adjacent tile
 
     if (solid) {
-      console.log(`${this.name} is attacking ${solid.name}`);
       this.dealDamage(solid, parent);
       return;
     }// ^ attacks the solid if one was found
@@ -184,7 +185,6 @@ export class Scythe extends Weapon {
     hitList.forEach((tile: Tile) => {
       const target = tile.contents.find(entity => entity.isSolid);
       if (target && target instanceof Mob) {
-        console.log(`${this.name} is attacking ${target.name}`);
         this.dealDamage(target, parent)
       };
     });// ^ attacks the solid if one was found
@@ -217,7 +217,6 @@ export class Spear extends Weapon {
     hitList.forEach((tile: Tile) => {
       const target = tile.contents.find(entity => entity.isSolid);
       if (target && target instanceof Mob) {
-        console.log(`${this.name} is attacking ${target.name}`);
         this.dealDamage(target, parent)
       };
     });// ^ attacks the solid if one was found
@@ -284,7 +283,6 @@ export class Arbalest extends Weapon {
     }
     hitList.forEach((target: Entity) => {
       if (target instanceof Mob) {
-        console.log(`${this.name} is attacking ${target.name}`);
         this.dealDamage(target, parent)
       };
     });
@@ -330,7 +328,6 @@ export class Mob extends Entity {
     // ^ attacker is optional
     if (this.health <= 0) return;
     this.health = this.health - damage;
-    console.log(this.name, "took damage")
     this.idName = 'damage';
     setTimeout(() => {
       this.emptyIdName()
@@ -338,9 +335,7 @@ export class Mob extends Entity {
   }
 
   emptyIdName():void {
-    console.log(this.idName)
     this.idName=''
-    console.log(this.idName)
   }
  
 }
@@ -438,9 +433,11 @@ export class GoblinTank extends Enemy {
     const damageAfterReduction = damage - damageReduction;
     const damageTaken = damageAfterReduction >= 0 ? damageAfterReduction : 0;
     this.health = this.health - damageTaken;
-    if (this.health >= 0) {
-      console.log(`${this.name} died!`);
-    }
+    // look here
+    this.idName = 'damage';
+    setTimeout(() => {
+      this.emptyIdName()
+    }, 100)
   }
 }
 
@@ -457,9 +454,12 @@ export class PulsatingLump extends Enemy {
     const damageAfterReduction = damage - damageReduction;
     const damageTaken = damageAfterReduction >= 0 ? damageAfterReduction : 0;
     this.health = this.health - damageTaken;
-    if (this.health >= 0) {
-      console.log(`${this.name} died!`);
-    }
+    // look here
+    this.idName = 'damage';
+    setTimeout(() => {
+      this.emptyIdName()
+    }, 100)
+
   }
 }
 
@@ -478,9 +478,12 @@ export class Wraith extends Enemy {
     const damageAfterReduction = damage - damageReduction;
     const damageTaken = damageAfterReduction >= 0 ? damageAfterReduction : 0;
     this.health = this.health - damageTaken;
-    if (this.health >= 0) {
-      console.log(`${this.name} died!`);
-    }
+    // look here
+    this.idName = 'damage';
+    setTimeout(() => {
+      this.emptyIdName()
+    }, 100)
+
   }
 }
 
@@ -626,8 +629,12 @@ export class Devil extends Enemy {
     const damageAfterReduction = damage - damageReduction;
     const damageTaken = damageAfterReduction >= 0 ? damageAfterReduction : 0;
     this.health = this.health - damageTaken;
+    // look here
+    this.idName = 'damage';
+    setTimeout(() => {
+      this.emptyIdName()
+    }, 100)
     if (this.health >= 0) {
-      console.log(`${this.name} died!`);
     }
   }
   advance(): this | undefined {

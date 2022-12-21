@@ -17,13 +17,13 @@ export type PersistenceStyle = {
 
 export const persistenceInitialState: PersistenceStyle = {
   entities: [],
-  raccoonTeam: [new Raccoon("David", 10, "the clone"), new Raccoon("Derek", 10, "the other clone"), new Raccoon("Kira", 10, "the other clone"), new Raccoon("Janet", 10, "the other clone"),],
+  raccoonTeam: [new Raccoon("David", 25, "the clone"), new Raccoon("Derek", 25, "the other clone"), new Raccoon("Kira", 25, "the other clone"), new Raccoon("Janet", 25, "the other clone"),],
   inventory: {
     sidelineRaccoons: [
-      new Raccoon("Hugo", 500, "Bill Gates' child"),
-      new Raccoon("Zayah", 500, 'waterproof'),
-      new Raccoon("Jim", 500, 'bendy'),
-      new Raccoon("Luis", 500, 'laughy'),
+      new Raccoon("Hugo", 25, "Bill Gates' child"),
+      new Raccoon("Zayah", 25, 'waterproof'),
+      new Raccoon("Jim", 25, 'bendy'),
+      new Raccoon("Luis", 25, 'laughy'),
     ],
     items: [new Axe(), new GoldCrown(), new Katana(), new Arbalest(), new Spear(), new Axe(), new JesterHat(), new KnightHelmet(), new Spear(), new Axe(), new Katana()],
   },
