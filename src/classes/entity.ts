@@ -35,7 +35,7 @@ export class Entity {
     this.name = name;
     this.sprite = sprite;
     this.isSolid = true;
-    this.id = Math.round(Math.random()*1000)
+    this.id = Math.round(Math.random()*10000)
   }
   className: string | undefined;
   idName: string | undefined;
