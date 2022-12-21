@@ -81,15 +81,11 @@ export class Gameboard {
     }
     return undefined;
   }
-
+  
   update = () => {
     const spawnTile = this.findEnemySpawnTile(); // find spawns
-
-    if (this.enemyQueue.length > 0 && spawnTile) {
-      const enemy = this.enemyQueue.pop()!// not queue
-      this.moveEntity(enemy, spawnTile);// moveEntity
-      this.currentEntities.push(enemy)
-    };
+    
+    
     
     this.currentEntities.forEach(entity => {
       if (entity instanceof Raccoon) {
@@ -103,9 +99,13 @@ export class Gameboard {
         this.entityDeathHandler(entity);// entityDeath
       }
     });
-
+    if (this.enemyQueue.length > 0 && spawnTile) {
+      const enemy = this.enemyQueue.pop()!// not queue
+      this.moveEntity(enemy, spawnTile);// moveEntity
+      this.currentEntities.push(enemy)
+    };
   }
-
+  
   findEnemySpawnTile = (): [number, number] | undefined => {
     const length = this.tiles.length;
     const validSpawns: Tile[] = [];
@@ -117,7 +117,7 @@ export class Gameboard {
     if (!spawn) return;
     return spawn.position
   }
-
+  
   moveEntity = (entity: Entity, pos: [number, number]) => {
     const tile = this.getTile(pos);
     if (!tile) {
@@ -126,12 +126,12 @@ export class Gameboard {
     }
     return entity.moveToPosition(tile)
   }
-
+  
   firstRender = (raccoonTeam: Raccoon[]) => {
     let counter = 0;
     for (const raccoon of raccoonTeam) {
       if (!this.currentEntities.find(entity => entity === raccoon)) {
-
+        
         this.currentEntities.push(raccoon);
         this.raccoonTeam.push(raccoon);
       }
@@ -139,7 +139,7 @@ export class Gameboard {
       counter++;
     }
   }
-
+  
   regenerate = () => {
     let counter = 0;
     this.currentEntities = [];

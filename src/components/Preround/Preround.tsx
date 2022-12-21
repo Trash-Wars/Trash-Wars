@@ -6,8 +6,8 @@ import { paginate, range } from "../../helpers/array";
 import useMousePosition from "../../hooks/useMousePosition";
 import './Preround.css';
 import raccoonIcon from '../../assets/doll.png';
-import forward from '../../assets/ui/arrow_2.png';
-import backward from '../../assets/ui/arrow_6.png';
+import forward from '../../assets/ui/forward.png';
+import backward from '../../assets/ui/back.png';
 import Modal from 'react-bootstrap/Modal';
 import Carousel from 'react-bootstrap/Carousel';
 import { Link } from "react-router-dom";
@@ -128,7 +128,7 @@ const Preround = () => {
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Link to="/gameboard">
           <button
-            style={{ color: "white" }}
+            style={{ color: "red" ,backgroundColor:'transparent',  border:'none'}}
             onClick={() => {
             playSelect();
             }}
