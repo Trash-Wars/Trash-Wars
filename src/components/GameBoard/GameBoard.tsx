@@ -92,7 +92,6 @@ const Board = () => {
     if (!board.roundInProgress) {
       board.regenerate();
       const difficulty = board.rounds + 3;
-      console.log('Difficulty: ', difficulty)
       board.generateEnemies(difficulty);
     };
 
@@ -108,10 +107,10 @@ const Board = () => {
   return (
     <div className='board'>
       <Buttons startRound={startRound} />
-      {board.currentEntities.map((entity, i) => (
+      {board.currentEntities.map((entity) => (
         <img
           id={entity.idName}
-          key={i}
+          key={entity.id}
           className={entity.className}
           onClick={() => board.entityDeathHandler(entity)}
           style={{ ...entitySize, ...getPosValues(entity), imageRendering: "pixelated" }}

@@ -25,7 +25,6 @@ export class Gameboard {
     setInterval(() => {
       /// make special return constants that are handled differently in a switch case
       const shouldRun = this.shouldTick(this.currentEntities);
-      console.log('Should run?', shouldRun);
       if (!shouldRun) {
         this.roundInProgress = false;
         return;
@@ -45,9 +44,7 @@ export class Gameboard {
         // add the tile
         const tileIndex = Math.floor(Math.random() * allTileBackgrounds.length)
         const tileSprite = allTileBackgrounds[tileIndex]
-        if (!tileSprite) {
-          console.log("NO TILE SPRITE:", allTileBackgrounds.length - 1, tileIndex)
-        }
+
         const tile: Tile = {
           contents: [],
           position: [x, y],
@@ -103,17 +100,9 @@ export class Gameboard {
       }
       if (entity instanceof Mob && entity.health <= 0) {
         //doCondition or other generics
-        console.log(`${entity.name} dies`);
         this.entityDeathHandler(entity);// entityDeath
       }
     });
-
-    // const remainingSpawns = [...this.enemyQueue]
-    // if (remainingSpawns.length > 0 && spawnTile) {
-    //   const enemy = remainingSpawns.pop()!// not queue
-    //   this.moveEntity(enemy, spawnTile);// moveEntity
-    //   this.currentEntities.push(enemy)
-    // };
 
   }
 
@@ -140,7 +129,6 @@ export class Gameboard {
 
   firstRender = (raccoonTeam: Raccoon[]) => {
     let counter = 0;
-    console.log('First render')
     for (const raccoon of raccoonTeam) {
       if (!this.currentEntities.find(entity => entity === raccoon)) {
 
@@ -196,13 +184,11 @@ export class Gameboard {
       return true; //round not over
     }
     let enemyCount = 0;
-    console.log(entityList.length, 'Entities')
     entityList.forEach((critter: Entity) => {
       if (critter instanceof Enemy) {
         enemyCount++;
         if (critter.position && critter.position[0] === 0) {
           this.redirectPage!("/gameover")
-          console.log('Lose!');
           this.roundInProgress = false;
           return false;
         }
@@ -214,7 +200,6 @@ export class Gameboard {
       } else {
         this.rounds++;
       }
-      console.log(this.rounds, "Rounds");
       //modal popup
       //modal should kick player to preround screen when they select an item
       this.redirectPage!("/preround")
