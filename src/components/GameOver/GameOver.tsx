@@ -27,7 +27,9 @@ const GameOver = () => {
         );
         const data = await response.json();
         setScores(data.data);
-        if (!scores.length) {
+        if (board.rounds === 0) {
+          return;
+        } else if (!scores.length) {
           setIsNewScore(true);
         } else {
           setIsNewScore(scores.some((match) => board.rounds > match.score));
@@ -70,7 +72,7 @@ const GameOver = () => {
               })}
           </tbody>
         </table>
-        <Link to="/preround">
+        <Link to="/">
           <button id="button">Return to Menu</button>
         </Link>
         <ScoreModal

@@ -11,6 +11,7 @@ export const useSound = (src: string) => {
 
   const play = () => {
     if (audio && userOptions.soundfx) {
+      audio.volume = userOptions.volume / 60;
       audio.play();
     }
   };

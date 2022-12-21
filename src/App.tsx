@@ -40,7 +40,7 @@ function App() {
       audioElement.pause();
     } else if (audioElement) {
       audioElement.loop = true;
-      audioElement.volume = userOptions.userOptions.volume / 100;
+      audioElement.volume = userOptions.userOptions.volume / 1000;
       audioElement.play();
     }
   }, [userOptions])
