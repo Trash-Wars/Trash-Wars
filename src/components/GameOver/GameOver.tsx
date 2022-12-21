@@ -1,27 +1,23 @@
-
-import React, { useContext, useEffect, useState } from 'react';
-import { Modal } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { PersistenceContext } from '../../context/PersistenceContext';
-import { addScore } from '../../routes/routes';
-import './GameOver.css'
-import { board } from '../GameBoard/GameBoard'
-
+import React, { useEffect, useState } from "react";
+import { Modal } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { addScore } from "../../routes/routes";
+import "./GameOver.css";
+import { board } from "../GameBoard/GameBoard";
 
 type ScoreEntry = {
-  _id: string,
-  name: string,
-  score: number,
-  __v: number
-}
+  _id: string;
+  name: string;
+  score: number;
+  __v: number;
+};
 
 // TODO:will need to take these props from the gameboard to display number of rounds won in game
 
 const GameOver = () => {
-
   const [scores, setScores] = useState<ScoreEntry[]>([]);
   const [isNewScore, setIsNewScore] = useState<boolean>(false);
-  const [roundsWon, setRoundsWon] = useState<number>(0);
+  const [clicked, setClicked] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchScores = async () => {
@@ -31,21 +27,28 @@ const GameOver = () => {
         );
         const data = await response.json();
         setScores(data.data);
-        setIsNewScore(scores.some((match) => roundsWon > match.score));
+        if (!scores.length) {
+          setIsNewScore(true);
+        } else {
+          setIsNewScore(scores.some((match) => board.rounds >= match.score));
+        }
       } catch (error) {
         console.error(error);
       }
     };
+    if (clicked) {
+      console.log("added to db");
+    }
     fetchScores();
-  }, [roundsWon, scores]);
-
+    console.log(board.rounds);
+  }, [clicked]);
 
   return (
     <div id="GameOverContainer">
-      <div id = "readables">
-        <h1 id= "GameOver">Game Over 💀</h1>
-        {isNewScore || roundsWon === 0 ? null : <p id = "GameOver">YOU SURVIVED {board.rounds} ROUNDS</p>}
-        <p id = "GameOver">HIGH SCORES</p>
+      <div id="readables">
+        <h1 id="GameOver">Game Over 💀</h1>
+        <p id="GameOver">YOU SURVIVED {board.rounds} ROUNDS</p>
+        <p id="GameOver">HIGH SCORES</p>
         <table>
           <thead>
             <tr>
@@ -55,50 +58,50 @@ const GameOver = () => {
             </tr>
           </thead>
           <tbody>
-            {scores && scores.map((match: ScoreEntry, idx: number) => {
-              return (
-                <tr key={idx}>
-                  <td>{idx+1}</td>
-                  <td>{match.score}</td>
-                  <td>{match.name}</td>
-                </tr>
-              )
-            })}
+            {scores &&
+              scores.map((match: ScoreEntry, idx: number) => {
+                return (
+                  <tr key={idx}>
+                    <td>{idx + 1}</td>
+                    <td>{match.score}</td>
+                    <td>{match.name}</td>
+                  </tr>
+                );
+              })}
           </tbody>
         </table>
         <Link to="/preround">
-          <button id = "button">Return to Menu</button>
+          <button id="button">Return to Menu</button>
         </Link>
-        <ScoreModal isNewScore={isNewScore} roundsWon={roundsWon} setRoundsWon={setRoundsWon}/>
+        <ScoreModal isNewScore={isNewScore} setClicked={setClicked} />
       </div>
     </div>
-  )
-}
+  );
+};
 
 type ScoreModalProps = {
-  roundsWon: number;
   isNewScore: boolean;
-  setRoundsWon: (num: number) => void;
-}
+  setClicked: (bool: boolean) => void;
+};
 
-const ScoreModal: React.FC<ScoreModalProps> = ({isNewScore, roundsWon, setRoundsWon}) => {
+const ScoreModal: React.FC<ScoreModalProps> = ({ isNewScore, setClicked }) => {
   const [name, setName] = useState("");
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = {
       name,
-      score: roundsWon,
+      score: board.rounds,
     };
     addScore(data);
-    setRoundsWon(0);
-  }
+    setClicked(true);
+  };
 
   return (
     <Modal show={isNewScore} centered>
       <div className="gold-modal score-modal">
-        <h1>New High Score!</h1>
-        <p>You won {roundsWon} rounds!</p>
+        <h1>New Top 10 High Score!</h1>
+        <p>You won {board.rounds} rounds!</p>
         <form onSubmit={handleSubmit}>
           <label>Name:</label>
           <input
@@ -107,12 +110,12 @@ const ScoreModal: React.FC<ScoreModalProps> = ({isNewScore, roundsWon, setRounds
             maxLength={3}
             value={name}
             onChange={(event) => setName(event.target.value)}
-            />
+          />
           <button type="submit">Submit</button>
         </form>
       </div>
     </Modal>
-  )
-}
+  );
+};
 
 export default GameOver;
