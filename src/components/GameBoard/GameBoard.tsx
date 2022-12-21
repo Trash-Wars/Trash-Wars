@@ -1,5 +1,5 @@
 import { Gameboard } from '../../classes/gameboard';
-import { useEffect, useContext, useCallback, useState } from 'react'
+import { useEffect, useContext, useCallback, useState } from 'react';
 import { Entity } from '../../classes/entity';
 import { PersistenceContext } from '../../context/PersistenceContext';
 import './GameBoard.css'
@@ -8,7 +8,7 @@ import { range } from '../../helpers/array';
 import { useOptions } from '../../hooks/useOptions/useOptions';
 import { useSound } from '../../hooks/useSound';
 import fallbackGrass from '../../assets/grass/blue1.png';
-import { Link } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 
 const buttonSelect = require('../../assets/sounds/buttonSelect.wav');
 const gameStart = require("../../assets/sounds/gameStart.ogg");
@@ -48,6 +48,7 @@ const board = new Gameboard(6, 4);
 const Board = () => {
   const persistence = useContext(PersistenceContext)
   const { winWidth, winHeight } = useWindowDimensions()
+  const [redirectString, setRedirectString] = useState<string | undefined>(undefined)
   const [, updateState] = useState({});
   const forceUpdate = useCallback(() => updateState({}), []);
   //const boardRef = useRef(new Gameboard(6, 4))
@@ -70,9 +71,14 @@ const Board = () => {
     return { marginLeft: `${pixelX}px`, marginTop: `${pixelY}px` }
   }
 
+  const redirectPage = (url: string) => {
+    setRedirectString(url)
+  }
+
   const firstRender = useCallback(() => {
     board.firstRender(persistence.raccoonTeam);
     board.rerender = forceUpdate;
+    board.redirectPage = redirectPage;
   }, [persistence, forceUpdate])
 
   //when game board loads, 
@@ -91,6 +97,12 @@ const Board = () => {
 
     board.roundInProgress = true;
   };
+
+  if(redirectString) {
+    return (
+      <Navigate to={redirectString} />
+    )
+  }
 
   return (
     <div className='board'>
