@@ -6,18 +6,26 @@ import { paginate, range } from "../../helpers/array";
 import useMousePosition from "../../hooks/useMousePosition";
 import './Preround.css';
 import raccoonIcon from '../../assets/doll.png';
-import todo from '../../assets/todo.png';
+import forward from '../../assets/ui/arrow_2.png';
+import backward from '../../assets/ui/arrow_6.png';
 import Modal from 'react-bootstrap/Modal';
 import Carousel from 'react-bootstrap/Carousel';
 import { Link } from "react-router-dom";
 import Card from 'react-bootstrap/Card';
 import { useSound } from "../../hooks/useSound";
-
+import dallERacc1 from '../../assets/raccoons/spearGuardingTrashRacc.png'
+import dallERacc2 from '../../assets/raccoons/SmokingRacc.png'
+import dallERacc3 from '../../assets/raccoons/motorcycleRacc.png'
+import dallERacc4 from '../../assets/raccoons/firebrandRacc.png'
+import dallERacc5 from '../../assets/raccoons/codingInHeckRacc.png'
+import dallERacc6 from '../../assets/raccoons/orbPonderingRacc.png'
+import dallERacc7 from '../../assets/raccoons/overworkedCodingRacc.png'
+import dallERacc8 from '../../assets/raccoons/pilotRacc.png'
 const itemEquip = require("../../assets/sounds/itemEquip.mp3");
 const itemSelect = require("../../assets/sounds/itemSelect.mp3");
 const buttonSelect = require("../../assets/sounds/buttonSelect.wav");
 const ITEMS_PER_PAGE = 8
-
+const raccArray =[dallERacc1,dallERacc2,dallERacc3, dallERacc4, dallERacc5,dallERacc6,dallERacc7,dallERacc8]
 
 // give this type to anything that should pass or use handleGrab
 type GrabSupported = {
@@ -166,7 +174,7 @@ const InventoryCarousel = (props: GrabSupported) => {
 
   return (
     <div style={{ display: "flex" }}>
-      {page > 0 ? <img onClick={() => handleSetPage(-1)} className="forward-back" src={todo} alt="back" /> : <img className="forward-back" src={todo} alt="back" />}
+      {page > 0 ? <img onClick={() => handleSetPage(-1)} className="forward-back" src={backward} alt="back" /> : <img className="forward-back" src={backward} alt="back" />}
 
       {range(1, ITEMS_PER_PAGE).map((_, i) => (
         <ItemSlot
@@ -179,9 +187,9 @@ const InventoryCarousel = (props: GrabSupported) => {
           handleGrab={handleGrab}
           grabbed={grabbed} />
       ))}
-      {page < invBook.length - 1 ? <img onClick={() => handleSetPage(1)} className="forward-back" src={todo} alt="forward" /> : <img
+      {page < invBook.length - 1 ? <img onClick={() => handleSetPage(1)} className="forward-back" src={forward} alt="forward" /> : <img
 
-        className="forward-back" src={todo} alt="forward" />}
+        className="forward-back" src={forward} alt="forward" />}
 
     </div>
   )
@@ -407,15 +415,15 @@ const RaccoonCarousel = (props: RaccoonCarouselProps) => {
 
   return (
     <Carousel activeIndex={index} onSelect={handleSelect} interval={null}>
-      {inventory.sidelineRaccoons.map((raccoon: Raccoon) => {
+      {inventory.sidelineRaccoons.map((raccoon: Raccoon, i) => {
         return (
           <Carousel.Item>
             <Card
               style={{ width: '18rem', height: '480px', imageRendering: 'pixelated' }}
             >
-              <Card.Img variant="top" src={`${raccoon.sprite}`} />
+              <Card.Img variant="top" src={`${raccArray[i]}`} />
               <Card.Body>
-                <Card.Title> hi{`${raccoon.name}`}</Card.Title>
+                <Card.Title> {`${raccoon.name}`}</Card.Title>
                 <Card.Text>
                   {`${raccoon.description}`}
                 </Card.Text>
