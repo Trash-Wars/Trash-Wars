@@ -30,7 +30,7 @@ const GameOver = () => {
         if (!scores.length) {
           setIsNewScore(true);
         } else {
-          setIsNewScore(scores.some((match) => board.rounds >= match.score));
+          setIsNewScore(scores.some((match) => board.rounds > match.score));
         }
       } catch (error) {
         console.error(error);
@@ -73,7 +73,11 @@ const GameOver = () => {
         <Link to="/preround">
           <button id="button">Return to Menu</button>
         </Link>
-        <ScoreModal isNewScore={isNewScore} setClicked={setClicked} />
+        <ScoreModal
+          isNewScore={isNewScore}
+          setClicked={setClicked}
+          setIsNewScore={setIsNewScore}
+        />
       </div>
     </div>
   );
@@ -82,9 +86,14 @@ const GameOver = () => {
 type ScoreModalProps = {
   isNewScore: boolean;
   setClicked: (bool: boolean) => void;
+  setIsNewScore: (bool: boolean) => void;
 };
 
-const ScoreModal: React.FC<ScoreModalProps> = ({ isNewScore, setClicked }) => {
+const ScoreModal: React.FC<ScoreModalProps> = ({
+  isNewScore,
+  setClicked,
+  setIsNewScore,
+}) => {
   const [name, setName] = useState("");
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -94,6 +103,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({ isNewScore, setClicked }) => {
       score: board.rounds,
     };
     addScore(data);
+    setIsNewScore(false);
     setClicked(true);
   };
 
@@ -112,6 +122,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({ isNewScore, setClicked }) => {
             onChange={(event) => setName(event.target.value)}
           />
           <button type="submit">Submit</button>
+          <button onClick={() => setIsNewScore(false)}>Close</button>
         </form>
       </div>
     </Modal>
