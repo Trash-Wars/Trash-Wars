@@ -12,7 +12,6 @@ export const addScore = async (data: Data) => {
       },
       body: JSON.stringify(data),
     });
-    console.log("Score added to db successfully.");
   } catch (error) {
     console.error(error);
   }

@@ -60,7 +60,6 @@ export class Entity {
       return this.setTile(tile);
     }
     this.tile.contents.splice(this.tile.contents.indexOf(this), 1);
-    console.log(this.name, "moved to:", this.position)
     return this.setTile(tile);
   }
 
@@ -135,7 +134,6 @@ export class Weapon extends Item {
     // ^ Defines the first solid entity in adjacent tile
 
     if (solid) {
-      console.log(`${this.name} is attacking ${solid.name}`);
       this.dealDamage(solid, parent);
       return;
     }// ^ attacks the solid if one was found
@@ -187,7 +185,6 @@ export class Scythe extends Weapon {
     hitList.forEach((tile: Tile) => {
       const target = tile.contents.find(entity => entity.isSolid);
       if (target && target instanceof Mob) {
-        console.log(`${this.name} is attacking ${target.name}`);
         this.dealDamage(target, parent)
       };
     });// ^ attacks the solid if one was found
@@ -220,7 +217,6 @@ export class Spear extends Weapon {
     hitList.forEach((tile: Tile) => {
       const target = tile.contents.find(entity => entity.isSolid);
       if (target && target instanceof Mob) {
-        console.log(`${this.name} is attacking ${target.name}`);
         this.dealDamage(target, parent)
       };
     });// ^ attacks the solid if one was found
@@ -287,7 +283,6 @@ export class Arbalest extends Weapon {
     }
     hitList.forEach((target: Entity) => {
       if (target instanceof Mob) {
-        console.log(`${this.name} is attacking ${target.name}`);
         this.dealDamage(target, parent)
       };
     });
@@ -333,7 +328,6 @@ export class Mob extends Entity {
     // ^ attacker is optional
     if (this.health <= 0) return;
     this.health = this.health - damage;
-    // console.log(this.name, "took damage")
     this.idName = 'damage';
     setTimeout(() => {
       this.emptyIdName()
@@ -444,9 +438,6 @@ export class GoblinTank extends Enemy {
     setTimeout(() => {
       this.emptyIdName()
     }, 100)
-    if (this.health >= 0) {
-      console.log(`${this.name} died!`);
-    }
   }
 }
 
@@ -468,9 +459,7 @@ export class PulsatingLump extends Enemy {
     setTimeout(() => {
       this.emptyIdName()
     }, 100)
-    if (this.health >= 0) {
-      console.log(`${this.name} died!`);
-    }
+
   }
 }
 
@@ -494,9 +483,7 @@ export class Wraith extends Enemy {
     setTimeout(() => {
       this.emptyIdName()
     }, 100)
-    if (this.health <= 0) {
-      console.log(`${this.name} died!`);
-    }
+
   }
 }
 
@@ -648,7 +635,6 @@ export class Devil extends Enemy {
       this.emptyIdName()
     }, 100)
     if (this.health >= 0) {
-      console.log(`${this.name} died!`);
     }
   }
   advance(): this | undefined {

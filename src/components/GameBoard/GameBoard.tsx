@@ -86,7 +86,6 @@ const Board = () => {
     if (!board.roundInProgress) {
       board.regenerate();
       const difficulty = board.rounds + 3;
-      console.log('Difficulty: ', difficulty)
       board.generateEnemies(difficulty);
     };
 
