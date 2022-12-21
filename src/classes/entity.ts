@@ -159,7 +159,7 @@ export class Katana extends Weapon {
 
 export class Scythe extends Weapon {
   constructor() {
-    super('Scythe', scytheIcon, `Don't fear the reaper`, 4, 1);
+    super('Scythe', scytheIcon, `Don't fear the reaper`, 7, 1);
   }
   use(parent: Raccoon) {
     const origin = parent.position;
@@ -193,7 +193,7 @@ export class Scythe extends Weapon {
 
 export class Spear extends Weapon {
   constructor() {
-    super('Spear', spearIcon, `It's pointy!`, 4, 2)
+    super('Spear', spearIcon, `It's pointy!`, 5, 2)
   }
   use(parent: Raccoon) {
     const origin = parent.position;
@@ -226,7 +226,7 @@ export class Spear extends Weapon {
 
 export class SimpleBow extends Weapon {
   constructor() {
-    super('Simple bow', simpleBowIcon, 'Simple, yet deadly', 4, 1)
+    super('Simple bow', simpleBowIcon, 'Simple, yet deadly', 6, 1)
   }
   use(parent: Raccoon) {
     let solid: Entity | undefined = undefined;
@@ -259,7 +259,7 @@ export class SimpleBow extends Weapon {
 
 export class Arbalest extends Weapon {
   constructor() {
-    super('Arbalest', arbalestIcon, 'A mighty siege weapon', 5, 1)
+    super('Arbalest', arbalestIcon, 'A mighty siege weapon', 4, 1)
   }
   use(parent: Raccoon) {
     const hitList: Entity[] = [];
@@ -431,10 +431,10 @@ export class GoblinBasic extends Enemy {
 }
 export class GoblinTank extends Enemy {
   constructor() {
-    super('Goblin Tank', goblinTankIcon, 15, 5, 'goblin, but in a tank');
+    super('Goblin Tank', goblinTankIcon, 15, 4, 'goblin, but in a tank');
   }
   takeDamage(damage: number, attacker: Entity | undefined): void {
-    const damageReduction = 3;
+    const damageReduction = 2;
     const damageAfterReduction = damage - damageReduction;
     const damageTaken = damageAfterReduction >= 0 ? damageAfterReduction : 0;
     this.health = this.health - damageTaken;
@@ -446,14 +446,14 @@ export class GoblinTank extends Enemy {
 
 export class PulsatingLump extends Enemy {
   constructor() {
-    super('Pulsating Lump', pulsatingLumpIcon, 20, 7, 'A lump of flesh')
+    super('Pulsating Lump', pulsatingLumpIcon, 20, 5, 'A lump of flesh')
   }
   attack(target: Mob) {
     //play damage animation on target
     target.takeDamage(this.damage, this);
   }
   takeDamage(damage: number, attacker: Entity | undefined): void {
-    const damageReduction = 3;
+    const damageReduction = 2;
     const damageAfterReduction = damage - damageReduction;
     const damageTaken = damageAfterReduction >= 0 ? damageAfterReduction : 0;
     this.health = this.health - damageTaken;
@@ -474,7 +474,7 @@ export class Wraith extends Enemy {
     super('Wraith', wraithIcon, 12, 6, 'An angry ghost')
   }
   takeDamage(damage: number, attacker: Entity | undefined): void {
-    const damageReduction = 4;
+    const damageReduction = 3;
     const damageAfterReduction = damage - damageReduction;
     const damageTaken = damageAfterReduction >= 0 ? damageAfterReduction : 0;
     this.health = this.health - damageTaken;
@@ -562,7 +562,7 @@ export class GnomeWizard extends Enemy {
 
 export class Imp extends Enemy {
   constructor() {
-    super('Imp', impIcon, 8, 6, 'A fiery fiend')
+    super('Imp', impIcon, 6, 4, 'A fiery fiend')
   }
   advance(): this | undefined {
     if (!this.tile) return;
