@@ -117,6 +117,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
           <input
             type="text"
             id="name"
+            minLength={3}
             maxLength={3}
             value={name}
             onChange={(event) => setName(event.target.value)}
