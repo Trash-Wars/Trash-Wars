@@ -1,18 +1,15 @@
 .Title {
-  background-image: url(../../assets/gameOver.png);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background-image: radial-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 1) 100%), url(../../assets/raccoons/holyRacc.png);
   background-repeat: no-repeat;
-   background-position: center;
+  background-position: center;
   image-rendering: pixelated;
   height: 100vh;
   width: 100vw;
   color: white;
-  /* border-radius: 10%; */
-  background-color: black;
 }
 
 .titleButton {
@@ -24,6 +21,7 @@
   cursor: pointer;
   width: fit-content;
   color: white;
+  font-size: 22px;
 }
 
 .titleButton:hover {

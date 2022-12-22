@@ -33,7 +33,7 @@ const Buttons = (props: any) => {
       <button className="button" onClick={handleOptions}>Options ⚙️</button>
       <button className="button" onClick={() => handleStart()}>Start Round ▶️</button>
       <Link to="/gameover">
-        <button className="button">Quit Out 🏳️</button>
+        <button className="button" onClick={() => playSelect()}>Quit Out 🏳️</button>
       </Link>
 
       {isOpen && <Options />}

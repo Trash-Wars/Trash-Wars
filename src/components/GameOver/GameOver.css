@@ -1,66 +1,77 @@
 #GameOverContainer {
-  background-color: black;
-  background-image: URL('../../assets/gameOver.png'); 
-  width: 100%;
-  height: 1024px;
-  margin: auto;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-   display:flex;
+  display: flex;
   justify-content: center;
+  align-items: center;
+  background-image: radial-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 1) 100%),
+    url("../../assets/gameOver.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  image-rendering: pixelated;
+  width: 100vw;
+  height: 100vh;
 }
 
 #GameOver {
-  border-radius: 10px;
-  display:flex;
-  justify-content: space-evenly;
-  color: red;
-  background-color: black;
-  margin: 0px;
- 
+  color: #ff074e;
+  text-align: center;
+  font-size: 24px;
 }
 
-#readables {
-   display:flex;
-  justify-content: space-between;
-  margin: auto;
-  background-color: rgba(255, 228, 196, 0.554);
-  width:25%;
-  height:50%;
+#scoreBoard {
+  max-width: 450px;
+  height: 650px;
+  background-color: rgba(7, 7, 7, 0.671);
+  margin: 20px 20px;
+  outline: 4px solid goldenrod;
+  display: flex;
   flex-direction: column;
-  border-radius: 10px;
+  align-items: center;
 }
 
-#button {
-  background-color: rgba(255, 228, 196, 0);
+table {
+  width: 450px;
+  border-collapse: separate;
+  border-spacing: 0 1rem;
+}
+
+thead {
+  color: rgb(254, 235, 44);
+  height: 40px;
+  padding-bottom: 20px;
+}
+
+#tdhead {
+  text-align: center;
+  font-size: 22px;
+}
+
+#tdbody {
+  color: white;
+  text-align: center;
+  font-size: 22px;
+}
+
+#returnButton {
+  background-color: transparent;
   border: none;
   color: white;
-  padding: 15px 32px;
+  padding: 5px;
+  margin-top: 30px;
+  border-radius: 5px;
   text-align: center;
-  text-decoration: none;
-  font-size: 24px;
-  border-radius: 10px;
-  transition: color 0.3s;
+  font-size: 30px;
   animation: shimmer 1s linear infinite;
-}
-
-#button:hover {
-  /* background-color: #b00202; */
-  transition: color 1s;
-  color: black;
 }
 
 @keyframes shimmer {
   0% {
-      color: transparent;
+    color: transparent;
   }
   50% {
-      
-      color: white;
+    color: white;
   }
   100% {
-      color: transparent;
+    color: transparent;
   }
 }
 
