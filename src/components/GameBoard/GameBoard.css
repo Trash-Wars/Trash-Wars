@@ -14,7 +14,6 @@
   height: 100%;
   display: flex; 
   justify-content: center;
-  background-image: url('../../assets/marble_wall1.png');
 }
 
 .tile:last-child, .rows:last-child > .tile {
@@ -58,12 +57,10 @@
 }
 
 #damage {
-  /* filter:hue-rotate(50deg);
-  background-color: black; */
   filter: blur(5px); 
-  /* transition: filter .1s linear; */
   animation: flash 2s linear infinite;
 }
+
 @keyframes flash {
   0%{
     
@@ -83,8 +80,6 @@
   filter: blur(3px);
   transition: filter 0.1s ease;
 } 
-
-
 
 .buttons {
   text-align: center;
@@ -113,31 +108,10 @@ form {
   flex-direction: column;
 }
 
-/* .button:hover {
-  transition: color 1s;
-  color: white;
-} */
+.button:hover {
+  animation: shake 1s linear infinite;
+}
 
 .Options {
   color:white;
 }
-
-.board {
-  background-image: url('../../assets/marble_wall1.png')
-}
-
-/* debug overrides */
-
-/* better show tiles */
-/*
-.tile {
-  border-top: 1px solid purple;
-  border-left: 1px solid yellow;
-} 
-
-.entity {
-  v remove margin from .entity if you uncomment this v
-  border: 1px solid red;
-}
-
-*/

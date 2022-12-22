@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { addScore } from "../../routes/routes";
 import "./GameOver.css";
 import { board } from "../GameBoard/GameBoard";
+import { useSound } from "../../hooks/useSound";
+const buttonSelect = require("../../assets/sounds/buttonSelect.wav")
 
 type ScoreEntry = {
   _id: string;
@@ -18,6 +20,8 @@ const GameOver = () => {
   const [scores, setScores] = useState<ScoreEntry[]>([]);
   const [isNewScore, setIsNewScore] = useState<boolean>(false);
   const [clicked, setClicked] = useState<boolean>(false);
+
+  const {play: playSelect} = useSound(buttonSelect);
 
   useEffect(() => {
     const fetchScores = async () => {
@@ -47,16 +51,18 @@ const GameOver = () => {
 
   return (
     <div id="GameOverContainer">
-      <div id="readables">
-        <h1 id="GameOver">Game Over 💀</h1>
-        <p id="GameOver">YOU SURVIVED {board.rounds} ROUNDS</p>
-        <p id="GameOver">HIGH SCORES</p>
+      <div id="scoreBoard">
+        <div id="GameOver">
+          <h1>Game Over</h1>
+          <p>YOU SURVIVED {board.rounds} ROUNDS</p>
+          <p>HIGH SCORES</p>
+        </div>
         <table>
           <thead>
             <tr>
-              <th>Rank</th>
-              <th>Score</th>
-              <th>Name</th>
+              <th id="tdhead">Rank</th>
+              <th id="tdhead">Score</th>
+              <th id="tdhead">Name</th>
             </tr>
           </thead>
           <tbody>
@@ -64,23 +70,23 @@ const GameOver = () => {
               scores.map((match: ScoreEntry, idx: number) => {
                 return (
                   <tr key={idx}>
-                    <td>{idx + 1}</td>
-                    <td>{match.score}</td>
-                    <td>{match.name}</td>
+                    <td id="tdbody">{idx + 1}</td>
+                    <td id="tdbody">{match.score}</td>
+                    <td id="tdbody">{match.name}</td>
                   </tr>
                 );
               })}
           </tbody>
         </table>
         <Link to="/">
-          <button id="button">Return to Menu</button>
+          <button id="returnButton" onClick={() => playSelect()}>Return to Menu</button>
         </Link>
-        <ScoreModal
-          isNewScore={isNewScore}
-          setClicked={setClicked}
-          setIsNewScore={setIsNewScore}
-        />
       </div>
+      <ScoreModal
+        isNewScore={isNewScore}
+        setClicked={setClicked}
+        setIsNewScore={setIsNewScore}
+      />
     </div>
   );
 };

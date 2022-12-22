@@ -67,8 +67,9 @@ const Preround = () => {
 
   function handleAddRaccoon(newRaccoon: Raccoon): void {
     let index = inventory.sidelineRaccoons.findIndex((raccoon: Raccoon) => raccoon.name === newRaccoon.name)
-    let [raccoon] = inventory.sidelineRaccoons.splice(index, 1)
-    raccoonTeam.push(raccoon)
+    let [raccoon] = inventory.sidelineRaccoons.splice(index, 1);
+    raccoonTeam.push(raccoon);
+    playSelect();
   }
 
   function handleRemoveRaccoonFromTeam(raccoonToRemove: Raccoon): void {
@@ -83,6 +84,7 @@ const Preround = () => {
     raccoonToRemove.hat = undefined
     let [raccoon] = raccoonTeam.splice(index, 1)
     inventory.sidelineRaccoons.push(raccoon)
+    playSelect();
   }
 
   return (
@@ -127,8 +129,7 @@ const Preround = () => {
       </div>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Link to="/gameboard">
-          <button
-            style={{ color: "red" ,backgroundColor:'transparent',  border:'none'}}
+          <button id="startButton"
             onClick={() => {
             playSelect();
             }}
@@ -383,8 +384,13 @@ type emptyRaccoonSlotProps = {
 
 const EmptyRaccoonSlot = (props: emptyRaccoonSlotProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { play: playSelect } = useSound(buttonSelect);
   // const { sidelineRaccoons } = inventory;
   // const modalImage = portraits[raccIndex]
+  const handleOpen = () => {
+    setIsOpen(!isOpen);
+    playSelect();
+  }
 
   return (
     <div className="raccoon-name">
@@ -396,7 +402,7 @@ const EmptyRaccoonSlot = (props: emptyRaccoonSlotProps) => {
           <RaccoonCarousel handleAddRaccoon={props.handleAddRaccoon} />
         </Modal.Body>
       </Modal>
-      <button className="raccSelectButton" onClick={() => setIsOpen(!isOpen)}>Select a Raccoon</button>
+      <button className="raccSelectButton" onClick={() => handleOpen()}>Select a Raccoon</button>
     </div>
   )
 }
