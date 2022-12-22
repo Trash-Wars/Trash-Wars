@@ -1,6 +1,6 @@
 import { Gameboard } from '../../classes/gameboard';
 import { useEffect, useContext, useCallback, useState } from 'react';
-import { Entity } from '../../classes/entity';
+import { Entity, Raccoon } from '../../classes/entity';
 import { PersistenceContext } from '../../context/PersistenceContext';
 import './GameBoard.css'
 import useWindowDimensions from '../../hooks/useWindowDimensions';
@@ -83,7 +83,7 @@ const Board = () => {
 
   //when game board loads, 
   useEffect(() => firstRender(), [firstRender])
-
+  
   // startRound should be a useEffect()
   // effect should read 'isRunning' bool  to start running game
   // button should toggle isRunning
@@ -107,7 +107,8 @@ const Board = () => {
   return (
     <div className='board'>
       <Buttons startRound={startRound} />
-      {board.currentEntities.map((entity) => (
+      {board.currentEntities.map((entity) => ( 
+        <>
         <img
           id={entity.idName}
           key={entity.id}
@@ -116,6 +117,11 @@ const Board = () => {
           style={{ ...entitySize, ...getPosValues(entity), imageRendering: "pixelated" }}
           src={entity.sprite}
           alt={entity.name} />
+          
+        </>
+        
+          
+          
       ))}
       {range(0, board.cols - 1).reverse().map(col => (
         <div className='rows' key={col} style={{ display: "flex" }}>

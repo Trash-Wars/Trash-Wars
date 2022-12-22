@@ -133,7 +133,7 @@
 }
 
 #button {
-  background-color: black !important;
+  background-color:transparent;
   border: none;
   color: white;
   padding: 15px 32px;

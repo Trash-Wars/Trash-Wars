@@ -155,12 +155,18 @@ const InventoryCarousel = (props: GrabSupported) => {
       inventory.items.splice(((page*8)+clickedIndex!), 0, grabbed)
       playItemSelect();
       setGrabbed(undefined);
-    } else {
-      const taken = inventory.items.splice(((page*8)+clickedIndex!), 1)[0]
+    } else if(((page*ITEMS_PER_PAGE)+clickedIndex!+1) % ITEMS_PER_PAGE === 1 && page > 0) {
+        handleSetPage(-1);
+        const taken = inventory.items.splice(((page*ITEMS_PER_PAGE)+clickedIndex!), 1)[0]
+        playItemSelect();
+        setGrabbed(taken);
+      }
+      else{
+        const taken = inventory.items.splice(((page*ITEMS_PER_PAGE)+clickedIndex!), 1)[0]
       playItemSelect();
       setGrabbed(taken);
+      }
     }
-  }
 
   function isDimmed(item?: Item): boolean | undefined {
     if (!grabbed) {
