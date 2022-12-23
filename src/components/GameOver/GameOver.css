@@ -76,7 +76,25 @@ thead {
 }
 
 .score-modal {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.formButton {
+  color: white;
+  background-color: transparent;
+}
+
+.formCloseButton {
+  color: white;
+  background-color: transparent;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.formButton:hover {
+  animation: shake 1s linear infinite;
 }
