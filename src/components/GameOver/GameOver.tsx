@@ -5,7 +5,7 @@ import { addScore } from "../../routes/routes";
 import "./GameOver.css";
 import { board } from "../GameBoard/GameBoard";
 import { useSound } from "../../hooks/useSound";
-const buttonSelect = require("../../assets/sounds/buttonSelect.wav")
+const buttonSelect = require("../../assets/sounds/buttonSelect.wav");
 
 type ScoreEntry = {
   _id: string;
@@ -21,7 +21,7 @@ const GameOver = () => {
   const [isNewScore, setIsNewScore] = useState<boolean>(false);
   const [clicked, setClicked] = useState<boolean>(false);
 
-  const {play: playSelect} = useSound(buttonSelect);
+  const { play: playSelect } = useSound(buttonSelect);
 
   useEffect(() => {
     const fetchScores = async () => {
@@ -79,7 +79,9 @@ const GameOver = () => {
           </tbody>
         </table>
         <Link to="/">
-          <button id="returnButton" onClick={() => playSelect()}>Return to Menu</button>
+          <button id="returnButton" onClick={() => playSelect()}>
+            Return to Menu
+          </button>
         </Link>
       </div>
       <ScoreModal
@@ -118,7 +120,7 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
   return (
     <Modal show={isNewScore} centered>
       <div className="gold-modal score-modal">
-        <h1>New Top 10 High Score!</h1>
+        <h1>New Score!</h1>
         <p>You won {board.rounds} rounds!</p>
         <form onSubmit={handleSubmit}>
           <label>Name:</label>
@@ -130,8 +132,17 @@ const ScoreModal: React.FC<ScoreModalProps> = ({
             value={name}
             onChange={(event) => setName(event.target.value)}
           />
-          <button type="submit">Submit</button>
-          <button onClick={() => setIsNewScore(false)}>Close</button>
+          <div>
+            <button className="formButton" type="submit">
+              Submit
+            </button>
+            <button
+              className="formCloseButton"
+              onClick={() => setIsNewScore(false)}
+            >
+              Close
+            </button>
+          </div>
         </form>
       </div>
     </Modal>
